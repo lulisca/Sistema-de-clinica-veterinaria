@@ -14,6 +14,17 @@
 
 ---
 
+## Requisitos obrigatórios (definidos pelo professor)
+
+Esses pontos **não são negociáveis** — todo entregável técnico precisa contemplá-los:
+
+- **Tempo médio de espera** — o sistema calcula e mostra uma estimativa de quanto o tutor vai esperar.
+- **Taxa de erro para mais e para menos** — a estimativa vem com margem (ex.: "25 ± 5 min"), e o sistema acompanha o erro real ao longo do uso.
+- **Hierarquia de prioridade** — a fila respeita níveis de prioridade (quais níveis existem continua sendo decisão nossa).
+- **Geolocalização** — o sistema usa a localização do tutor para saber se ele consegue chegar a tempo quando for chamado.
+
+---
+
 ## Papéis individuais
 
 - **Gerente de Projeto (GP)** — conduz as reuniões de segunda, cuida de cronograma, destrava bloqueios.
@@ -100,14 +111,20 @@
 ### 6.1 Backend — Grupo 1
 - API (REST ou GraphQL)
 - Autenticação (recepção, veterinário)
-- Lógica da fila: ordem de chegada + prioridade
+- Lógica da fila: ordem de chegada + **hierarquia de prioridade** *(obrigatório)*
+- Cálculo de **tempo médio de espera** com **margem de erro ±** *(obrigatório)*
+- Registro do erro real da estimativa a cada atendimento concluído (para ajustar o cálculo)
+- Serviço de **geolocalização**: distância tutor ↔ clínica e tempo estimado de deslocamento *(obrigatório)*
 - Mecanismo de notificação (canal definido na etapa 2)
 - Persistência (banco de dados)
 - Logs e trilha de auditoria (LGPD)
 
 ### 6.2 Frontend — Grupo 2
 - Fluxo do **tutor**: entrar na fila, ver posição, receber aviso
-- Fluxo da **recepção**: ver fila, chamar próximo, marcar presença
+  - Mostrar **tempo estimado de espera com margem** (ex.: "25 ± 5 min") *(obrigatório)*
+  - Pedir **permissão de geolocalização** ao tutor com justificativa clara (LGPD) *(obrigatório)*
+  - Indicador "dá tempo de chegar / não dá tempo" com base na distância
+- Fluxo da **recepção**: ver fila (com o nível de prioridade de cada caso), chamar próximo, marcar presença
 - Fluxo do **veterinário** (se v1 incluir): iniciar / finalizar atendimento
 - (Opcional) Painel de senhas para a sala de espera
 
@@ -147,11 +164,15 @@
 
 - [ ] Perfis que o sistema atende na v1 (só tutor + recepção? inclui veterinário? gestor?)
 - [ ] Canal de notificação obrigatório na demo (painel na recepção? WhatsApp? SMS? e-mail? push?)
-- [ ] Onde o tutor pode esperar (só na clínica? em qualquer lugar? híbrido com confirmação?)
+- [ ] **Níveis da hierarquia de prioridade** (ex.: emergência / urgência / rotina — ou mais níveis)
+- [ ] Como calcular o tempo médio de espera (média simples? média móvel? por tipo de atendimento?)
+- [ ] Fallback caso o tutor **negue a permissão de geolocalização**
 - [ ] Stack técnico (linguagem/framework do backend, framework do frontend, banco)
 - [ ] Hospedagem (local, cloud grátis, cloud pago simulado?)
 - [ ] Data da apresentação final
 - [ ] Nomes dos 9 integrantes e quem assume cada papel (GP, Arquiteto, Grupo 1/2/3)
+
+> **Já decidido pela geolocalização obrigatória:** o tutor pode esperar fora da clínica (modo "em qualquer lugar" ou "híbrido com confirmação de presença").
 
 ---
 
