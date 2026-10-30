@@ -1,0 +1,5 @@
+appointment_type,duration_minutes,source,observed_at,note
+consulta,,DIRECT_OBSERVATION,,
+vacina,,DIRECT_OBSERVATION,,
+retorno,,DIRECT_OBSERVATION,,
+exame,,DIRECT_OBSERVATION,,
