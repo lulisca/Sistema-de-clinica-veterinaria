@@ -116,10 +116,13 @@ class Notification(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     queue_entry_id: Mapped[int] = mapped_column(ForeignKey('queue_entries.id'), index=True)
     channel: Mapped[str] = mapped_column(String(40), default='SIMULATOR')
-    status: Mapped[str] = mapped_column(String(30), default='SENT')
+    status: Mapped[str] = mapped_column(String(30), default='SIMULATED')
     message: Mapped[str] = mapped_column(Text)
     sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    reception_action_required: Mapped[bool] = mapped_column(Boolean, default=False)
+    reception_action_resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    reception_action_note: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 class ResourceAllocation(Base):
     __tablename__ = 'resource_allocations'

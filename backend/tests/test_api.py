@@ -67,7 +67,8 @@ def test_location_refusal_uses_fixed_notice_mode(client,reception_headers):
     tutor,animal,vet=create_basic(client,reception_headers)
     add_real_samples(client,reception_headers)
     q=client.post('/api/walk-ins',json={'animal_id':animal['id'],'appointment_type':'CONSULTATION'},headers=reception_headers).json()
-    client.post(f"/api/queue/{q['id']}/location",json={'moment':'CHECK_IN','consent_given':False,'retention_minutes':60},headers=reception_headers)
+    saved=client.post(f"/api/queue/{q['id']}/location",json={'moment':'CHECK_IN','consent_given':False},headers=reception_headers)
+    assert saved.status_code==200, saved.text
     d=client.get(f"/api/queue/{q['id']}/return-decision?safety_margin_minutes=5",headers=reception_headers).json()
     assert d['mode']=='FIXED_NOTICE'
 

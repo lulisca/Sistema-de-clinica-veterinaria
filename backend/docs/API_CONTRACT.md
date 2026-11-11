@@ -42,15 +42,29 @@ O backend calcula percentis por **tipo de atendimento**. `SYNTHETIC` é aceito p
 A primeira previsão persistida é marcada como `is_initial=true`. Cada revisão recebe `revision_number`, `trigger_event` e `calculated_at`. Check-in, encaixe, alteração de prioridade, início/fim do atendimento, atualização das amostras e mudança de capacidade veterinária recalculam automaticamente os pacientes em espera quando houver dados suficientes. Quando o atendimento começa, o backend grava a espera real e calcula erro assinado, erro absoluto e se a espera caiu entre p50 e p90 em todas as revisões daquele paciente.
 
 ## F2 — deslocamento sem rastreamento contínuo
-- `POST /queue/{id}/location`
-- `GET /queue/{id}/return-decision`
-- `POST /queue/{id}/notifications`
-- `POST /notifications/{id}/confirm`
-- `POST /notifications/{id}/fail`
 
-O backend não persiste latitude/longitude. Persiste somente consentimento, faixa de distância/tempo de deslocamento e expiração. Sem consentimento, o backend só usa `FIXED_NOTICE` se a antecedência fixa tiver sido configurada após validação da clínica. Caso contrário retorna `FIXED_NOTICE_NOT_CONFIGURED`. A margem de segurança é parâmetro explícito, pois ainda é decisão pendente.
+Rotas do tutor (token público aleatório do próprio atendimento):
+- `GET /public/status/{token}/location-consent` — finalidade, momentos de captura e política de minimização.
+- `POST /public/status/{token}/location` — registra consentimento e tempo estimado de deslocamento em `CHECK_IN`, `NOTIFICATION` ou `RETURN_CONFIRMATION`.
+- `POST /public/status/{token}/confirm-return` — confirma o retorno e muda `CALLED` para `RETURNING`.
+- `GET /public/status/{token}` — consulta o próprio atendimento e o estado resumido do último aviso.
 
-O canal real de mensagem ainda não foi escolhido; `SIMULATOR` registra o evento sem fingir integração externa.
+Rotas da recepção/equipe:
+- `POST /queue/{id}/location` — registro assistido da mesma informação, se necessário.
+- `GET /queue/{id}/return-decision?safety_margin_minutes=N` — calcula o momento do aviso e a viabilidade estimada de chegada.
+- `POST /queue/{id}/notifications/evaluate?safety_margin_minutes=N` — avalia e cria um evento simulado apenas quando o aviso é devido.
+- `POST /queue/{id}/notifications` — registro manual/simulado pela equipe.
+- `GET /queue/{id}/notifications` — histórico de avisos.
+- `POST /notifications/{id}/confirm` — confirmação assistida pela equipe.
+- `POST /notifications/{id}/fail` — registra falha e abre ação para a recepção.
+- `GET /notifications/reception-actions` — lista falhas que exigem ação.
+- `POST /notifications/{id}/resolve-reception-action` — registra a providência da recepção.
+
+O backend não recebe nem persiste latitude/longitude. O contrato recebe somente o tempo estimado de deslocamento (`travel_minutes`) calculado pelo cliente/serviço de rotas escolhido pela equipe. A captura deve ocorrer apenas nos momentos definidos, mediante consentimento explícito. `LOCATION_RETENTION_MINUTES` é configuração do servidor; o cliente não pode escolher o prazo. Snapshots expirados são excluídos nas operações F2 e também podem ser removidos pelo script `python scripts/purge_expired_location_snapshots.py` (agendar no ambiente publicado).
+
+Sem consentimento, o backend não guarda tempo de deslocamento e usa `FIXED_NOTICE` somente se `DEFAULT_FIXED_NOTICE_MINUTES` estiver configurado. Caso contrário retorna `FIXED_NOTICE_NOT_CONFIGURED`; o tutor continua podendo usar o sistema, mas a clínica precisa definir a antecedência fixa antes da operação final. A margem de segurança é parâmetro explícito (`safety_margin_minutes`) porque ainda depende de validação com a clínica. A resposta também indica `return_viable` e `return_feasibility` (`FEASIBLE`, `AT_RISK`, `INFEASIBLE`, `UNKNOWN`).
+
+O canal real de mensagem ainda não foi escolhido. `SIMULATOR` cria um registro `SIMULATED`, sem alegar envio por WhatsApp/SMS/e-mail. Falhas abrem uma ação pendente para a recepção; uma nova tentativa automática fica bloqueada até a recepção registrar a providência. O endpoint de avaliação impede avisos duplicados enquanto houver um aviso pendente não confirmado.
 
 ## Estados principais
 Agenda: `SCHEDULED`, `CHECKED_IN`, `CANCELLED`, `NO_SHOW`, `COMPLETED`.

@@ -10,7 +10,7 @@ Backend executável para o Projeto Integrador **Agenda + Fila Virtual** de clín
 - Emergência marcada apenas por perfil veterinário/admin.
 - Recursos compartilhados com bloqueio de dupla alocação.
 - **F1:** amostras por tipo, p50/p90, revisões automáticas versionadas, espera real, erro assinado, MAE, cobertura da faixa e métricas por tipo.
-- **F2:** snapshots de deslocamento com consentimento, sem rastreamento contínuo/sem persistir coordenadas, fallback sem GPS e simulador de avisos.
+- **F2:** captura pontual com consentimento, sem persistir coordenadas, fallback configurável sem GPS, cálculo de viabilidade do retorno, notificação simulada, confirmação pública, prevenção de duplicidade e ação da recepção em caso de falha.
 - Trilha de auditoria para ações críticas.
 - Link público aleatório para o tutor consultar somente o próprio atendimento.
 - PostgreSQL suportado; SQLite funciona para desenvolvimento rápido.
@@ -18,7 +18,7 @@ Backend executável para o Projeto Integrador **Agenda + Fila Virtual** de clín
 
 ## Regras propositalmente NÃO inventadas
 
-O planejamento da equipe ainda marca como pendentes: tolerância de atraso, reinserção, precedência agendado × encaixe, desempate final, níveis de prioridade além de emergência, canal de notificação, margem final de retorno e detalhes de retenção. O backend deixa essas decisões abertas em vez de criar regra acadêmica sem validação da clínica.
+O planejamento da equipe ainda marca como pendentes: tolerância de atraso, reinserção, precedência agendado × encaixe, desempate final, níveis de prioridade além de emergência, canal real de notificação, margem de retorno, antecedência fixa sem GPS, serviço de rotas e prazo de retenção. O backend deixa essas decisões abertas em vez de criar regra acadêmica sem validação da clínica.
 
 ## Executar localmente (mais simples)
 
@@ -28,7 +28,8 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 copy .env.example .env
-# edite as variáveis necessárias (especialmente JWT_SECRET)
+# edite as variáveis necessárias (especialmente JWT_SECRET). Para F2, defina LOCATION_RETENTION_MINUTES
+# e, após validação da clínica, DEFAULT_FIXED_NOTICE_MINUTES.
 uvicorn app.main:app --reload
 ```
 
@@ -68,7 +69,7 @@ PostgreSQL: `localhost:5432`
 alembic upgrade head
 ```
 
-A aplicação também cria as tabelas automaticamente no startup para facilitar o MVP. Na publicação final, prefira migrations.
+A aplicação também cria tabelas novas automaticamente no startup para facilitar o MVP. **Ao atualizar um banco já existente para esta versão F2, execute `alembic upgrade head` antes de iniciar a API**: `create_all` não adiciona colunas a tabelas antigas. Na publicação final, use migrations.
 
 ## Dados de campo da F1
 
@@ -116,6 +117,8 @@ pytest -q
 - `docs/MODELO_DADOS.md` — ER em Mermaid e decisões do modelo
 - `docs/DEMO_S5.md` — roteiro da fatia vertical F1
 - `docs/F1_IMPLEMENTACAO.md` — descrição técnica e critérios de fechamento da F1
+- `docs/F2_IMPLEMENTACAO.md` — fluxo, privacidade, parâmetros pendentes e testes da F2
+- `docs/adr/0002-f2-localizacao-e-acionamento.md` — proposta de decisão F2, ainda não aprovada
 - `docs/RELATORIO_CALIBRACAO_F1.md` — gerado pelo script de relatório
 - `docs/REGISTRO_IA_RASCUNHO.md` — rascunho para declaração obrigatória
 - `docs/adr/0001-backend-stack-e-f1.md` — ADR proposto

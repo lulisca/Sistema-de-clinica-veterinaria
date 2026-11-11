@@ -167,11 +167,19 @@ class F1ReadinessOut(BaseModel):
     types: list[F1ReadinessItem]
 
 class LocationIn(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     moment: Literal['CHECK_IN','NOTIFICATION','RETURN_CONFIRMATION']
     consent_given: bool
     travel_minutes: int | None = Field(default=None, ge=0, le=1440)
-    distance_range: str | None = None
-    retention_minutes: int = Field(ge=1, le=10080)
+
+class LocationConsentOut(BaseModel):
+    purpose: str
+    consent_version: str
+    retention_minutes: int | None
+    coordinates_persisted: bool = False
+    continuous_tracking: bool = False
+    denial_supported: bool = True
+    moments: list[str]
 
 class ReturnDecisionOut(BaseModel):
     queue_entry_id: int
@@ -179,12 +187,16 @@ class ReturnDecisionOut(BaseModel):
     travel_minutes: int | None
     safety_margin_minutes: int
     should_notify_now: bool
+    return_viable: bool | None
+    return_feasibility: Literal['FEASIBLE','AT_RISK','INFEASIBLE','UNKNOWN']
+    arrival_slack_minutes: float | None
     mode: str
     reason: str
 
 class NotificationIn(BaseModel):
-    message: str = 'É hora de retornar à clínica.'
-    channel: str = 'SIMULATOR'
+    model_config = ConfigDict(extra='forbid')
+    message: str = Field(default='É hora de retornar à clínica.', min_length=1, max_length=500)
+    channel: Literal['SIMULATOR'] = 'SIMULATOR'
 class NotificationOut(ORMModel):
     id: int
     queue_entry_id: int
@@ -193,6 +205,18 @@ class NotificationOut(ORMModel):
     message: str
     sent_at: datetime
     confirmed_at: datetime | None
+    reception_action_required: bool
+    reception_action_resolved_at: datetime | None
+    reception_action_note: str | None
+
+class NotificationDispatchOut(BaseModel):
+    created: bool
+    reason: str
+    decision: ReturnDecisionOut
+    notification: NotificationOut | None = None
+
+class ReceptionActionResolveIn(BaseModel):
+    note: str = Field(min_length=3, max_length=1000)
 
 class AllocationIn(BaseModel):
     resource_id: int

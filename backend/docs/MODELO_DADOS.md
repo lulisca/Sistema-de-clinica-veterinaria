@@ -107,6 +107,9 @@ erDiagram
       string message
       datetime sent_at
       datetime confirmed_at
+      bool reception_action_required
+      datetime reception_action_resolved_at
+      text reception_action_note
     }
     USER {
       int id PK
@@ -129,6 +132,7 @@ erDiagram
 
 1. **Fila não é uma tabela por espécie/motivo.** `QueueEntry` armazena os eixos e a API pode agrupar/filtrar sem perder a disputa por recursos compartilhados.
 2. **Emergência não é calculada pelo sistema.** O campo só pode ser alterado por perfil veterinário/admin.
-3. **Localização precisa não é persistida.** O backend persiste apenas consentimento, tempo/faixa de deslocamento e expiração.
-4. **Previsões são versionadas.** Isso permite comparar previsão inicial, revisões e espera real.
-5. **Amostras de campo ficam separadas da fila operacional.** Assim observação direta/retrospectiva pode calibrar a F1 antes de existirem atendimentos reais no sistema.
+3. **Localização precisa não é persistida.** O backend recebe somente tempo estimado de deslocamento, consentimento, momento e expiração; o cliente não escolhe o prazo de retenção. Snapshots expirados são removidos nas operações F2 e pelo script de limpeza agendável.
+4. **Falha de aviso gera ação para a recepção.** O registro guarda se há providência pendente, quando foi resolvida e a anotação da equipe.
+5. **Previsões são versionadas.** Isso permite comparar previsão inicial, revisões e espera real.
+6. **Amostras de campo ficam separadas da fila operacional.** Assim observação direta/retrospectiva pode calibrar a F1 antes de existirem atendimentos reais no sistema.

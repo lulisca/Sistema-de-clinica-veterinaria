@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
@@ -227,59 +227,395 @@ def create_samples(payload:DurationSamplesBulkIn,db:Session=Depends(get_db),user
     recalculate_waiting_estimates(db, 'SAMPLES_UPDATED')
     return {'created':len(objs),'warning':'SYNTHETIC samples are stored for development but excluded from calibrated F1 estimates.'}
 
-@router.post('/queue/{entry_id}/location')
-def save_location(entry_id:int,payload:LocationIn,db:Session=Depends(get_db),user=STAFF):
-    q=db.get(QueueEntry,entry_id)
-    if not q: raise HTTPException(404,'Queue entry not found')
-    if payload.consent_given and payload.travel_minutes is None: raise HTTPException(400,'travel_minutes is required when consent is granted')
-    expires=datetime.now(timezone.utc)+timedelta(minutes=payload.retention_minutes)
-    snap=LocationSnapshot(queue_entry_id=q.id,moment=payload.moment,consent_given=payload.consent_given,
+LOCATION_CONSENT_VERSION = 'F2-LOCATION-1'
+LOCATION_CONSENT_PURPOSE = (
+    'Usar o tempo estimado de deslocamento para decidir quando avisar você para retornar à clínica. '
+    'O sistema não armazena sua localização exata nem acompanha seu deslocamento continuamente. '
+    'Você pode negar a localização e continuar usando o sistema; nesse caso, será usado o aviso por tempo fixo, '
+    'se a clínica tiver configurado esse parâmetro.'
+)
+
+
+def _get_public_queue(db: Session, public_token: str) -> QueueEntry:
+    q = db.scalar(select(QueueEntry).where(QueueEntry.public_token == public_token))
+    if not q:
+        raise HTTPException(404, 'Invalid status link')
+    return q
+
+
+def _purge_expired_location_snapshots(db: Session) -> int:
+    now = datetime.now(timezone.utc)
+    result = db.execute(delete(LocationSnapshot).where(
+        or_(LocationSnapshot.expires_at.is_(None), LocationSnapshot.expires_at <= now)
+    ))
+    removed = int(result.rowcount or 0)
+    if removed:
+        db.commit()
+    else:
+        db.flush()
+    return removed
+
+
+def _record_location_snapshot(
+    db: Session,
+    q: QueueEntry,
+    payload: LocationIn,
+    actor_user_id: int | None = None,
+) -> LocationSnapshot:
+    retention = settings.location_retention_minutes
+    if retention is None or retention < 1 or retention > 10080:
+        raise HTTPException(503, 'Location retention is not configured. Set LOCATION_RETENTION_MINUTES after the team/clinic decision.')
+    if payload.consent_given and payload.travel_minutes is None:
+        raise HTTPException(400, 'travel_minutes is required when consent is granted')
+    if not payload.consent_given and payload.travel_minutes is not None:
+        raise HTTPException(400, 'Do not submit travel data when location consent is denied')
+
+    _purge_expired_location_snapshots(db)
+    now = datetime.now(timezone.utc)
+    snap = LocationSnapshot(
+        queue_entry_id=q.id,
+        moment=payload.moment,
+        consent_given=payload.consent_given,
         travel_minutes=payload.travel_minutes if payload.consent_given else None,
-        distance_range=payload.distance_range if payload.consent_given else None,expires_at=expires)
-    db.add(snap); audit(db,'QueueEntry',q.id,'LOCATION_SNAPSHOT',user.id,{'consent':payload.consent_given,'moment':payload.moment}); db.commit(); db.refresh(snap)
-    return {'id':snap.id,'stored_coordinates':False,'travel_minutes':snap.travel_minutes,'distance_range':snap.distance_range,'expires_at':snap.expires_at}
+        distance_range=None,
+        captured_at=now,
+        expires_at=now + timedelta(minutes=retention),
+    )
+    db.add(snap)
+    audit(db, 'QueueEntry', q.id, 'LOCATION_SNAPSHOT', actor_user_id, {
+        'consent': payload.consent_given,
+        'moment': payload.moment,
+        'purpose_version': LOCATION_CONSENT_VERSION,
+        'coordinates_stored': False,
+        'retention_minutes': retention,
+    })
+    db.commit()
+    db.refresh(snap)
+    return snap
+
+
+def _latest_active_location_snapshot(db: Session, queue_entry_id: int) -> LocationSnapshot | None:
+    now = datetime.now(timezone.utc)
+    return db.scalar(select(LocationSnapshot).where(
+        LocationSnapshot.queue_entry_id == queue_entry_id,
+        LocationSnapshot.expires_at.is_not(None),
+        LocationSnapshot.expires_at > now,
+    ).order_by(LocationSnapshot.captured_at.desc(), LocationSnapshot.id.desc()).limit(1))
+
+
+def _calculate_return_decision(db: Session, q: QueueEntry, safety_margin_minutes: int) -> ReturnDecisionOut:
+    _purge_expired_location_snapshots(db)
+    est = calculate_estimate(db, q)
+    if est['status'] != 'ok':
+        return ReturnDecisionOut(
+            queue_entry_id=q.id,
+            estimated_wait_minutes=None,
+            travel_minutes=None,
+            safety_margin_minutes=safety_margin_minutes,
+            should_notify_now=False,
+            return_viable=None,
+            return_feasibility='UNKNOWN',
+            arrival_slack_minutes=None,
+            mode='NO_ESTIMATE',
+            reason=est.get('message', 'Estimate unavailable'),
+        )
+
+    wait = float(est['p50_minutes'])
+    snap = _latest_active_location_snapshot(db, q.id)
+    if snap and snap.consent_given and snap.travel_minutes is not None:
+        travel = int(snap.travel_minutes)
+        slack = round(wait - travel, 2)
+        if slack < 0:
+            feasibility = 'INFEASIBLE'
+        elif slack < safety_margin_minutes:
+            feasibility = 'AT_RISK'
+        else:
+            feasibility = 'FEASIBLE'
+        should = wait <= travel + safety_margin_minutes
+        if feasibility == 'INFEASIBLE':
+            reason = 'The p50 wait is shorter than the estimated travel time. Notify now and flag that arrival before service is unlikely.'
+        elif feasibility == 'AT_RISK':
+            reason = 'The tutor can arrive within the p50 estimate, but the configured safety margin is not fully available.'
+        else:
+            reason = 'The p50 wait covers travel time and the configured safety margin.'
+        return ReturnDecisionOut(
+            queue_entry_id=q.id,
+            estimated_wait_minutes=wait,
+            travel_minutes=travel,
+            safety_margin_minutes=safety_margin_minutes,
+            should_notify_now=should,
+            return_viable=slack >= 0,
+            return_feasibility=feasibility,
+            arrival_slack_minutes=slack,
+            mode='TRAVEL_TIME',
+            reason=reason,
+        )
+
+    fixed = settings.default_fixed_notice_minutes
+    if fixed is None:
+        return ReturnDecisionOut(
+            queue_entry_id=q.id,
+            estimated_wait_minutes=wait,
+            travel_minutes=None,
+            safety_margin_minutes=safety_margin_minutes,
+            should_notify_now=False,
+            return_viable=None,
+            return_feasibility='UNKNOWN',
+            arrival_slack_minutes=None,
+            mode='FIXED_NOTICE_NOT_CONFIGURED',
+            reason='No active consented travel estimate. Configure DEFAULT_FIXED_NOTICE_MINUTES after validation with the clinic; the tutor can still use the system.',
+        )
+    should = wait <= fixed
+    return ReturnDecisionOut(
+        queue_entry_id=q.id,
+        estimated_wait_minutes=wait,
+        travel_minutes=None,
+        safety_margin_minutes=safety_margin_minutes,
+        should_notify_now=should,
+        return_viable=None,
+        return_feasibility='UNKNOWN',
+        arrival_slack_minutes=None,
+        mode='FIXED_NOTICE',
+        reason=f'No active location estimate: use the configured fixed notice threshold of {fixed} minutes.',
+    )
+
+
+def _pending_notification(db: Session, queue_entry_id: int) -> Notification | None:
+    return db.scalar(select(Notification).where(
+        Notification.queue_entry_id == queue_entry_id,
+        Notification.status.in_(['SENT', 'SIMULATED']),
+        Notification.confirmed_at.is_(None),
+    ).order_by(Notification.sent_at.desc(), Notification.id.desc()).limit(1))
+
+
+def _open_reception_action(db: Session, queue_entry_id: int) -> Notification | None:
+    return db.scalar(select(Notification).where(
+        Notification.queue_entry_id == queue_entry_id,
+        Notification.status == 'FAILED',
+        Notification.reception_action_required.is_(True),
+        Notification.reception_action_resolved_at.is_(None),
+    ).order_by(Notification.sent_at.desc(), Notification.id.desc()).limit(1))
+
+
+def _create_simulated_notification(db: Session, q: QueueEntry, message: str, actor_user_id: int | None) -> Notification:
+    if q.status not in {'WAITING', 'CALLED'}:
+        raise HTTPException(409, f'Cannot notify a queue entry in status {q.status}')
+    if _open_reception_action(db, q.id):
+        raise HTTPException(409, 'Reception must resolve the previous notification failure before another attempt')
+    if _pending_notification(db, q.id):
+        raise HTTPException(409, 'There is already an unconfirmed notification for this queue entry')
+    now = datetime.now(timezone.utc)
+    n = Notification(
+        queue_entry_id=q.id,
+        channel='SIMULATOR',
+        status='SIMULATED',
+        message=message,
+        sent_at=now,
+    )
+    db.add(n)
+    if q.status == 'WAITING':
+        q.status = 'CALLED'
+        q.called_at = now
+    audit(db, 'QueueEntry', q.id, 'NOTIFICATION_SIMULATED', actor_user_id, {'channel': 'SIMULATOR'})
+    db.commit()
+    db.refresh(n)
+    return n
+
+
+@router.get('/public/status/{public_token}/location-consent', response_model=LocationConsentOut)
+def public_location_consent(public_token: str, db: Session = Depends(get_db)):
+    _get_public_queue(db, public_token)
+    return LocationConsentOut(
+        purpose=LOCATION_CONSENT_PURPOSE,
+        consent_version=LOCATION_CONSENT_VERSION,
+        retention_minutes=settings.location_retention_minutes,
+        coordinates_persisted=False,
+        continuous_tracking=False,
+        denial_supported=True,
+        moments=['CHECK_IN', 'NOTIFICATION', 'RETURN_CONFIRMATION'],
+    )
+
+
+@router.post('/public/status/{public_token}/location')
+def save_public_location(public_token: str, payload: LocationIn, db: Session = Depends(get_db)):
+    q = _get_public_queue(db, public_token)
+    snap = _record_location_snapshot(db, q, payload, actor_user_id=None)
+    return {
+        'id': snap.id,
+        'stored_coordinates': False,
+        'travel_minutes': snap.travel_minutes,
+        'moment': snap.moment,
+        'consent_given': snap.consent_given,
+        'expires_at': snap.expires_at,
+    }
+
+
+@router.post('/queue/{entry_id}/location')
+def save_location(entry_id: int, payload: LocationIn, db: Session = Depends(get_db), user=STAFF):
+    q = db.get(QueueEntry, entry_id)
+    if not q:
+        raise HTTPException(404, 'Queue entry not found')
+    snap = _record_location_snapshot(db, q, payload, actor_user_id=user.id)
+    return {
+        'id': snap.id,
+        'stored_coordinates': False,
+        'travel_minutes': snap.travel_minutes,
+        'moment': snap.moment,
+        'consent_given': snap.consent_given,
+        'expires_at': snap.expires_at,
+    }
+
 
 @router.get('/queue/{entry_id}/return-decision', response_model=ReturnDecisionOut)
-def return_decision(entry_id:int,safety_margin_minutes:int=Query(ge=0,le=120),db:Session=Depends(get_db),user=STAFF):
-    q=db.get(QueueEntry,entry_id)
-    if not q: raise HTTPException(404,'Queue entry not found')
-    est=calculate_estimate(db,q)
-    if est['status']!='ok':
-        return ReturnDecisionOut(queue_entry_id=q.id,estimated_wait_minutes=None,travel_minutes=None,safety_margin_minutes=safety_margin_minutes,should_notify_now=False,mode='NO_ESTIMATE',reason=est.get('message','Estimate unavailable'))
-    snap=db.scalar(select(LocationSnapshot).where(LocationSnapshot.queue_entry_id==q.id).order_by(LocationSnapshot.captured_at.desc()))
-    if snap and snap.consent_given and snap.travel_minutes is not None:
-        should=est['p50_minutes'] <= snap.travel_minutes+safety_margin_minutes
-        return ReturnDecisionOut(queue_entry_id=q.id,estimated_wait_minutes=est['p50_minutes'],travel_minutes=snap.travel_minutes,safety_margin_minutes=safety_margin_minutes,should_notify_now=should,mode='TRAVEL_TIME',reason='Compares current p50 wait with travel time plus safety margin.')
-    fixed=settings.default_fixed_notice_minutes
-    if fixed is None:
-        return ReturnDecisionOut(queue_entry_id=q.id,estimated_wait_minutes=est['p50_minutes'],travel_minutes=None,safety_margin_minutes=safety_margin_minutes,should_notify_now=False,mode='FIXED_NOTICE_NOT_CONFIGURED',reason='No usable location and the clinic fallback notice threshold has not been configured yet.')
-    should=est['p50_minutes'] <= fixed
-    return ReturnDecisionOut(queue_entry_id=q.id,estimated_wait_minutes=est['p50_minutes'],travel_minutes=None,safety_margin_minutes=safety_margin_minutes,should_notify_now=should,mode='FIXED_NOTICE',reason=f'No usable location: fixed notice threshold of {fixed} minutes.')
+def return_decision(
+    entry_id: int,
+    safety_margin_minutes: int = Query(ge=0, le=1440),
+    db: Session = Depends(get_db),
+    user=STAFF,
+):
+    q = db.get(QueueEntry, entry_id)
+    if not q:
+        raise HTTPException(404, 'Queue entry not found')
+    return _calculate_return_decision(db, q, safety_margin_minutes)
+
 
 @router.post('/queue/{entry_id}/notifications', response_model=NotificationOut)
-def notify(entry_id:int,payload:NotificationIn,db:Session=Depends(get_db),user=STAFF):
-    q=db.get(QueueEntry,entry_id)
-    if not q: raise HTTPException(404,'Queue entry not found')
-    pending=db.scalar(select(Notification.id).where(Notification.queue_entry_id==q.id,Notification.status=='SENT',Notification.confirmed_at.is_(None)).limit(1))
-    if pending: raise HTTPException(409,'There is already an unconfirmed notification for this queue entry')
-    n=Notification(queue_entry_id=q.id,channel=payload.channel,status='SENT',message=payload.message)
-    db.add(n); audit(db,'QueueEntry',q.id,'NOTIFY',user.id,{'channel':payload.channel}); db.commit(); db.refresh(n); return n
+def notify(entry_id: int, payload: NotificationIn, db: Session = Depends(get_db), user=STAFF):
+    q = db.get(QueueEntry, entry_id)
+    if not q:
+        raise HTTPException(404, 'Queue entry not found')
+    return _create_simulated_notification(db, q, payload.message, user.id)
+
+
+@router.post('/queue/{entry_id}/notifications/evaluate', response_model=NotificationDispatchOut)
+def evaluate_notification(
+    entry_id: int,
+    safety_margin_minutes: int = Query(ge=0, le=1440),
+    payload: NotificationIn = ...,
+    db: Session = Depends(get_db),
+    user=STAFF,
+):
+    q = db.get(QueueEntry, entry_id)
+    if not q:
+        raise HTTPException(404, 'Queue entry not found')
+    decision = _calculate_return_decision(db, q, safety_margin_minutes)
+    if decision.mode in {'NO_ESTIMATE', 'FIXED_NOTICE_NOT_CONFIGURED'}:
+        return NotificationDispatchOut(created=False, reason=decision.mode, decision=decision, notification=None)
+    if not decision.should_notify_now:
+        return NotificationDispatchOut(created=False, reason='NOT_DUE', decision=decision, notification=None)
+    failed = _open_reception_action(db, q.id)
+    if failed:
+        return NotificationDispatchOut(created=False, reason='RECEPTION_ACTION_REQUIRED', decision=decision, notification=None)
+    pending = _pending_notification(db, q.id)
+    if pending:
+        return NotificationDispatchOut(
+            created=False,
+            reason='DUPLICATE_PREVENTED',
+            decision=decision,
+            notification=NotificationOut.model_validate(pending),
+        )
+    n = _create_simulated_notification(db, q, payload.message, user.id)
+    return NotificationDispatchOut(
+        created=True,
+        reason='SIMULATED_NOTIFICATION_CREATED',
+        decision=decision,
+        notification=NotificationOut.model_validate(n),
+    )
+
+
+@router.get('/queue/{entry_id}/notifications', response_model=list[NotificationOut])
+def list_notifications(entry_id: int, db: Session = Depends(get_db), user=STAFF):
+    q = db.get(QueueEntry, entry_id)
+    if not q:
+        raise HTTPException(404, 'Queue entry not found')
+    return list(db.scalars(select(Notification).where(
+        Notification.queue_entry_id == q.id
+    ).order_by(Notification.sent_at.desc(), Notification.id.desc())).all())
+
+
+@router.get('/notifications/reception-actions', response_model=list[NotificationOut])
+def list_reception_actions(db: Session = Depends(get_db), user=STAFF):
+    return list(db.scalars(select(Notification).where(
+        Notification.reception_action_required.is_(True),
+        Notification.reception_action_resolved_at.is_(None),
+    ).order_by(Notification.sent_at.asc())).all())
+
 
 @router.post('/notifications/{notification_id}/fail', response_model=NotificationOut)
-def fail_notification(notification_id:int,db:Session=Depends(get_db),user=STAFF):
-    n=db.get(Notification,notification_id)
-    if not n: raise HTTPException(404,'Notification not found')
-    n.status='FAILED'
-    audit(db,'Notification',n.id,'MARK_FAILED',user.id)
-    db.commit(); db.refresh(n); return n
+def fail_notification(notification_id: int, db: Session = Depends(get_db), user=STAFF):
+    n = db.get(Notification, notification_id)
+    if not n:
+        raise HTTPException(404, 'Notification not found')
+    if n.status not in {'SENT', 'SIMULATED'} or n.confirmed_at is not None:
+        raise HTTPException(409, f'Cannot mark notification as failed from status {n.status}')
+    n.status = 'FAILED'
+    n.reception_action_required = True
+    n.reception_action_resolved_at = None
+    n.reception_action_note = None
+    audit(db, 'Notification', n.id, 'MARK_FAILED_RECEPTION_ACTION_REQUIRED', user.id)
+    db.commit()
+    db.refresh(n)
+    return n
+
+
+@router.post('/notifications/{notification_id}/resolve-reception-action', response_model=NotificationOut)
+def resolve_reception_action(
+    notification_id: int,
+    payload: ReceptionActionResolveIn,
+    db: Session = Depends(get_db),
+    user=STAFF,
+):
+    n = db.get(Notification, notification_id)
+    if not n:
+        raise HTTPException(404, 'Notification not found')
+    if n.status != 'FAILED' or not n.reception_action_required or n.reception_action_resolved_at is not None:
+        raise HTTPException(409, 'There is no open reception action for this notification')
+    n.reception_action_resolved_at = datetime.now(timezone.utc)
+    n.reception_action_note = payload.note
+    audit(db, 'Notification', n.id, 'RESOLVE_RECEPTION_ACTION', user.id, {'note': payload.note})
+    db.commit()
+    db.refresh(n)
+    return n
+
+
+def _confirm_notification(db: Session, n: Notification, actor_user_id: int | None) -> Notification:
+    if n.status not in {'SENT', 'SIMULATED'} or n.confirmed_at is not None:
+        raise HTTPException(409, f'Cannot confirm notification from status {n.status}')
+    now = datetime.now(timezone.utc)
+    n.confirmed_at = now
+    n.status = 'CONFIRMED'
+    q = db.get(QueueEntry, n.queue_entry_id)
+    if q and q.status == 'CALLED':
+        q.status = 'RETURNING'
+    audit(db, 'Notification', n.id, 'CONFIRM_RETURN', actor_user_id)
+    db.commit()
+    db.refresh(n)
+    return n
+
 
 @router.post('/notifications/{notification_id}/confirm', response_model=NotificationOut)
-def confirm_notification(notification_id:int,db:Session=Depends(get_db),user=STAFF):
-    n=db.get(Notification,notification_id)
-    if not n: raise HTTPException(404,'Notification not found')
-    n.confirmed_at=datetime.now(timezone.utc); n.status='CONFIRMED'; q=db.get(QueueEntry,n.queue_entry_id)
-    if q and q.status=='CALLED': q.status='RETURNING'
-    db.commit(); db.refresh(n); return n
+def confirm_notification(notification_id: int, db: Session = Depends(get_db), user=STAFF):
+    n = db.get(Notification, notification_id)
+    if not n:
+        raise HTTPException(404, 'Notification not found')
+    return _confirm_notification(db, n, user.id)
+
+
+@router.post('/public/status/{public_token}/confirm-return')
+def public_confirm_return(public_token: str, db: Session = Depends(get_db)):
+    q = _get_public_queue(db, public_token)
+    n = _pending_notification(db, q.id)
+    if not n:
+        raise HTTPException(409, 'There is no pending return notification to confirm')
+    confirmed = _confirm_notification(db, n, actor_user_id=None)
+    return {
+        'queue_entry_id': q.id,
+        'queue_status': db.get(QueueEntry, q.id).status,
+        'notification_id': confirmed.id,
+        'notification_status': confirmed.status,
+        'confirmed_at': confirmed.confirmed_at,
+    }
+
 
 @router.post('/queue/{entry_id}/allocations', response_model=AllocationOut)
 def allocate(entry_id:int,payload:AllocationIn,db:Session=Depends(get_db),user=STAFF):
@@ -335,19 +671,30 @@ def f1_readiness(db:Session=Depends(get_db),user=STAFF):
     )
 
 @router.get('/public/status/{public_token}')
-def public_status(public_token:str,db:Session=Depends(get_db)):
-    q=db.scalar(select(QueueEntry).where(QueueEntry.public_token==public_token))
-    if not q: raise HTTPException(404,'Invalid status link')
-    est=calculate_estimate(db,q)
-    waiting=list(db.scalars(select(QueueEntry).where(QueueEntry.status.in_(['WAITING','CALLED','RETURNING','READY']))).all())
-    waiting.sort(key=lambda e:(-int(e.emergency),-e.priority_level,e.checked_in_at,e.id))
-    position=next((i+1 for i,e in enumerate(waiting) if e.id==q.id),None)
+def public_status(public_token: str, db: Session = Depends(get_db)):
+    q = _get_public_queue(db, public_token)
+    _purge_expired_location_snapshots(db)
+    est = calculate_estimate(db, q)
+    waiting = list(db.scalars(select(QueueEntry).where(QueueEntry.status.in_(['WAITING','CALLED','RETURNING','READY']))).all())
+    waiting.sort(key=lambda e: (-int(e.emergency), -e.priority_level, e.checked_in_at, e.id))
+    position = next((i + 1 for i, e in enumerate(waiting) if e.id == q.id), None)
+    latest_notification = db.scalar(select(Notification).where(
+        Notification.queue_entry_id == q.id
+    ).order_by(Notification.sent_at.desc(), Notification.id.desc()).limit(1))
+    notification_summary = None
+    if latest_notification:
+        notification_summary = {
+            'status': latest_notification.status,
+            'sent_at': latest_notification.sent_at,
+            'confirmed_at': latest_notification.confirmed_at,
+        }
     return {
-        'queue_entry_id':q.id,
-        'status':q.status,
-        'species':q.species,
-        'appointment_type':q.appointment_type,
-        'contextual_position':position,
-        'estimate':est,
-        'called_at':q.called_at,
+        'queue_entry_id': q.id,
+        'status': q.status,
+        'species': q.species,
+        'appointment_type': q.appointment_type,
+        'contextual_position': position,
+        'estimate': est,
+        'called_at': q.called_at,
+        'notification': notification_summary,
     }
