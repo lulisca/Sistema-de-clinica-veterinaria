@@ -2,6 +2,13 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 
+
+def env_bool(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {'1', 'true', 'yes', 'on'}
+
 class Settings:
     app_name = os.getenv('APP_NAME', 'Fila Virtual API')
     database_url = os.getenv('DATABASE_URL', 'sqlite:///./fila_virtual.db')
@@ -12,6 +19,7 @@ class Settings:
     _location_retention = os.getenv('LOCATION_RETENTION_MINUTES')
     location_retention_minutes = int(_location_retention) if _location_retention else None
     min_samples_for_estimate = int(os.getenv('MIN_SAMPLES_FOR_ESTIMATE', '3'))
+    allow_mocked_estimates = env_bool('ALLOW_MOCKED_ESTIMATES', False)
     cors_origins = [x.strip() for x in os.getenv('CORS_ORIGINS', '*').split(',') if x.strip()]
 
 settings = Settings()

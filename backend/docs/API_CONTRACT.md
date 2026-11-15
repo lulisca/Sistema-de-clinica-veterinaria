@@ -37,7 +37,7 @@ Ordenação base: emergência declarada pelo veterinário → `priority_level` �
 - `GET /metrics/wait-estimates/by-type` — os mesmos indicadores segmentados por tipo.
 - `GET /metrics/f1-readiness` — quantidade de amostras e prontidão técnica por tipo.
 
-O backend calcula percentis por **tipo de atendimento**. `SYNTHETIC` é aceito para desenvolvimento, mas excluído da estimativa calibrada. Se faltarem amostras reais/retrospectivas/sistema, retorna `insufficient_data`.
+O backend calcula percentis por **tipo de atendimento**. Por padrao, `MOCKED` e excluido. Com `ALLOW_MOCKED_ESTIMATES=true`, a apresentacao calcula p50/p90 com a massa mockada e retorna `data_source=MOCKED`; isso nao valida o C1. Sem amostras elegiveis, retorna `insufficient_data`.
 
 A primeira previsão persistida é marcada como `is_initial=true`. Cada revisão recebe `revision_number`, `trigger_event` e `calculated_at`. Check-in, encaixe, alteração de prioridade, início/fim do atendimento, atualização das amostras e mudança de capacidade veterinária recalculam automaticamente os pacientes em espera quando houver dados suficientes. Quando o atendimento começa, o backend grava a espera real e calcula erro assinado, erro absoluto e se a espera caiu entre p50 e p90 em todas as revisões daquele paciente.
 

@@ -5,6 +5,7 @@ import os
 os.environ['DATABASE_URL'] = 'sqlite:///./test_fila_virtual.db'
 os.environ['JWT_SECRET'] = 'test-secret-012345678901234567890123456789'
 os.environ['MIN_SAMPLES_FOR_ESTIMATE'] = '3'
+os.environ['ALLOW_MOCKED_ESTIMATES'] = 'false'
 os.environ['DEFAULT_FIXED_NOTICE_MINUTES'] = '20'
 os.environ['LOCATION_RETENTION_MINUTES'] = '60'
 

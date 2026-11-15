@@ -19,7 +19,7 @@ from app.core.database import SessionLocal  # noqa: E402
 from app.models.domain import ServiceDurationSample  # noqa: E402
 from app.services.estimation import recalculate_waiting_estimates  # noqa: E402
 
-ALLOWED_SOURCES = {'DIRECT_OBSERVATION', 'RETROSPECTIVE', 'SYSTEM', 'SYNTHETIC'}
+ALLOWED_SOURCES = {'DIRECT_OBSERVATION', 'RETROSPECTIVE', 'SYSTEM', 'MOCKED'}
 
 
 def main() -> None:

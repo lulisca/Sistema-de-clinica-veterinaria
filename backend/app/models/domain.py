@@ -78,7 +78,7 @@ class ServiceDurationSample(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     appointment_type: Mapped[str] = mapped_column(String(50), index=True)
     duration_minutes: Mapped[float] = mapped_column(Float)
-    source: Mapped[str] = mapped_column(String(40), default='DIRECT_OBSERVATION')  # DIRECT_OBSERVATION, RETROSPECTIVE, SYSTEM, SYNTHETIC
+    source: Mapped[str] = mapped_column(String(40), default='DIRECT_OBSERVATION')  # DIRECT_OBSERVATION, RETROSPECTIVE, SYSTEM, MOCKED
     observed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     note: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

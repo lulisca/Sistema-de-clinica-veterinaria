@@ -219,13 +219,16 @@ def finish_service(entry_id:int,db:Session=Depends(get_db),user=STAFF):
 
 @router.post('/samples/bulk')
 def create_samples(payload:DurationSamplesBulkIn,db:Session=Depends(get_db),user=STAFF):
-    allowed_sources={'DIRECT_OBSERVATION','RETROSPECTIVE','SYSTEM','SYNTHETIC'}
+    allowed_sources={'DIRECT_OBSERVATION','RETROSPECTIVE','SYSTEM','MOCKED'}
     invalid=sorted({sample.source for sample in payload.samples if sample.source not in allowed_sources})
     if invalid: raise HTTPException(400,f'Invalid sample source(s): {invalid}')
     objs=[ServiceDurationSample(**sample.model_dump()) for sample in payload.samples]
     db.add_all(objs); db.commit()
     recalculate_waiting_estimates(db, 'SAMPLES_UPDATED')
-    return {'created':len(objs),'warning':'SYNTHETIC samples are stored for development but excluded from calibrated F1 estimates.'}
+    return {
+        'created': len(objs),
+        'warning': 'MOCKED samples are eligible only when ALLOW_MOCKED_ESTIMATES=true and remain identified as MOCKED.',
+    }
 
 LOCATION_CONSENT_VERSION = 'F2-LOCATION-1'
 LOCATION_CONSENT_PURPOSE = (
@@ -666,7 +669,11 @@ def metrics_by_type(db:Session=Depends(get_db),user=STAFF):
 def f1_readiness(db:Session=Depends(get_db),user=STAFF):
     return F1ReadinessOut(
         minimum_configured=settings.min_samples_for_estimate,
-        note='This is the software threshold only. Academic calibration still requires the clinic field dataset defined by the project.',
+        note=(
+            'MOCKED samples are enabled for development/presentation. Academic C1 validation remains pending.'
+            if settings.allow_mocked_estimates
+            else 'MOCKED samples are excluded. Academic calibration requires an accepted field/system dataset.'
+        ),
         types=sample_readiness(db),
     )
 
