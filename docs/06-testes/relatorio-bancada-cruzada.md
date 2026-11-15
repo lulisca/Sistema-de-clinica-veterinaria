@@ -1,44 +1,47 @@
-# Relatório de bancada cruzada
+# Bancada cruzada - 15 casos preparados
 
-> Modelo do Anexo F do Caderno do Aluno. Um arquivo, **mínimo de 15 casos** sobre o sistema da outra empresa, cobrindo as três features obrigatórias e **ao menos 3 casos de borda**: entrada inválida, permissão negada e estado impossível. Um conjunto que só exercita o caminho feliz não identifica defeitos. Entrega em 23/11. Status: **a preencher**.
+> Casos prontos para execucao no sistema da outra empresa. Resultados permanecem `NAO EXECUTADO` ate existir acesso; nenhum defeito e inventado.
 
-- **Sistema testado:** Empresa 02
-- **Endereço e versão testada:**
-- **Quem executou e quando:**
+- **Sistema avaliado:** preencher ao receber acesso.
+- **URL/versao:** pendente externa.
+- **Executor:** G3.
 
-## Cobertura
+| ID | Feature | Caso | Passos resumidos | Esperado | Resultado |
+|---|---|---|---|---|---|
+| BC01 | F1 | estimativa por tipo | inserir consulta e consultar espera | faixa especifica do tipo | NAO EXECUTADO |
+| BC02 | F1 | segundo tipo | inserir vacina no mesmo cenario | valor difere de consulta | NAO EXECUTADO |
+| BC03 | F1 | falta de amostras | usar tipo sem base suficiente | informar indisponibilidade | NAO EXECUTADO |
+| BC04 | F1 | revisao | alterar fila/prioridade | previsao e revisada | NAO EXECUTADO |
+| BC05 | F1 | erro real | iniciar atendimento | previsto x realizado registrado | NAO EXECUTADO |
+| BC06 | F2 | consentimento aceito | permitir localizacao pontual | aviso considera deslocamento | NAO EXECUTADO |
+| BC07 | F2 | permissao negada | negar localizacao | sistema continua com fallback | NAO EXECUTADO |
+| BC08 | F2 | deslocamento longo | informar tempo maior | aviso ocorre antes/indica risco | NAO EXECUTADO |
+| BC09 | F2 | confirmacao | confirmar retorno | estado atualizado | NAO EXECUTADO |
+| BC10 | F2 | aviso duplicado | repetir acionamento | duplicidade bloqueada | NAO EXECUTADO |
+| BC11 | F3 | prioridade | criar duas prioridades | maior prioridade vem primeiro | NAO EXECUTADO |
+| BC12 | F3 | emergencia | classificar por perfil autorizado | emergencia passa a frente | NAO EXECUTADO |
+| BC13 | F3 | perfil indevido | recepcao tenta emergencia | operacao negada | NAO EXECUTADO |
+| BC14 | F3 | segregacao | filtrar especie e motivo | grupos corretos | NAO EXECUTADO |
+| BC15 | F3 | recurso ocupado | alocar mesmo recurso duas vezes | segunda alocacao rejeitada | NAO EXECUTADO |
 
-| Feature | Casos |
+## Cobertura de borda
+
+- entrada invalida: BC03 ou payload invalido complementar;
+- permissao negada: BC07 e BC13;
+- estado impossivel: BC10 e BC15.
+
+## Registro de defeito
+
+Para qualquer falha, preencher:
+
+| Campo | Valor |
 |---|---|
-| F1 — estimativa com faixa | |
-| F2 — distância decide o aviso | |
-| F3 — segregação de filas | |
-| Casos de borda (mínimo 3) | |
+| Caso | |
+| Versao | |
+| Passos | |
+| Esperado | |
+| Obtido | |
+| Severidade | baixa / media / alta |
+| Evidencia | captura ou log |
 
-## Casos
-
-Copie o bloco abaixo para cada caso.
-
-```
-CASO CT-NN
-Feature:
-Pré-condição:
-Passos:
-Resultado esperado:
-Resultado obtido:
-Severidade proposta: baixa | média | alta
-Evidência: captura de tela / log
-```
-
-## Respostas da empresa avaliada
-
-Cada defeito recebido do outro lado é respondido assim (arquivo `respostas-aos-defeitos.md`):
-
-```
-RESPOSTA DA EMPRESA 01 — CT-NN
-[ ] acatado — será corrigido na versão final (03/12)
-[ ] contestado — fundamentação:
-[ ] fora do escopo declarado — referência ao documento de escopo:
-```
-
-Contestação com argumento técnico correto vale tanto quanto a correção.
+Sem acesso externo, a entrega possivel do G3 e esta suite completa e pronta para execucao.
