@@ -123,7 +123,7 @@ O esquema precisa conter: diagrama de blocos, componentes com justificativa (do 
 
 ## Checklist de congelamento — 16/11
 
-- [ ] Repositório único, histórico completo, commits de todos
+- [X ] Repositório único, histórico completo, commits de todos
 - [ ] Sistema publicado e acessível, com dados de teste
 - [ ] F1: estimativa por tipo, com faixa, calibrada no dado de campo
 - [ ] F2: distância decide o acionamento, com consentimento e alternativa sem GPS
