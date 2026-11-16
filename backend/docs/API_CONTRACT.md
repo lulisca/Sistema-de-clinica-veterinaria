@@ -33,7 +33,7 @@ Conflitos de horário do mesmo veterinário são rejeitados. Tolerância de atra
 - `GET /queue?species=&appointment_type=&status=`
 - `GET /queue/{id}`
 - `PATCH /queue/{id}/priority` — emergência somente por VETERINARIAN/ADMIN.
-- `PUT /queue/order` — somente VETERINARIAN/ADMIN. Corpo `{"entry_ids": [...]}` com todos os pacientes em `WAITING`, `CALLED`, `RETURNING` ou `READY` sem emergência, na ordem desejada. Grava `priority_level = N − posição` (o primeiro recebe o maior); emergência fica fora e continua no topo. Lista diferente da fila atual (faltando, sobrando ou repetindo ID) → `409 Queue changed; reload and try again`. Lista vazia ou com mais de 100 → `422`. Recalcula a F1 uma vez (`QUEUE_REORDERED`).
+- `PUT /queue/order` — somente VETERINARIAN/ADMIN. Corpo `{"entry_ids": [...]}` com todos os pacientes em `WAITING`, `CALLED`, `RETURNING` ou `READY` sem emergência, na ordem desejada. Grava `priority_level = N − posição` (o primeiro recebe o maior); emergência fica fora e continua no topo. Lista diferente da fila atual (faltando, sobrando ou repetindo ID) → `409 Queue changed; reload and try again`. Opcional: `previous_ids`, a ordem que a tela estava mostrando; se outra pessoa reordenou nesse meio-tempo, também `409`. Lista vazia ou com mais de 100 → `422`. Recalcula a F1 uma vez (`QUEUE_REORDERED`).
 - `POST /queue/{id}/call`
 - `POST /queue/{id}/start`
 - `POST /queue/{id}/finish`

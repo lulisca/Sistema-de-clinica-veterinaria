@@ -124,6 +124,8 @@ class PriorityUpdate(BaseModel):
 class QueueOrderIn(BaseModel):
     # IDs dos pacientes que esperam (sem emergência), na ordem que o veterinário quer.
     entry_ids: list[int] = Field(min_length=1, max_length=100)
+    # A ordem que a tela estava mostrando. Se outra pessoa reordenou nesse meio-tempo, dá 409.
+    previous_ids: list[int] | None = Field(default=None, max_length=100)
 
 class TutorQueueCreate(BaseModel):
     animal_id: int

@@ -236,6 +236,10 @@ def reorder_queue(payload: QueueOrderIn, db: Session = Depends(get_db), user=Dep
     # A lista precisa ter exatamente quem está esperando agora; se a fila mudou, a tela recarrega.
     if len(set(ids)) != len(ids) or set(ids) != set(ordenaveis):
         raise HTTPException(409, 'Queue changed; reload and try again')
+    # Mesmos pacientes, mas outra pessoa pode ter mudado a ordem depois que a tela carregou.
+    ordem_atual = [e.id for e in sorted(ordenaveis.values(), key=lambda e: (-e.priority_level, e.checked_in_at, e.id))]
+    if payload.previous_ids is not None and payload.previous_ids != ordem_atual:
+        raise HTTPException(409, 'Queue changed; reload and try again')
     for indice, entry_id in enumerate(ids):
         q = ordenaveis[entry_id]
         novo = len(ids) - indice

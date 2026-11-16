@@ -39,6 +39,19 @@ def test_lista_desatualizada_da_409(client, reception_headers, vet_headers):
     assert reordenar([]) == 422                          # vazio
 
 
+def test_ordem_mudada_por_outra_pessoa_da_409(client, reception_headers, vet_headers):
+    a, b, c = (nova_entrada(client, reception_headers, x) for x in ('A-1', 'B-1', 'C-1'))
+    # Duas telas carregaram a fila na ordem a, b, c. A primeira reordena:
+    primeira = client.put('/api/queue/order', json={'entry_ids': [c['id'], a['id'], b['id']],
+                                                    'previous_ids': [a['id'], b['id'], c['id']]}, headers=vet_headers)
+    assert primeira.status_code == 200
+    # A segunda ainda mostra a, b, c: o pedido dela não pode apagar o da primeira.
+    segunda = client.put('/api/queue/order', json={'entry_ids': [b['id'], a['id'], c['id']],
+                                                   'previous_ids': [a['id'], b['id'], c['id']]}, headers=vet_headers)
+    assert segunda.status_code == 409
+    assert ids_da_fila(client, reception_headers) == [c['id'], a['id'], b['id']]
+
+
 def test_emergencia_fica_no_topo_e_fora_da_ordem(client, reception_headers, vet_headers):
     a, b, c = (nova_entrada(client, reception_headers, x) for x in ('A-1', 'B-1', 'C-1'))
     client.patch(f"/api/queue/{b['id']}/priority", json={'emergency': True}, headers=vet_headers)
