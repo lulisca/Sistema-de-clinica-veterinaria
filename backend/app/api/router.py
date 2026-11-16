@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import delete, func, or_, select
@@ -18,6 +19,7 @@ from app.services.estimation import (
 
 router = APIRouter()
 STAFF = Depends(require_roles('RECEPTION','VETERINARIAN','ADMIN'))
+TUTOR = Depends(require_roles('TUTOR'))
 
 @router.get('/health')
 def health():
@@ -25,8 +27,9 @@ def health():
 
 @router.post('/auth/bootstrap', response_model=TokenOut)
 def bootstrap(payload: BootstrapIn, db: Session = Depends(get_db)):
-    if db.scalar(select(func.count(User.id))) > 0:
-        raise HTTPException(409, 'Bootstrap is allowed only when there are no users')
+    staff_roles = ('RECEPTION', 'VETERINARIAN', 'ADMIN')
+    if db.scalar(select(func.count(User.id)).where(User.role.in_(staff_roles))) > 0:
+        raise HTTPException(409, 'Bootstrap is allowed only when there are no staff users')
     user = User(name=payload.name, email=payload.email.lower(), password_hash=hash_password(payload.password), role=payload.role.upper())
     db.add(user); db.commit(); db.refresh(user)
     return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
@@ -37,6 +40,77 @@ def login(payload: LoginIn, db: Session = Depends(get_db)):
     if not user or not verify_password(payload.password, user.password_hash):
         raise HTTPException(401, 'Invalid credentials')
     return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
+
+@router.post('/auth/tutors/register', response_model=TokenOut, status_code=201)
+def register_tutor(payload: TutorRegisterIn, db: Session = Depends(get_db)):
+    email = payload.email.strip().lower()
+    if db.scalar(select(User.id).where(User.email == email)):
+        raise HTTPException(409, 'Email already registered')
+    user = User(
+        name=payload.name.strip(), email=email,
+        password_hash=hash_password(payload.password), role='TUTOR',
+    )
+    db.add(user)
+    db.flush()
+    tutor = Tutor(user_id=user.id, name=user.name, contact=payload.contact)
+    db.add(tutor)
+    db.flush()
+    audit(db, 'Tutor', tutor.id, 'SELF_REGISTER', user.id)
+    db.commit()
+    return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
+
+def _tutor_for_user(db: Session, user: User) -> Tutor:
+    tutor = db.scalar(select(Tutor).where(Tutor.user_id == user.id))
+    if not tutor:
+        raise HTTPException(404, 'Tutor profile not found')
+    return tutor
+
+@router.get('/tutor/me', response_model=TutorOut)
+def tutor_me(db: Session = Depends(get_db), user=TUTOR):
+    return _tutor_for_user(db, user)
+
+@router.get('/tutor/animals', response_model=list[AnimalOut])
+def list_tutor_animals(db: Session = Depends(get_db), user=TUTOR):
+    tutor = _tutor_for_user(db, user)
+    return list(db.scalars(select(Animal).where(Animal.tutor_id == tutor.id).order_by(Animal.name, Animal.id)).all())
+
+@router.post('/tutor/animals', response_model=AnimalOut, status_code=201)
+def create_tutor_animal(payload: TutorAnimalCreate, db: Session = Depends(get_db), user=TUTOR):
+    tutor = _tutor_for_user(db, user)
+    code = f'T-{tutor.id}-{secrets.token_hex(4).upper()}'
+    animal = Animal(tutor_id=tutor.id, code=code, species=payload.species.upper(), name=payload.name)
+    db.add(animal)
+    db.flush()
+    audit(db, 'Animal', animal.id, 'SELF_CREATE', user.id)
+    db.commit()
+    db.refresh(animal)
+    return animal
+
+@router.post('/tutor/queue', response_model=QueueOut, status_code=201)
+def create_tutor_queue_entry(payload: TutorQueueCreate, db: Session = Depends(get_db), user=TUTOR):
+    tutor = _tutor_for_user(db, user)
+    animal = db.get(Animal, payload.animal_id)
+    if not animal or animal.tutor_id != tutor.id:
+        raise HTTPException(404, 'Animal not found')
+    active = db.scalar(select(QueueEntry.id).where(
+        QueueEntry.animal_id == animal.id,
+        QueueEntry.status.in_(['WAITING', 'CALLED', 'RETURNING', 'READY', 'IN_SERVICE']),
+    ).limit(1))
+    if active:
+        raise HTTPException(409, 'Animal already has an active queue entry')
+    q = QueueEntry(
+        animal_id=animal.id,
+        appointment_type=payload.appointment_type.upper(),
+        species=animal.species,
+        symptoms=payload.symptoms.strip(),
+    )
+    db.add(q)
+    db.flush()
+    audit(db, 'QueueEntry', q.id, 'TUTOR_SELF_ENTRY', user.id)
+    db.commit()
+    db.refresh(q)
+    recalculate_waiting_estimates(db, 'TUTOR_SELF_ENTRY')
+    return q
 
 @router.post('/tutors', response_model=TutorOut)
 def create_tutor(payload: TutorCreate, db: Session = Depends(get_db), user=STAFF):

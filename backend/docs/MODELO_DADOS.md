@@ -14,9 +14,11 @@ erDiagram
     QUEUE_ENTRY ||--o{ LOCATION_SNAPSHOT : informa
     QUEUE_ENTRY ||--o{ NOTIFICATION : recebe
     USER ||--o{ AUDIT_EVENT : executa
+    USER ||--o| TUTOR : autentica
 
     TUTOR {
       int id PK
+      int user_id FK
       string name
       string contact
     }
@@ -44,6 +46,7 @@ erDiagram
       int animal_id FK
       string appointment_type
       string species
+      text symptoms
       string status
       int priority_level
       bool emergency
@@ -136,3 +139,5 @@ erDiagram
 4. **Falha de aviso gera ação para a recepção.** O registro guarda se há providência pendente, quando foi resolvida e a anotação da equipe.
 5. **Previsões são versionadas.** Isso permite comparar previsão inicial, revisões e espera real.
 6. **Amostras de campo ficam separadas da fila operacional.** Assim observação direta/retrospectiva pode calibrar a F1 antes de existirem atendimentos reais no sistema.
+7. **Conta e perfil do tutor são separados.** `User` guarda autenticação/papel e `Tutor` guarda o domínio; tutores antigos cadastrados pela recepção podem permanecer sem conta.
+8. **Sintomas são dados clínicos restritos.** A equipe os recebe na fila, mas o status público por token não os expõe.
