@@ -1,0 +1,86 @@
+/*
+  Variáveis de design copiadas do Figma (página "01 · Fundamentos").
+  Os nomes são os mesmos do Figma, para achar cada valor nos dois lugares.
+*/
+:root {
+  /* Fundos */
+  --cor-fundo-pagina: #eaf8ea;
+  --cor-fundo-superficie: #ffffff;
+  --cor-fundo-sutil: #d4f1d4;
+  --cor-fundo-destaque: #a8e6a9;
+  --cor-fundo-marca: #0b4d1a;
+  --cor-fundo-marca-suave: #d4f1d4;
+
+  /* Textos */
+  --cor-texto-primario: #05300e;
+  --cor-texto-secundario: #5a6a73;
+  --cor-texto-marca: #0b4d1a;
+  --cor-texto-invertido: #ffffff;
+
+  /* Ação principal (laranja) */
+  --cor-acao-fundo: #f26a0e;
+  --cor-acao-fundo-hover: #e05f08;
+  --cor-acao-texto: #05300e;
+
+  /* Bordas */
+  --cor-borda-padrao: #d4f1d4;
+  --cor-borda-forte: #bfcad1;
+
+  /* Estados da fila (Selo de estado) */
+  --cor-estado-aguardando-fundo: #ecf1f3;
+  --cor-estado-aguardando-texto: #39474f;
+  --cor-estado-chamado-fundo: #fbf2e0;
+  --cor-estado-chamado-texto: #8a5a00;
+  --cor-estado-retornando-fundo: #e8f0f7;
+  --cor-estado-retornando-texto: #14517f;
+  --cor-estado-pronto-fundo: #eaf8ea;
+  --cor-estado-pronto-texto: #0b4d1a;
+  --cor-estado-atendimento-fundo: #eeeaf6;
+  --cor-estado-atendimento-texto: #553b9e;
+  /* Concluído, cancelado e não compareceu não aparecem no Figma: usam o tom neutro. */
+  --cor-estado-encerrado-fundo: #ecf1f3;
+  --cor-estado-encerrado-texto: #5a6a73;
+
+  /* Prioridade */
+  --cor-prioridade-emergencia-fundo: #b3261e;
+  --cor-prioridade-emergencia-fundo-hover: #9c2019;
+  --cor-prioridade-emergencia-texto: #ffffff;
+
+  /* Faixas de aviso e selo de viabilidade */
+  --cor-alerta-sucesso-fundo: #eaf8ea;
+  --cor-alerta-sucesso-borda: #d4f1d4;
+  --cor-alerta-sucesso-texto: #0b4d1a;
+  --cor-alerta-atencao-fundo: #fbf2e0;
+  --cor-alerta-atencao-borda: #f6e3bc;
+  --cor-alerta-atencao-texto: #8a5a00;
+  --cor-alerta-erro-fundo: #fbebea;
+  --cor-alerta-erro-borda: #f6d5d3;
+  --cor-alerta-erro-texto: #b3261e;
+  --cor-alerta-info-fundo: #e8f0f7;
+  --cor-alerta-info-borda: #cfe0ef;
+  --cor-alerta-info-texto: #14517f;
+
+  /* Espaçamento */
+  --espaco-2xs: 2px;
+  --espaco-xs: 4px;
+  --espaco-sm: 8px;
+  --espaco-md: 12px;
+  --espaco-lg: 16px;
+  --espaco-xl: 24px;
+  --espaco-2xl: 32px;
+  --espaco-3xl: 48px;
+
+  /* Cantos */
+  --raio-sm: 8px;
+  --raio-md: 16px;
+  --raio-lg: 24px;
+  --raio-pill: 999px;
+
+  /* Sombra dos cartões ("sombra/cartao" no Figma) */
+  --sombra-cartao: 0 1px 2px rgba(23, 33, 38, 0.06), 0 6px 16px rgba(23, 33, 38, 0.05);
+
+  /* Movimento: só resposta ao toque/clique */
+  --curva-saida: cubic-bezier(0.23, 1, 0.32, 1);
+
+  --fonte: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}

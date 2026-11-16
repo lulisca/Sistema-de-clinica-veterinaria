@@ -1,0 +1,450 @@
+/*
+  Estilos base e componentes reaproveitados por todas as telas.
+  Componentes do Figma (página "02 · Componentes"): Botão, Chip de filtro, Campo,
+  Cartão, Selo de estado, Selo de prioridade, Selo de viabilidade, Faixa de aviso.
+*/
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent; /* sem o "flash" azul ao tocar no celular */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  color: var(--cor-texto-primario);
+  background: var(--cor-fundo-superficie);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums; /* números alinhados nas tabelas */
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--cor-texto-marca);
+  text-underline-offset: 3px;
+}
+
+::selection {
+  background: var(--cor-fundo-destaque);
+  color: var(--cor-texto-primario);
+}
+
+:focus-visible {
+  outline: 3px solid var(--cor-alerta-info-texto);
+  outline-offset: 2px;
+}
+
+/* Controles: toque sem atraso e sem selecionar o texto ao segurar o dedo */
+button,
+a.botao,
+.chip,
+summary {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* No celular, campo com fonte menor que 16px faz o iPhone dar zoom na página */
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* "Pular para o conteúdo": aparece só ao navegar pelo teclado */
+.pular-link {
+  position: absolute;
+  top: var(--espaco-sm);
+  left: var(--espaco-sm);
+  z-index: 10;
+  padding: var(--espaco-sm) var(--espaco-md);
+  border-radius: var(--raio-sm);
+  background: var(--cor-fundo-marca);
+  color: var(--cor-texto-invertido);
+  transform: translateY(-200%);
+}
+
+.pular-link:focus {
+  transform: none;
+}
+
+/* Texto só para leitores de tela */
+.so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Estilos de texto (mesmos nomes do Figma) ---------- */
+.titulo-xl { font-size: 28px; line-height: 34px; font-weight: 600; }
+.titulo-lg { font-size: 22px; line-height: 28px; font-weight: 600; }
+.titulo-md { font-size: 18px; line-height: 24px; font-weight: 600; }
+.titulo-sm { font-size: 16px; line-height: 22px; font-weight: 600; }
+.corpo-lg { font-size: 17px; line-height: 26px; }
+.corpo-md { font-size: 15px; line-height: 22px; }
+.corpo-md-forte { font-size: 15px; line-height: 22px; font-weight: 600; }
+.corpo-sm { font-size: 13px; line-height: 20px; }
+.etiqueta-md { font-size: 14px; line-height: 20px; font-weight: 500; }
+.etiqueta-sm {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+.numero-hero { font-size: 72px; line-height: 76px; font-weight: 800; letter-spacing: -1px; }
+.numero-xl { font-size: 44px; line-height: 48px; font-weight: 700; }
+.numero-md { font-size: 20px; line-height: 26px; font-weight: 600; }
+
+.texto-secundario { color: var(--cor-texto-secundario); }
+.texto-marca { color: var(--cor-texto-marca); }
+.texto-erro { color: var(--cor-alerta-erro-texto); }
+
+/* ---------- Botão ---------- */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-sm);
+  height: 44px; /* Médio */
+  padding: 0 var(--espaco-lg);
+  border: 1px solid transparent;
+  border-radius: var(--raio-pill);
+  background: transparent;
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 160ms var(--curva-saida), background-color 160ms ease;
+}
+
+.botao:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botao-grande {
+  height: 52px;
+  padding: 0 var(--espaco-xl);
+  font-size: 16px;
+}
+
+.botao-largo {
+  width: 100%;
+}
+
+.botao-acao {
+  background: var(--cor-acao-fundo);
+  color: var(--cor-acao-texto);
+}
+
+.botao-contorno {
+  background: var(--cor-fundo-superficie);
+  border-color: var(--cor-borda-forte);
+  color: var(--cor-texto-primario);
+}
+
+.botao-texto {
+  color: var(--cor-texto-marca);
+}
+
+.botao-perigo {
+  background: var(--cor-prioridade-emergencia-fundo);
+  color: var(--cor-prioridade-emergencia-texto);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .botao-acao:hover:not(:disabled) { background: var(--cor-acao-fundo-hover); }
+  .botao-contorno:hover:not(:disabled) { background: var(--cor-fundo-pagina); }
+  .botao-texto:hover:not(:disabled) { background: var(--cor-fundo-pagina); }
+  .botao-perigo:hover:not(:disabled) { background: var(--cor-prioridade-emergencia-fundo-hover); }
+}
+
+/* ---------- Chip de filtro (também usado como aba) ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-sm);
+}
+
+.chip {
+  height: 44px;
+  padding: 0 var(--espaco-lg);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-pill);
+  background: var(--cor-fundo-superficie);
+  color: var(--cor-texto-secundario);
+  font-size: 15px;
+  line-height: 22px;
+  cursor: pointer;
+  transition: transform 160ms var(--curva-saida);
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.chip[aria-pressed='true'],
+.chip[aria-selected='true'] {
+  background: var(--cor-fundo-marca-suave);
+  border-color: var(--cor-texto-marca);
+  color: var(--cor-texto-marca);
+}
+
+/* ---------- Campo de formulário ---------- */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+}
+
+.campo label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--espaco-md);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-sm);
+  background: var(--cor-fundo-superficie);
+  font-size: 15px;
+  line-height: 22px;
+  caret-color: var(--cor-texto-marca);
+}
+
+.campo textarea {
+  padding: var(--espaco-sm) var(--espaco-md);
+  resize: vertical;
+}
+
+.campo-apoio {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--cor-texto-secundario);
+}
+
+.campo-com-erro input,
+.campo-com-erro select {
+  border: 2px solid var(--cor-alerta-erro-texto);
+}
+
+.campo-com-erro .campo-apoio {
+  color: var(--cor-alerta-erro-texto);
+}
+
+/* Caixa de seleção (Marcadores operacionais) */
+.opcao {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  font-size: 15px;
+  line-height: 22px;
+  cursor: pointer;
+}
+
+.opcao input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--cor-fundo-marca);
+}
+
+/* ---------- Cartão ---------- */
+.cartao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-lg);
+  padding: var(--espaco-xl);
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-md);
+  background: var(--cor-fundo-superficie);
+  box-shadow: var(--sombra-cartao);
+}
+
+/* Linha "rótulo ............ valor" (Dados do caso, Decisão de retorno) */
+.linha-dado {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espaco-md);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.linha-dado > :first-child {
+  color: var(--cor-texto-secundario);
+}
+
+.linha-dado > :last-child {
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ---------- Selos ---------- */
+.selo {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--espaco-sm) var(--espaco-md);
+  border-radius: var(--raio-pill);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.selo-WAITING { background: var(--cor-estado-aguardando-fundo); color: var(--cor-estado-aguardando-texto); }
+.selo-CALLED { background: var(--cor-estado-chamado-fundo); color: var(--cor-estado-chamado-texto); }
+.selo-RETURNING { background: var(--cor-estado-retornando-fundo); color: var(--cor-estado-retornando-texto); }
+.selo-READY { background: var(--cor-estado-pronto-fundo); color: var(--cor-estado-pronto-texto); }
+.selo-IN_SERVICE { background: var(--cor-estado-atendimento-fundo); color: var(--cor-estado-atendimento-texto); }
+.selo-COMPLETED,
+.selo-CANCELLED,
+.selo-NO_SHOW { background: var(--cor-estado-encerrado-fundo); color: var(--cor-estado-encerrado-texto); }
+
+.selo-emergencia { background: var(--cor-prioridade-emergencia-fundo); color: var(--cor-prioridade-emergencia-texto); }
+.selo-nivel { background: var(--cor-fundo-sutil); color: var(--cor-texto-primario); }
+.selo-claro { background: var(--cor-fundo-superficie); color: var(--cor-texto-secundario); padding: var(--espaco-xs) var(--espaco-md); }
+
+/* Marcador operacional (Isolamento, Risco infeccioso, Reativo) */
+.marcadores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-xs);
+}
+
+.marcador {
+  padding: var(--espaco-2xs) var(--espaco-sm);
+  border-radius: var(--raio-sm);
+  background: var(--cor-fundo-sutil);
+  color: var(--cor-texto-secundario);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+/* Selo de viabilidade (F2) */
+.viabilidade {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: var(--espaco-md);
+  border: 1px solid;
+  border-radius: var(--raio-sm);
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 600;
+}
+
+.viabilidade-FEASIBLE { background: var(--cor-alerta-sucesso-fundo); border-color: var(--cor-alerta-sucesso-borda); color: var(--cor-alerta-sucesso-texto); }
+.viabilidade-AT_RISK { background: var(--cor-alerta-atencao-fundo); border-color: var(--cor-alerta-atencao-borda); color: var(--cor-alerta-atencao-texto); }
+.viabilidade-INFEASIBLE { background: var(--cor-alerta-erro-fundo); border-color: var(--cor-alerta-erro-borda); color: var(--cor-alerta-erro-texto); }
+.viabilidade-UNKNOWN { background: var(--cor-alerta-info-fundo); border-color: var(--cor-alerta-info-borda); color: var(--cor-alerta-info-texto); }
+
+/* ---------- Faixa de aviso ---------- */
+.faixa-aviso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xs);
+  padding: var(--espaco-lg);
+  border: 1px solid;
+  border-radius: var(--raio-md);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.faixa-aviso strong { font-weight: 600; }
+
+.faixa-aviso-atencao { background: var(--cor-alerta-atencao-fundo); border-color: var(--cor-alerta-atencao-borda); color: var(--cor-alerta-atencao-texto); }
+.faixa-aviso-erro { background: var(--cor-alerta-erro-fundo); border-color: var(--cor-alerta-erro-borda); color: var(--cor-alerta-erro-texto); }
+.faixa-aviso-sucesso { background: var(--cor-alerta-sucesso-fundo); border-color: var(--cor-alerta-sucesso-borda); color: var(--cor-alerta-sucesso-texto); }
+.faixa-aviso-info { background: var(--cor-alerta-info-fundo); border-color: var(--cor-alerta-info-borda); color: var(--cor-alerta-info-texto); }
+
+.faixa-aviso .botao { align-self: flex-start; }
+
+/* ---------- Tabela simples (Histórico de estimativas, Indicadores) ---------- */
+.tabela-rolagem {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.tabela th {
+  padding: 0 var(--espaco-md) var(--espaco-sm) 0;
+  text-align: left;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--cor-texto-secundario);
+  white-space: nowrap;
+}
+
+.tabela td {
+  padding: var(--espaco-sm) var(--espaco-md) var(--espaco-sm) 0;
+  border-top: 1px solid var(--cor-borda-padrao);
+  color: var(--cor-texto-secundario);
+  vertical-align: top;
+}
+
+.tabela td:first-child {
+  font-weight: 600;
+  color: var(--cor-texto-primario);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .botao,
+  .chip {
+    transition: none;
+  }
+}

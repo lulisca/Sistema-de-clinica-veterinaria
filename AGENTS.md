@@ -9,7 +9,7 @@ Projeto Integrador UNASP-EC "Fila Virtual": sistema de fila de atendimento para 
 ## Estrutura
 
 - `backend/`: API em FastAPI (Python).
-- `frontend/`: React + Vite + TypeScript (a criar).
+- `frontend/`: React + Vite + TypeScript. Como rodar e onde fica cada tela: [frontend/README.md](frontend/README.md).
 - `docs/`: documentação do projeto.
 
 ## Regras
