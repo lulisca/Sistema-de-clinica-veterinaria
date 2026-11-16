@@ -68,7 +68,7 @@
 
 - [x] 7.1 Execucao local documentada
 - [x] 7.2 Docker Compose local do backend
-- [ ] 7.3 Plataforma de hospedagem escolhida
+- [x] 7.3 Plataforma de hospedagem escolhida (ADR-003, Vercel + Neon, 2026-11-16)
 - [ ] 7.4 Banco e variaveis de producao configurados
 - [ ] 7.5 API e frontend publicados
 - [ ] 7.6 Migrations, CORS, limpeza F2 e smoke test

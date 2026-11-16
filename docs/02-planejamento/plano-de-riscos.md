@@ -5,7 +5,7 @@
 | ID | Risco | Prob. | Impacto | Resposta | Acao concreta | Responsavel | Status |
 |---|---|---|---|---|---|---|---|
 | R01 | Frontend nao integrar a tempo | Alta | Alta | Mitigar | Congelar fluxo minimo, integrar endpoint por endpoint e remover extras | G2 + arquiteto | Aberto |
-| R02 | Sistema nao ser publicado para teste externo | Alta | Alta | Mitigar | Escolher plataforma, publicar API primeiro e executar smoke test externo | G3 + arquiteto | Aberto |
+| R02 | Sistema nao ser publicado para teste externo | Alta | Alta | Mitigar | Plataforma escolhida no ADR-003 (Vercel + Neon); publicar API primeiro e executar smoke test externo | G3 + arquiteto | Aberto |
 | R03 | C1 nao ser aceito sem coleta real verificavel | Alta | Alta | Aceitar/mitigar | Manter C1 a validar, separar dados mockados e pedir orientacao formal | GP + G3 | Aberto |
 | R04 | Dependencias impedirem os testes | Media | Alta | Mitigar | Reproduzir ambiente limpo, registrar versoes e usar Docker | G1 + G3 | Aberto |
 | R05 | Regra F3 permanecer ambigua | Media | Alta | Mitigar | Aprovar e testar emergencia, prioridade, check-in e ID | Arquiteto + G1 | Aberto |
