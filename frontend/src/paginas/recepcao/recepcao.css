@@ -364,3 +364,110 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* ---------- Reordenar a fila (veterinário/admin) ----------
+   A coluna da posição ganha a alça de arrastar e os botões ↑ ↓.
+   O espaço embaixo deixa a barra de destino da última linha aparecer sem rolagem. */
+.fila-ordenavel {
+  padding-bottom: var(--espaco-md);
+}
+
+.fila-ordenavel .fila-cabecalho,
+.fila-ordenavel .fila-linha {
+  grid-template-columns: 88px 210px 140px 150px 160px 150px minmax(240px, 1fr);
+  min-width: 1108px;
+}
+
+.posicao {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+}
+
+.alca {
+  flex: none;
+  fill: var(--cor-texto-secundario);
+  cursor: grab;
+}
+
+.mover {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2xs);
+  margin-left: auto;
+}
+
+.botao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-pill);
+  background: var(--cor-fundo-superficie);
+  color: var(--cor-texto-primario);
+  cursor: pointer;
+  transition: transform 160ms var(--curva-saida), background-color 160ms ease;
+}
+
+.botao-icone:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.botao-icone:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.botao-icone[aria-disabled='true'] {
+  cursor: progress;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .botao-icone:hover:not(:disabled) {
+    background: var(--cor-fundo-sutil);
+  }
+}
+
+.fila-linha {
+  position: relative;
+}
+
+.fila-linha[draggable='true'] {
+  cursor: grab;
+}
+
+.fila-linha.arrastando {
+  opacity: 0.5;
+}
+
+/* Barra verde no vão entre as linhas: mostra onde o paciente vai entrar */
+.fila-linha.destino-antes::before,
+.fila-linha.destino-depois::after {
+  content: '';
+  position: absolute;
+  left: var(--espaco-lg);
+  right: var(--espaco-lg);
+  height: 3px;
+  border-radius: var(--raio-pill);
+  background: var(--cor-fundo-marca);
+  pointer-events: none;
+}
+
+.fila-linha.destino-antes::before {
+  top: calc(var(--espaco-md) / -2 - 2px);
+}
+
+.fila-linha.destino-depois::after {
+  bottom: calc(var(--espaco-md) / -2 - 2px);
+}
+
+/* Sintomas na linha da fila: uma linha só; o texto inteiro está no Detalhe */
+.sintomas-linha {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
