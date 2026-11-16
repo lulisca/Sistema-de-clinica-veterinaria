@@ -106,10 +106,10 @@ export const declararEmergencia = (id: number) =>
 export const removerEmergencia = (id: number) =>
   chamar<EntradaFila>(`/queue/${id}/priority`, { metodo: 'PATCH', corpo: { emergency: false } })
 
-// O veterinário arrasta a fila: manda todos que esperam (sem emergência) na ordem nova.
-// Se a fila mudou nesse meio-tempo, a API responde 409 e a tela recarrega.
-export const reordenarFila = (ids: number[]) =>
-  chamar<EntradaFila[]>('/queue/order', { metodo: 'PUT', corpo: { entry_ids: ids } })
+// O veterinário arrasta a fila: manda todos que esperam (sem emergência) na ordem nova
+// e a ordem que a tela mostrava. Se a fila mudou nesse meio-tempo, a API responde 409.
+export const reordenarFila = (ids: number[], ordemNaTela: number[]) =>
+  chamar<EntradaFila[]>('/queue/order', { metodo: 'PUT', corpo: { entry_ids: ids, previous_ids: ordemNaTela } })
 
 // "Chamar" cria um aviso simulado e muda o estado para CALLED.
 // Assim o tutor consegue tocar em "Estou voltando" (precisa de um aviso pendente).

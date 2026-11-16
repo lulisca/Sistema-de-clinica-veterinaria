@@ -75,9 +75,14 @@ export default function Fila() {
   // A atualização automática de 20 s pula enquanto alguém arrasta ou a ordem está sendo salva;
   // senão ela trocaria a lista no meio do movimento. (Ref, porque o intervalo lê o valor na hora.)
   const pausadoRef = useRef({ arrastando: false, salvando: false })
+  // Cada carga da fila ganha um número; só a mais recente pode trocar a lista na tela.
+  // Começar a arrastar ou salvar também conta: uma carga que já estava a caminho
+  // traria a ordem antiga e desfaria o movimento.
+  const cargaRef = useRef(0)
 
   const carregar = useCallback(async () => {
     if (pausadoRef.current.arrastando || pausadoRef.current.salvando) return
+    const minha = ++cargaRef.current
     try {
       const [lista, listaRecursos] = await Promise.all([listarFila(filtros), listarRecursos()])
       const visiveis = filtros.status ? lista : lista.filter((e) => ATIVOS.includes(e.status))
@@ -88,13 +93,14 @@ export default function Fila() {
           .filter((e) => ESPERANDO.includes(e.status))
           .map(async (e) => [e.id, (await listarRevisoes(e.id)).at(-1)] as const),
       )
+      if (minha !== cargaRef.current) return // chegou depois de algo mais novo: descarta
       setRevisoes(Object.fromEntries(pares))
       setEntradas(visiveis)
       setRecursos(listaRecursos)
       setErro(null)
       setAtualizadaAs(agora())
     } catch (e) {
-      setErro(mensagemDeErro(e))
+      if (minha === cargaRef.current) setErro(mensagemDeErro(e))
     }
   }, [filtros])
 
@@ -135,11 +141,14 @@ export default function Fila() {
 
   async function salvarOrdem(novaOrdem: EntradaFila[]) {
     pausadoRef.current.salvando = true
+    cargaRef.current++
     setSalvando(true)
-    // Mostra a ordem nova na hora; se a fila tiver mudado, a API responde 409 e a tela recarrega.
+    const ordemNaTela = ordenaveis.map((e) => e.id)
+    // Mostra a ordem nova na hora; se a fila tiver mudado (outro encaixe, outra pessoa
+    // reordenou), a API responde 409 e a tela recarrega.
     setEntradas((atual) => atual && aplicarOrdem(atual, novaOrdem))
     try {
-      await reordenarFila(novaOrdem.map((e) => e.id))
+      await reordenarFila(novaOrdem.map((e) => e.id), ordemNaTela)
       setResultado({ tipo: 'sucesso', texto: 'Ordem da fila salva.' })
     } catch (e) {
       setResultado({ tipo: 'erro', texto: mensagemDeErro(e) })
@@ -159,6 +168,7 @@ export default function Fila() {
 
   function comecarArrastar(evento: DragEvent, id: number) {
     pausadoRef.current.arrastando = true
+    cargaRef.current++
     evento.dataTransfer.effectAllowed = 'move'
     evento.dataTransfer.setData('text/plain', String(id)) // o Firefox só arrasta com algum dado
     setArrastandoId(id)
@@ -282,7 +292,7 @@ export default function Fila() {
                       : undefined
                   }
                   onDrop={movel ? (e) => { e.preventDefault(); soltar(indice) } : undefined}
-                  onDragEnd={movel ? terminarArrastar : undefined}
+                  onDragEnd={terminarArrastar}
                 >
                   <div className="posicao">
                     {movel && <IconeAlca />}
