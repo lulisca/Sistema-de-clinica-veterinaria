@@ -20,7 +20,6 @@ from sqlalchemy import select  # noqa: E402
 from app.core.config import settings  # noqa: E402
 from app.core.database import SessionLocal  # noqa: E402
 from app.models.domain import QueueEntry, ServiceDurationSample, WaitEstimate  # noqa: E402
-from app.services.estimation import sample_readiness  # noqa: E402
 
 
 def fmt(value):
@@ -34,8 +33,20 @@ def main() -> None:
         samples = list(db.scalars(select(ServiceDurationSample)).all())
         field_samples = [s for s in samples if s.source in {'DIRECT_OBSERVATION', 'RETROSPECTIVE'}]
         system_samples = [s for s in samples if s.source == 'SYSTEM']
-        synthetic_samples = [s for s in samples if s.source == 'SYNTHETIC']
-        readiness = sample_readiness(db)
+        mocked_samples = [s for s in samples if s.source == 'MOCKED']
+        accepted_by_type = defaultdict(int)
+        for sample in samples:
+            if sample.source != 'MOCKED':
+                accepted_by_type[sample.appointment_type] += 1
+        readiness = [
+            {
+                'appointment_type': appointment_type,
+                'sample_size': count,
+                'minimum_configured': settings.min_samples_for_estimate,
+                'ready_for_software_estimate': count >= settings.min_samples_for_estimate,
+            }
+            for appointment_type, count in sorted(accepted_by_type.items())
+        ]
 
         initial_rows = list(db.scalars(
             select(WaitEstimate).where(
@@ -83,10 +94,10 @@ def main() -> None:
         '',
         f'- Amostras de observação direta/retrospectiva: **{len(field_samples)}**',
         f'- Amostras produzidas pelo sistema em operação: **{len(system_samples)}**',
-        f'- Amostras sintéticas, excluídas da calibração: **{len(synthetic_samples)}**',
-        f'- Limiar técnico configurado por tipo: **{settings.min_samples_for_estimate}** amostras não sintéticas.',
+        f'- Amostras mockadas, excluídas da calibração: **{len(mocked_samples)}**',
+        f'- Limiar técnico configurado por tipo: **{settings.min_samples_for_estimate}** amostras não mockadas.',
         '',
-        '| Tipo | Amostras não sintéticas | Limiar técnico | Backend pode estimar? |',
+        '| Tipo | Amostras não mockadas | Limiar técnico | Backend pode estimar? |',
         '|---|---:|---:|---|',
     ]
 

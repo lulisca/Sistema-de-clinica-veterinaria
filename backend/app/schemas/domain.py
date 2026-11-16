@@ -124,6 +124,7 @@ class EstimateOut(BaseModel):
     p90_minutes: float | None = None
     sample_size: int = 0
     method: str | None = None
+    data_source: str | None = None
     missing_types: list[str] = []
     message: str | None = None
     estimate_id: int | None = None

@@ -25,32 +25,36 @@ def _percentile(values: list[float], p: float) -> float:
 
 
 def stats_for_type(db: Session, appointment_type: str):
-    vals = list(db.scalars(
-        select(ServiceDurationSample.duration_minutes).where(
-            ServiceDurationSample.appointment_type == appointment_type,
-            ServiceDurationSample.source != 'SYNTHETIC',
-        )
-    ).all())
-    # Synthetic samples are useful for development but never calibrate F1.
+    query = select(
+        ServiceDurationSample.duration_minutes,
+        ServiceDurationSample.source,
+    ).where(ServiceDurationSample.appointment_type == appointment_type)
+    if not settings.allow_mocked_estimates:
+        query = query.where(ServiceDurationSample.source != 'MOCKED')
+    rows = db.execute(query).all()
+    vals = [duration for duration, _source in rows]
     if len(vals) < settings.min_samples_for_estimate:
         return None
+    sources = {source for _duration, source in rows}
+    data_source = 'MOCKED' if sources == {'MOCKED'} else 'MIXED' if 'MOCKED' in sources else 'ACCEPTED'
     return {
         'p50': _percentile(vals, .50),
         'p90': _percentile(vals, .90),
         'n': len(vals),
+        'data_source': data_source,
     }
 
 
 def sample_readiness(db: Session) -> list[dict]:
     """Returns sample counts per service type and whether each meets the configured software threshold."""
+    query = select(
+        ServiceDurationSample.appointment_type,
+        func.count(ServiceDurationSample.id),
+    )
+    if not settings.allow_mocked_estimates:
+        query = query.where(ServiceDurationSample.source != 'MOCKED')
     rows = db.execute(
-        select(
-            ServiceDurationSample.appointment_type,
-            func.count(ServiceDurationSample.id),
-        )
-        .where(ServiceDurationSample.source != 'SYNTHETIC')
-        .group_by(ServiceDurationSample.appointment_type)
-        .order_by(ServiceDurationSample.appointment_type)
+        query.group_by(ServiceDurationSample.appointment_type).order_by(ServiceDurationSample.appointment_type)
     ).all()
     return [
         {
@@ -131,9 +135,10 @@ def calculate_estimate(db: Session, target: QueueEntry):
         target_stats = stat_map.get(target.appointment_type)
         return {
             'status': 'insufficient_data',
-            'message': 'Not enough non-synthetic samples for all service types involved.',
+            'message': 'Not enough eligible samples for all service types involved.',
             'missing_types': missing,
             'sample_size': target_stats['n'] if target_stats else 0,
+            'data_source': None,
         }
 
     capacity = _active_vet_capacity(db, target)
@@ -160,12 +165,21 @@ def calculate_estimate(db: Session, target: QueueEntry):
     p50_wait = _simulate_wait(p50_durations, capacity, current_p50)
     p90_wait = _simulate_wait(p90_durations, capacity, current_p90)
 
+    estimate_sources = {stats['data_source'] for stats in stat_map.values()}
+    data_source = 'MOCKED' if estimate_sources == {'MOCKED'} else 'MIXED' if 'MOCKED' in estimate_sources or 'MIXED' in estimate_sources else 'ACCEPTED'
+    method = 'historical_percentiles_queue_simulation'
+    if data_source == 'MOCKED':
+        method += '_mocked'
+    elif data_source == 'MIXED':
+        method += '_mixed'
+
     return {
         'status': 'ok',
         'p50_minutes': round(p50_wait, 1),
         'p90_minutes': round(max(p50_wait, p90_wait), 1),
         'sample_size': stat_map[target.appointment_type]['n'],
-        'method': 'historical_percentiles_queue_simulation',
+        'method': method,
+        'data_source': data_source,
         'missing_types': [],
     }
 

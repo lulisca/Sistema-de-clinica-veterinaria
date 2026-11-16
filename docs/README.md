@@ -2,7 +2,7 @@
 
 Esta pasta guarda a documentação do projeto. O Caderno do Aluno trata o repositório como evidência de processo: o que não está commitado aqui não conta na avaliação (C2 Gestão, C3 Arquitetura e ADRs, C8 Processo).
 
-A documentação técnica do backend fica em `backend/docs/` (hoje só na branch `feature/backend-f1`, ainda fora do `main`).
+A documentação técnica do backend fica em `backend/docs/`.
 
 ## Regras que valem para tudo aqui
 
@@ -19,6 +19,7 @@ docs/
 ├── COMMITS.md             regras de commit e de autoria
 ├── registro-de-ia.md      Registro de IA (obrigatório)
 ├── responsabilidades.md   quem faz o quê (proposta, a formalizar no ADR-000)
+├── referencias/           materiais de trabalho preservados, sem substituir os documentos oficiais
 ├── adr/                   um arquivo por decisão: NNN-titulo-curto.md
 ├── reunioes/              atas das segundas-feiras: AAAA-MM-DD-ata.md
 ├── 01-iniciacao/          termo de abertura, stakeholders, premissas
@@ -31,6 +32,8 @@ docs/
 ```
 
 Arquivos que começam com `_modelo` são modelos: copie, renomeie e preencha. Não edite o modelo.
+
+O planejamento detalhado preparado pelo GP está preservado em `referencias/ETAPAS-planejamento-detalhado.md`. Ele serve como fonte para os entregáveis do projeto e não substitui o `ETAPAS.md` da raiz.
 
 ## Entregáveis: onde cada um fica
 
@@ -83,6 +86,18 @@ Arquivos que começam com `_modelo` são modelos: copie, renomeie e preencha. N�
 - **ADR do hardware.**
 
 Toda decisão relevante vira ADR, incluindo stack, forma de integração, hospedagem, canal de notificação, eixos de segregação e faixa da estimativa (p50/p90 ou média ± desvio).
+
+## Pacote documental consolidado em 2026-11-15
+
+- Planejamento: `02-planejamento/`.
+- Campo mockado separado: `03-campo/`.
+- Arquitetura e hardware: `04-arquitetura/` e `adr/`.
+- Publicacao: `05-publicacao/`.
+- Qualidade: `06-testes/`.
+- Manual, demo e encerramento: `07-encerramento/`.
+- Rastreabilidade: `08-controle/matriz-de-rastreabilidade.md`.
+
+Diagnosticos, auditorias de leitura e listas pessoais de pendencias do GP sao controles locais e nao integram o pacote versionado.
 
 ### Esquema de hardware (`04-arquitetura/esquema-de-hardware.md`)
 

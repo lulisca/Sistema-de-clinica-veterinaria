@@ -33,6 +33,10 @@ Se a clínica não gerar o volume, complete com registro retrospectivo da agenda
 | `janelas.md` (a criar) | Contexto de cada janela, preenchido uma vez por janela. |
 | `entrevista.md` (a criar) | Registro da entrevista com o responsável. |
 | `relatorio-calibracao-f1.md` (a criar) | Resultado da calibração da F1 sobre esta série. |
+| `AVISO-DADOS-MOCKADOS.md` | Limites de uso da clinica e dos dados mockados. |
+| `serie-mock.csv` | Massa `MOCKED` com 40 casos, sem valor de evidencia de campo. |
+| `janelas-mock.md` | Quatro janelas mockadas para desenvolvimento. |
+| `relatorio-validacao-c1-mock.md` | Resultado técnico da massa mockada e pendências do C1. |
 
 ### Colunas de `serie-de-atendimentos.csv`
 
