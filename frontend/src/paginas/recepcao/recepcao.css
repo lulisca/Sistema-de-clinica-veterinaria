@@ -1,0 +1,353 @@
+/* Telas da recepção (Figma "04 · Recepção (1440)"): desktop. */
+
+/* ---------- R1 · Login ---------- */
+.login {
+  display: flex;
+  min-height: 100dvh;
+}
+
+.login-marca {
+  width: 520px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--espaco-lg);
+  padding: var(--espaco-3xl);
+  background: var(--cor-fundo-marca);
+  color: var(--cor-texto-invertido);
+}
+
+.login-foto {
+  height: 280px;
+  border-radius: var(--raio-lg);
+  overflow: hidden;
+  background: var(--cor-fundo-sutil);
+}
+
+.login-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.login-acesso {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-3xl) var(--espaco-lg);
+}
+
+.login-cartao {
+  width: 100%;
+  max-width: 420px;
+  padding: var(--espaco-2xl);
+}
+
+@media (max-width: 900px) {
+  .login-marca {
+    display: none;
+  }
+}
+
+/* ---------- Moldura ---------- */
+.recepcao-topo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espaco-md) var(--espaco-2xl);
+  padding: var(--espaco-lg) var(--espaco-2xl);
+  border-bottom: 1px solid var(--cor-borda-padrao);
+  background: var(--cor-fundo-superficie);
+}
+
+.recepcao-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-xs) var(--espaco-xl);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.recepcao-nav a {
+  padding: var(--espaco-sm) 0;
+  color: var(--cor-texto-secundario);
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .recepcao-nav a:hover {
+    color: var(--cor-texto-marca);
+  }
+}
+
+.recepcao-nav a.active {
+  color: var(--cor-texto-marca);
+  font-weight: 600;
+}
+
+.recepcao-usuario {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--espaco-2xs);
+}
+
+.recepcao-conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xl);
+  padding: var(--espaco-2xl);
+}
+
+/* Cabeçalho de cada tela: título + subtítulo à esquerda, ações à direita */
+.cabecalho {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espaco-lg);
+}
+
+.cabecalho > div:first-child {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2xs);
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-sm);
+}
+
+/* Duas colunas: principal + lateral de 420px (Detalhe, Recursos) */
+.colunas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: var(--espaco-xl);
+  align-items: start;
+}
+
+.colunas-iguais {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.coluna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xl);
+}
+
+@media (max-width: 1100px) {
+  .colunas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- R2/R3 · Fila ---------- */
+.filtros {
+  gap: var(--espaco-lg);
+}
+
+.filtro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.filtro legend {
+  margin-bottom: var(--espaco-sm);
+  padding: 0;
+}
+
+.fila {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+  overflow-x: auto;
+}
+
+/* Colunas da tabela da fila (larguras do Figma) */
+.fila-cabecalho,
+.fila-linha {
+  display: grid;
+  grid-template-columns: 40px 210px 140px 150px 160px 150px minmax(240px, 1fr);
+  align-items: center;
+  gap: var(--espaco-md);
+  min-width: 1060px;
+}
+
+.fila-cabecalho {
+  padding: 0 var(--espaco-lg);
+  color: var(--cor-texto-secundario);
+}
+
+.fila-cabecalho > :last-child {
+  text-align: right;
+}
+
+.fila-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fila-linha {
+  padding: var(--espaco-lg);
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-md);
+  background: var(--cor-fundo-superficie);
+  box-shadow: var(--sombra-cartao);
+}
+
+.celula {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espaco-2xs);
+  min-width: 0;
+}
+
+.celula-acoes {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--espaco-sm);
+}
+
+/* ---------- R4 · Cadastro ---------- */
+.cartao-formulario {
+  scroll-margin-top: var(--espaco-xl);
+}
+
+.cartao-formulario[data-ativo='true'] {
+  border-color: var(--cor-texto-marca);
+}
+
+.grupo-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.grupo-opcoes legend {
+  margin-bottom: var(--espaco-sm);
+  padding: 0;
+}
+
+.caixa-encontrado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+  padding: var(--espaco-lg);
+  border-radius: var(--raio-sm);
+  background: var(--cor-fundo-sutil);
+}
+
+.link-tutor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-sm);
+  word-break: break-all;
+}
+
+/* ---------- R5 · Detalhe ---------- */
+.caixa-medida {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+  padding: var(--espaco-lg);
+  border-radius: var(--raio-sm);
+  background: var(--cor-fundo-sutil);
+}
+
+.formulario-linha {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--espaco-sm);
+}
+
+.formulario-linha .campo {
+  flex: 1;
+}
+
+/* ---------- R6 · Recursos ---------- */
+.lista-recursos {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-recursos li {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-md);
+  padding: var(--espaco-sm) 0;
+  border-top: 1px solid var(--cor-borda-padrao);
+}
+
+.lista-recursos li > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2xs);
+}
+
+/* ---------- R7 · Avisos com falha ---------- */
+.aviso-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-lg);
+}
+
+.aviso-cabecalho > div:first-child {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2xs);
+}
+
+/* ---------- R8 · Indicadores ---------- */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--espaco-lg);
+}
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+  padding: var(--espaco-xl);
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-md);
+  background: var(--cor-fundo-superficie);
+}
+
+/* Estado vazio dentro de um bloco */
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espaco-md);
+  padding: var(--espaco-xl);
+  border: 1px dashed var(--cor-borda-forte);
+  border-radius: var(--raio-md);
+}

@@ -35,10 +35,37 @@ docs(adr): ADR-003 adota p50/p90 na estimativa da F1
 docs(ata): ata da reunião de 16/11
 ```
 
+## Branches
+
+```
+main                               versão estável: é dela que sai o sistema publicado e a apresentação
+ └─ development                    onde o código das frentes se junta e é testado
+     └─ feature/<frente>-<assunto> onde cada um trabalha (ex.: feature/front-tela-login)
+```
+
+### Código, passo a passo
+
+1. Parta sempre da `development` atualizada:
+
+   ```bash
+   git checkout development
+   git pull
+   git checkout -b feature/front-tela-login
+   ```
+
+2. Faça commits pequenos e envie a branch: `git push -u origin feature/front-tela-login`.
+3. Abra o Pull Request **para a `development`**. No GitHub, troque o *base* de `main` para `development`.
+4. Outro integrante revisa. Faça o merge com **Create a merge commit**, nunca *Squash and merge*, que apaga a autoria individual.
+5. Com a `development` testada, alguém abre o PR **`development` → `main`**. Isso precisa acontecer antes de cada entrega: congelamento em 16/11 e versão final em 03/12.
+
+### Documentação
+
+Ata, ADR, campo e riscos continuam indo **direto na `main`**, no dia. A `development` não precisa ter a documentação em dia: o PR `development` → `main` junta tudo.
+
 ## No dia a dia
 
 - Um commit por mudança lógica, pequeno e frequente.
 - Rode `git status` e `git diff` antes. Nunca commite `.env`, senhas ou dado que identifique pessoas.
-- **Código** vai por Pull Request, em branch `feature/<frente>-<assunto>`, revisado por outro integrante. Evite *squash merge*, que apaga a autoria individual.
+- **Código** vai por Pull Request para a `development`, em branch `feature/<frente>-<assunto>`, revisado por outro integrante. Veja [Branches](#branches).
 - **Documentação** (ata, ADR, campo, riscos) vai direto no `main`, no dia. Dê `git pull` antes.
 - Se uma IA ajudou, registre em [registro-de-ia.md](registro-de-ia.md).
