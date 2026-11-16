@@ -16,6 +16,7 @@ class BootstrapIn(BaseModel):
     role: Literal['RECEPTION', 'VETERINARIAN', 'ADMIN'] = 'RECEPTION'
 
 class TutorRegisterIn(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     name: str = Field(min_length=2, max_length=120)
     email: str = Field(min_length=5, max_length=180)
     password: str = Field(min_length=8, max_length=128)
@@ -35,6 +36,7 @@ class TutorOut(ORMModel):
     contact: str | None
 
 class TutorAnimalCreate(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     species: str = Field(min_length=2, max_length=40)
     name: str | None = Field(default=None, max_length=120)
 
@@ -128,6 +130,7 @@ class QueueOrderIn(BaseModel):
     previous_ids: list[int] | None = Field(default=None, max_length=100)
 
 class TutorQueueCreate(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     animal_id: int
     appointment_type: str = Field(min_length=2, max_length=50)
     symptoms: str = Field(min_length=3, max_length=2000)

@@ -2,6 +2,7 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import delete, func, or_, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
@@ -37,7 +38,7 @@ def bootstrap(payload: BootstrapIn, db: Session = Depends(get_db)):
 @router.post('/auth/login', response_model=TokenOut)
 def login(payload: LoginIn, db: Session = Depends(get_db)):
     user = db.scalar(select(User).where(User.email == payload.email.lower()))
-    if not user or not verify_password(payload.password, user.password_hash):
+    if not user or not user.active or not verify_password(payload.password, user.password_hash):
         raise HTTPException(401, 'Invalid credentials')
     return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
 
@@ -50,13 +51,17 @@ def register_tutor(payload: TutorRegisterIn, db: Session = Depends(get_db)):
         name=payload.name.strip(), email=email,
         password_hash=hash_password(payload.password), role='TUTOR',
     )
-    db.add(user)
-    db.flush()
-    tutor = Tutor(user_id=user.id, name=user.name, contact=payload.contact)
-    db.add(tutor)
-    db.flush()
-    audit(db, 'Tutor', tutor.id, 'SELF_REGISTER', user.id)
-    db.commit()
+    try:
+        db.add(user)
+        db.flush()
+        tutor = Tutor(user_id=user.id, name=user.name, contact=payload.contact)
+        db.add(tutor)
+        db.flush()
+        audit(db, 'Tutor', tutor.id, 'SELF_REGISTER', user.id)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(409, 'Email already registered')
     return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
 
 def _tutor_for_user(db: Session, user: User) -> Tutor:
