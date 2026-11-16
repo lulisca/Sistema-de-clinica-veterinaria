@@ -1,0 +1,195 @@
+/* Telas do tutor (Figma "03 · Tutor (390)"): coluna única de celular. */
+
+.tutor {
+  min-height: 100dvh;
+  background: var(--cor-fundo-pagina);
+}
+
+.tutor-coluna {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: var(--espaco-lg);
+  /* Afasta o conteúdo do notch e da barra inferior do iPhone */
+  padding-top: max(var(--espaco-lg), env(safe-area-inset-top, 0px));
+  padding-bottom: max(var(--espaco-lg), env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+}
+
+.tutor-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 24px;
+}
+
+.tutor-texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xs);
+  padding-top: var(--espaco-sm);
+}
+
+.centro {
+  text-align: center;
+}
+
+/* Foto com o selo de estado por cima */
+.tutor-foto {
+  position: relative;
+  height: 220px;
+  border-radius: var(--raio-lg);
+  overflow: hidden;
+  background: var(--cor-fundo-sutil);
+}
+
+.tutor-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 5%; /* mostra o rosto do cão, como no Figma */
+}
+
+.tutor-foto-baixa {
+  height: 180px;
+}
+
+.tutor-foto-baixa img {
+  object-position: 50% 77%;
+}
+
+.tutor-foto .selo {
+  position: absolute;
+  top: var(--espaco-md);
+  left: var(--espaco-md);
+}
+
+/* Cartão verde-escuro com a posição */
+.cartao-posicao {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-lg);
+  padding: var(--espaco-xl);
+  border-radius: var(--raio-lg);
+  background: var(--cor-fundo-marca);
+  color: var(--cor-texto-invertido);
+}
+
+.legenda-posicao {
+  color: var(--cor-fundo-marca-suave);
+}
+
+/* Cartão menta com a faixa de espera (e com o aviso por tempo fixo na T5) */
+.cartao-espera {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espaco-xs);
+  padding: var(--espaco-xl);
+  border-radius: var(--raio-lg);
+  background: var(--cor-fundo-destaque);
+}
+
+/* Cartão branco do tutor (sem borda, cantos maiores que na recepção) */
+.cartao-tutor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+  padding: var(--espaco-xl);
+  border-radius: var(--raio-lg);
+  background: var(--cor-fundo-superficie);
+  box-shadow: var(--sombra-cartao);
+}
+
+.cartao-tutor-erro {
+  background: var(--cor-alerta-erro-fundo);
+  box-shadow: none;
+}
+
+.cartao-centro {
+  align-items: center;
+  text-align: center;
+}
+
+.icone-redondo {
+  display: inline-flex;
+  padding: var(--espaco-lg);
+  border-radius: var(--raio-pill);
+  background: var(--cor-fundo-pagina);
+}
+
+.icone-redondo-branco {
+  background: var(--cor-fundo-superficie);
+}
+
+/* T2: ilustração e os 3 momentos */
+.ilustracao {
+  display: flex;
+  justify-content: center;
+  padding: var(--espaco-xl);
+  border-radius: var(--raio-lg);
+  background: var(--cor-fundo-destaque);
+}
+
+.momentos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.momentos li {
+  padding: var(--espaco-sm) var(--espaco-md);
+  border-radius: var(--raio-pill);
+  background: var(--cor-fundo-superficie);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* T3: indicador de retorno */
+.linha-viabilidade {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-md);
+}
+
+.ver-calculo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+}
+
+.ver-calculo summary {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--cor-texto-marca);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  margin-bottom: var(--espaco-sm);
+}
+
+/* Rodapé com o link "Privacidade" */
+.rodape-tutor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espaco-sm);
+  padding: var(--espaco-sm) 0;
+  text-align: center;
+}
+
+.botao-link {
+  padding: var(--espaco-sm);
+  border: 0;
+  background: none;
+  color: var(--cor-texto-marca);
+  font-size: 13px;
+  line-height: 20px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
