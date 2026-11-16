@@ -41,12 +41,12 @@ Arquivos `_modelo-*` são modelos vazios. Não representam atividade executada.
 | C1 | Concluído como C1-MOCKED aprovado pelo GP | `03-campo/` |
 | Planejamento | Consolidado | `01-iniciacao/` e `02-planejamento/` |
 | Arquitetura | Consolidada para a versão atual | `04-arquitetura/` e `adr/` |
-| Backend | Integrado e com 43 testes aprovados | `backend/` e `06-testes/resultados-testes.md` |
+| Backend | Integrado e com 49 testes aprovados | `backend/` e `06-testes/resultados-testes.md` |
 | Frontend | Integrado ao contrato atual | `frontend/` e `08-controle/handoff-frontend.md` |
 | Hardware | Concluído como protótipo documental | `04-arquitetura/esquema-de-hardware.md` |
 | Manual e encerramento | Concluídos com 12 capturas | `07-encerramento/` |
 | Publicação externa | Em execução | `05-publicacao/` |
-| CT19 e CT20 | Em execução | `06-testes/resultados-testes.md` |
+| CT19 e CT20 | CT19 aprovado com ressalvas; CT20 em execução | `06-testes/resultados-testes.md` |
 
 ## Regras de integridade
 

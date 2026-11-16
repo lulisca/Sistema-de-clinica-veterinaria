@@ -11,10 +11,10 @@ Projeto Integrador UNASP-EC: agenda e fila virtual para clínica veterinária, c
 ## Estado da versão
 
 - backend e frontend integrados;
-- 43 testes automatizados aprovados;
+- 49 testes automatizados aprovados;
 - C1 concluído como C1-MOCKED aprovado pelo GP, sem alegação de coleta real;
 - hardware concluído como protótipo documental;
-- publicação Vercel/Neon, CT19 e CT20 em execução.
+- CT19 local aprovado com ressalvas; publicação Vercel/Neon e CT20 em execução.
 
 ## Execução local
 

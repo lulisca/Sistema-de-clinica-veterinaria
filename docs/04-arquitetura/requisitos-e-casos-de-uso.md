@@ -1,6 +1,6 @@
 # Requisitos e casos de uso
 
-> **Marco planejado:** 2026-10-19. **Consolidacao real:** 2026-11-16. Linha de base aprovada pelo GP e conferida contra frontend, backend e 43 testes automatizados.
+> **Marco planejado:** 2026-10-19. **Consolidacao real:** 2026-11-16. Linha de base aprovada pelo GP e conferida contra frontend, backend e 49 testes automatizados.
 
 ## Requisitos funcionais
 
@@ -35,7 +35,7 @@
 | RNF04 | Portabilidade | Execucao local, Docker e PostgreSQL na producao |
 | RNF05 | Usabilidade | Estados claros, erros tratados e fluxos demonstraveis |
 | RNF06 | Disponibilidade | Local documentado; publicacao externa em execucao |
-| RNF07 | Qualidade | 43 testes, casos manuais, capturas e bancada `MOCKED` |
+| RNF07 | Qualidade | 49 testes, casos manuais, capturas e bancada `MOCKED` |
 | RNF08 | Integridade academica | Dados `MOCKED` identificados; nenhuma evidencia externa inventada |
 
 ## Casos de uso

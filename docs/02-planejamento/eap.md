@@ -43,7 +43,7 @@
 - [x] 4.5 Frontend do tutor e autoatendimento
 - [x] 4.6 Frontend da recepcao e do veterinario
 - [x] 4.7 Integracao frontend-API na `development`
-- [ ] 4.8 Teste ponta a ponta das tres features - **em execucao**
+- [x] 4.8 Teste ponta a ponta local das tres features - **aprovado com ressalvas no CT19**
 
 ## 5. Hardware
 
@@ -58,7 +58,7 @@
 
 - [x] 6.1 Testes automatizados escritos no backend
 - [x] 6.2 Plano de testes consolidado
-- [x] 6.3 Suite backend executada com 43 testes aprovados
+- [x] 6.3 Suite backend executada com 49 testes aprovados
 - [x] 6.4 Casos manuais F1/F2/F3 e bordas documentados
 - [x] 6.5 Evidencias locais, resultados e 12 capturas do manual
 - [x] 6.6 Bancada cruzada simulada com Empresa 02 ficticia `MOCKED`
@@ -85,4 +85,4 @@
 
 ## Pacotes criticos do G3
 
-O G3 responde pelos pacotes 1, 2, 5, 6, 7 e 8 e pela consolidacao documental do pacote 3. G1 e G2 mantem backend e frontend; o GP aprova a linha de base e o arquiteto revisa o conteudo tecnico. Publicacao e teste ponta a ponta permanecem como atividades de fechamento em execucao, sem serem apresentados como concluidos antes da evidencia.
+O G3 responde pelos pacotes 1, 2, 5, 6, 7 e 8 e pela consolidacao documental do pacote 3. G1 e G2 mantem backend e frontend; o GP aprova a linha de base e o arquiteto revisa o conteudo tecnico. O CT19 local foi aprovado com ressalvas. Publicacao e CT20 permanecem como atividades de fechamento em execucao, sem serem apresentados como concluidos antes da evidencia.

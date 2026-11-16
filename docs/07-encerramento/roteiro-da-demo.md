@@ -21,7 +21,7 @@
 4. **F2 (2 min):** consentir, informar deslocamento, avaliar aviso e confirmar retorno.
 5. **Borda F2 (1 min):** negar localização e demonstrar o aviso por tempo fixo.
 6. **F3 (2 min):** espécie/tipo, emergência autorizada, reordenação e recurso exclusivo.
-7. **Qualidade (1 min):** 43 testes do backend, privacidade, CT19 em execução e limites do cenário `MOCKED`.
+7. **Qualidade (1 min):** 49 testes do backend, privacidade, CT19 aprovado com ressalvas e limites do cenário `MOCKED`.
 8. **Hardware/arquitetura (1 min):** protótipo documental do painel ESP32, protocolo e fluxo HTTPS.
 9. **Fechamento (1 min):** resultados, atividades em execução e lições aprendidas.
 

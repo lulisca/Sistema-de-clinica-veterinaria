@@ -24,16 +24,16 @@
 | BC11 | Fila elegivel e veterinario | reordenar entradas | nova ordem persistida | `test_vet_reordena_a_fila` | Coberto localmente |
 | BC12 | Veterinario/admin autenticado | declarar emergencia | entrada vai ao topo | `test_only_vet_can_mark_emergency` | Coberto localmente |
 | BC13 | Recepcao autenticada | tentar emergencia/reordenacao | operacao negada | testes de papel e reordenacao | Coberto localmente |
-| BC14 | Entradas de especies/tipos distintos | aplicar filtros | apenas grupo correto exibido | CT19 e verificacao manual da tela | Em execucao no CT19 |
+| BC14 | Entradas de especies/tipos distintos | aplicar filtros | apenas grupo correto exibido | CT19 confirmou a fila com duas entradas; filtro visual nao foi exercitado | Cobertura parcial documentada |
 | BC15 | Recurso ja ocupado | alocar novamente | segunda alocacao rejeitada | `test_resource_cannot_be_double_allocated` | Coberto localmente |
-| BC16 | Formulario aberto | enviar vazio, duracao invalida ou tipo inexistente | mensagem clara e nenhum registro | CT26 durante CT19 | Em execucao no CT19 |
+| BC16 | Formulario aberto | enviar vazio, duracao invalida ou tipo inexistente | mensagem clara e nenhum registro | validacoes da API na suite; formulario visual nao foi exercitado no CT19 | Cobertura parcial documentada |
 
 BC03 verifica falta de dados para estimativa. Entrada invalida e tratada exclusivamente em BC16.
 
 ## Interpretacao dos estados
 
 - **Coberto localmente:** comportamento exercitado por teste automatizado ou evidencia tecnica existente.
-- **Em execucao no CT19:** comportamento visual/manual a ser registrado pelo Rafa.
+- **Cobertura parcial documentada:** a camada tecnica foi verificada, mas a interacao visual especifica nao fez parte do roteiro CT19 executado.
 - Um caso `MOCKED` pode abrir defeito real quando o comportamento observado divergir do esperado.
 
 ## Registro de evidencia

@@ -4,13 +4,16 @@
 
 ## Situacao atual
 
-A execucao automatizada mais recente terminou com **43 testes aprovados** e nao abriu defeito de produto. Os casos manuais BC14, BC16 e a jornada CT19 permanecem em execucao e podem acrescentar registros abaixo. O smoke CT20 podera acrescentar defeitos de publicacao.
+A execucao automatizada mais recente terminou com **49 testes aprovados**. A jornada local CT19 foi aprovada com ressalvas e abriu tres defeitos de produto: um medio e dois baixos. O smoke CT20 permanece em execucao e podera acrescentar defeitos de publicacao.
 
 ## Registro
 
 | ID | Origem/caso | Versao | Defeito observado | Severidade | Decisao | Correcao/commit | Reteste |
 |---|---|---|---|---|---|---|---|
-| - | Suite automatizada - 43 testes | `5c8bb16` | Nenhuma divergencia observada | - | Aprovado | Nao aplicavel | `43 passed in 44.13s` |
+| AUTO-01 | Suite automatizada - 49 testes | merge com `origin/development` | Nenhuma divergencia automatizada observada | - | Aprovado | Nao aplicavel | `49 passed in 54.91s` |
+| E2E-01 | CT19 | `3e2e853` | Duracao `SYSTEM` de 0,1 minuto entra na base e pode contaminar a estimativa F1 | Media | Acatado para triagem do backend | A definir em branch propria | Aguardando correcao e regressao F1 |
+| E2E-02 | CT19 | `3e2e853` | Caso concluido apresenta mensagem incorreta e mantem acoes de aviso | Baixa | Acatado para triagem do frontend | A definir em branch propria | Aguardando correcao visual |
+| E2E-03 | CT19 | `3e2e853` | Proximo paciente recebe faixa de estimativa 0-0, prejudicando o indicador `inside_range` | Baixa | Acatado para triagem do backend/F1 | A definir em branch propria | Aguardando correcao e regressao F1 |
 
 Quando um defeito for encontrado, acrescentar uma nova linha com ID sequencial, sem apagar o historico das execucoes aprovadas.
 

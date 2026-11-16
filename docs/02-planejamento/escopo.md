@@ -52,7 +52,7 @@ A `Clinica Vila Nova EC`, de Engenheiro Coelho/SP, identifica somente o cenario 
 | F1 | Estimativa por tipo, faixa p50/p90, revisoes e comparacao previsto x realizado |
 | F2 | Consentimento, alternativa sem GPS, decisao de aviso e confirmacao demonstraveis |
 | F3 | Pelo menos dois eixos, prioridade explicita, reordenacao protegida e recurso exclusivo sem dupla alocacao |
-| Qualidade | Plano, 43 testes backend aprovados, casos manuais, capturas e tratamento da bancada cruzada `MOCKED` |
+| Qualidade | Plano, 49 testes backend aprovados, casos manuais, capturas e tratamento da bancada cruzada `MOCKED` |
 | Hardware | Esquema, componentes, protocolo e calculo eletrico documentados, sem construcao fisica |
 | Gestao/processo | Escopo, EAP, cronograma, riscos, custos, comunicacao, ADRs e Registro de IA |
 | Encerramento | Manual, roteiro da demonstracao, simulacao extensionista `MOCKED` e licoes aprendidas |
@@ -72,7 +72,7 @@ A `Clinica Vila Nova EC`, de Engenheiro Coelho/SP, identifica somente o cenario 
 |---|---|
 | Frontend e integracao com a API | Implementados na `development` |
 | Backend F1/F2/F3, cadastro, autoatendimento e reordenacao | Implementados e cobertos pela suite atual |
-| Testes automatizados | 43 testes backend aprovados |
+| Testes automatizados | 49 testes backend aprovados |
 | C1 | C1-MOCKED aprovado pelo GP, sem alegacao de coleta real |
 | Parametros F2 | 20/60/10 aprovados como configuracao `MOCKED` |
 | Empresa 02 e bancada cruzada | Simulacao documental `MOCKED` concluida |

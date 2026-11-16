@@ -60,8 +60,8 @@ O RF17 possui contrato e backend de autoatendimento autenticado, mas não recebe
 | Controle de perfil | Concluído | login, emergência e reordenação |
 | Privacidade do tutor | Concluído | token isolado, minutos sem coordenadas e campos públicos reduzidos |
 | Build e lint históricos | Concluído | execução registrada em `docs/06-testes/resultados-testes.md` |
-| Suite backend | Concluído | 43 testes aprovados |
-| CT19 ponta a ponta local | Em execução | registro será acrescentado aos resultados de testes |
+| Suite backend | Concluído | 49 testes aprovados |
+| CT19 ponta a ponta local | Aprovado com ressalvas | jornada e três defeitos registrados nos resultados de testes |
 | Publicação e CT20 | Em execução | Vercel, Neon e smoke HTTPS |
 
 ## Responsabilidade após a integração

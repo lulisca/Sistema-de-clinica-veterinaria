@@ -1,6 +1,6 @@
 # Plano de testes
 
-> **Versao:** 2026-11-16. A suite backend atual possui 43 testes. O frontend esta integrado; a jornada local CT19 e o smoke externo CT20 permanecem em execucao.
+> **Versao:** 2026-11-16. A suite backend atual possui 49 testes. O frontend esta integrado; a jornada local CT19 foi aprovada com ressalvas; o smoke externo CT20 permanece em execucao.
 
 ## Objetivos
 
