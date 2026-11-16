@@ -257,6 +257,11 @@ export default function Detalhe() {
             <h2 id="titulo-dados" className="titulo-md">Dados do caso</h2>
             <div className="linha-dado"><span>Espécie</span><span>{traduzir(ESPECIES, entrada.species)}</span></div>
             <div className="linha-dado"><span>Tipo</span><span>{traduzir(TIPOS_ATENDIMENTO, entrada.appointment_type)}</span></div>
+            {/* Texto livre (até 2000 caracteres): fica num bloco próprio, não numa linha */}
+            <div className="bloco-sintomas">
+              <span className="corpo-sm texto-secundario">Sintomas relatados</span>
+              <p className="corpo-md">{entrada.symptoms || '—'}</p>
+            </div>
             <div className="linha-dado"><span>Reativo</span><span>{simOuNao(entrada.reactive)}</span></div>
             <div className="linha-dado"><span>Risco infeccioso</span><span>{simOuNao(entrada.infectious_risk)}</span></div>
             <div className="linha-dado"><span>Requer isolamento</span><span>{simOuNao(entrada.isolation_required)}</span></div>

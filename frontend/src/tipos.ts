@@ -62,6 +62,7 @@ export interface EntradaFila {
   animal_id: number
   appointment_type: string
   species: string
+  symptoms: string | null // texto livre do tutor ou da recepção; só a equipe vê
   status: EstadoFila
   priority_level: number
   emergency: boolean

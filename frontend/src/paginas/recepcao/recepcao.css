@@ -351,3 +351,16 @@
   border: 1px dashed var(--cor-borda-forte);
   border-radius: var(--raio-md);
 }
+
+/* Sintomas relatados no detalhe do caso: texto livre, pode ter várias linhas */
+.bloco-sintomas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xs);
+}
+
+.bloco-sintomas p {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

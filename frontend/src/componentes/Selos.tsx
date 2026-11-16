@@ -7,9 +7,11 @@ export function SeloEstado({ estado }: { estado: EstadoFila }) {
 }
 
 // Emergência só existe se o veterinário declarou (o sistema nunca classifica gravidade).
-export function SeloPrioridade({ entrada }: { entrada: Pick<EntradaFila, 'emergency' | 'priority_level'> }) {
+// O nível numérico não aparece: quando o veterinário reordena a fila, ele vira 6, 5, 4…
+// e não diz nada a quem lê. A posição na fila já mostra a ordem.
+export function SeloPrioridade({ entrada }: { entrada: Pick<EntradaFila, 'emergency'> }) {
   if (entrada.emergency) return <span className="selo selo-emergencia">Emergência</span>
-  return <span className="selo selo-nivel">Nível {entrada.priority_level}</span>
+  return <span className="selo selo-nivel">Normal</span>
 }
 
 export function SeloViabilidade({ valor }: { valor: Viabilidade }) {
