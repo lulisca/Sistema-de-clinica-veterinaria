@@ -7,7 +7,7 @@ A implementação de software da F1 está fechada para desenvolvimento e integra
 ## Fluxo
 
 1. Durações são registradas por tipo de atendimento.
-2. Amostras `SYNTHETIC` podem apoiar desenvolvimento, mas não entram na estimativa.
+2. Amostras `MOCKED` entram somente quando `ALLOW_MOCKED_ESTIMATES=true`; a resposta informa `data_source=MOCKED` e nao valida o C1.
 3. O backend calcula p50 e p90 de cada tipo envolvido na fila.
 4. A espera é simulada considerando a ordem da fila, veterinários disponíveis e atendimentos em andamento.
 5. Cada previsão é persistida como revisão numerada.

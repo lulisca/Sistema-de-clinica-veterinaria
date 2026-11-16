@@ -189,3 +189,43 @@ def test_f1_metrics_and_history_expose_evidence(client,reception_headers):
 def test_f1_invalid_sample_source_is_rejected(client,reception_headers):
     r=client.post('/api/samples/bulk',json={'samples':[{'appointment_type':'CONSULTATION','duration_minutes':20,'source':'INVENTED'}]},headers=reception_headers)
     assert r.status_code==400
+
+
+def test_f1_mocked_samples_are_accepted_but_excluded_by_default(client,reception_headers,monkeypatch):
+    from app.core.config import settings
+    monkeypatch.setattr(settings, 'allow_mocked_estimates', False)
+    tutor,animal,vet=create_basic(client,reception_headers)
+    samples=[{'appointment_type':'CONSULTATION','duration_minutes':value,'source':'MOCKED'} for value in (20,30,40)]
+    created=client.post('/api/samples/bulk',json={'samples':samples},headers=reception_headers)
+    assert created.status_code==200
+    assert created.json()['created']==3
+
+    q=client.post('/api/walk-ins',json={'animal_id':animal['id'],'appointment_type':'CONSULTATION'},headers=reception_headers).json()
+    estimate=client.post(f"/api/queue/{q['id']}/estimate",headers=reception_headers).json()
+    assert estimate['status']=='insufficient_data'
+    assert 'CONSULTATION' in estimate['missing_types']
+
+    readiness=client.get('/api/metrics/f1-readiness',headers=reception_headers).json()
+    assert readiness['types']==[]
+
+
+def test_f1_mocked_samples_can_power_identified_presentation_estimate(client,reception_headers,monkeypatch):
+    from app.core.config import settings
+    monkeypatch.setattr(settings, 'allow_mocked_estimates', True)
+    tutor,animal,vet=create_basic(client,reception_headers)
+    samples=[{'appointment_type':'CONSULTATION','duration_minutes':value,'source':'MOCKED'} for value in (20,30,40)]
+    created=client.post('/api/samples/bulk',json={'samples':samples},headers=reception_headers)
+    assert created.status_code==200
+
+    q=client.post('/api/walk-ins',json={'animal_id':animal['id'],'appointment_type':'CONSULTATION'},headers=reception_headers).json()
+    estimate=client.post(f"/api/queue/{q['id']}/estimate",headers=reception_headers).json()
+    assert estimate['status']=='ok'
+    assert estimate['p50_minutes']>=0
+    assert estimate['p90_minutes']>=estimate['p50_minutes']
+    assert estimate['sample_size']==3
+    assert estimate['data_source']=='MOCKED'
+    assert estimate['method'].endswith('_mocked')
+
+    readiness=client.get('/api/metrics/f1-readiness',headers=reception_headers).json()
+    assert readiness['types'][0]['sample_size']==3
+    assert 'MOCKED samples are enabled' in readiness['note']

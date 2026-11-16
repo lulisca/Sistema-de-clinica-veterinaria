@@ -17,10 +17,10 @@ Este relatório é gerado a partir do banco atual. Ele não substitui a verifica
 
 - Amostras de observação direta/retrospectiva: **0**
 - Amostras produzidas pelo sistema em operação: **0**
-- Amostras sintéticas, excluídas da calibração: **0**
-- Limiar técnico configurado por tipo: **3** amostras não sintéticas.
+- Amostras mockadas, excluídas da calibração: **0**
+- Limiar técnico configurado por tipo: **3** amostras não mockadas.
 
-| Tipo | Amostras não sintéticas | Limiar técnico | Backend pode estimar? |
+| Tipo | Amostras não mockadas | Limiar técnico | Backend pode estimar? |
 |---|---:|---:|---|
 | — | 0 | 3 | Não |
 

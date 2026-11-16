@@ -87,14 +87,14 @@ Origens previstas no backend:
 - `DIRECT_OBSERVATION`
 - `RETROSPECTIVE`
 - `SYSTEM`
-- `SYNTHETIC`
+- `MOCKED`
 
-Amostras `SYNTHETIC` **não entram na calibração F1**.
+Amostras `MOCKED` nao validam a calibracao academica. Com `ALLOW_MOCKED_ESTIMATES=true`, elas alimentam a estimativa de apresentacao, que retorna `data_source=MOCKED`.
 
 ## Fluxo de demonstração S5
 
 1. Cadastrar tutor e animal.
-2. Registrar ao menos 3 amostras não sintéticas do tipo demonstrado (valor mínimo configurável; a coleta acadêmica continua seguindo os 40 atendimentos/4 tipos exigidos pelo projeto).
+2. Importar a massa mockada e habilitar `ALLOW_MOCKED_ESTIMATES=true`, ou registrar ao menos 3 amostras aceitas. A validacao academica permanece separada.
 3. Criar agendamento ou encaixe.
 4. Fazer check-in.
 5. A previsão inicial já é criada automaticamente quando houver dados suficientes; `POST /queue/{id}/estimate` continua disponível para recálculo manual.
@@ -120,7 +120,7 @@ pytest -q
 - `docs/F2_IMPLEMENTACAO.md` — fluxo, privacidade, parâmetros pendentes e testes da F2
 - `docs/adr/0002-f2-localizacao-e-acionamento.md` — proposta de decisão F2, ainda não aprovada
 - `docs/RELATORIO_CALIBRACAO_F1.md` — gerado pelo script de relatório
-- `docs/REGISTRO_IA_RASCUNHO.md` — rascunho para declaração obrigatória
+- `../docs/registro-de-ia.md` — registro consolidado e obrigatório do uso de IA
 - `docs/adr/0001-backend-stack-e-f1.md` — ADR proposto
 
 O ADR está explicitamente como **proposta**. Coloquem a data real e alterem o status somente quando a equipe efetivamente aprovar e commitar a decisão.

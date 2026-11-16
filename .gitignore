@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Bancos e arquivos locais
+*.db
+*.sqlite
+*.sqlite3
+
+# Ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Ferramentas e sistema
+.coverage
+htmlcov/
+.DS_Store
+Thumbs.db
+
+# Controles locais do GP - nao sao entregaveis do repositorio
+docs/00-diagnostico-g3.md
+docs/04-arquitetura/decisoes-pendentes.md
+docs/08-controle/auditoria-backend.md
+docs/08-controle/pendencias-projeto.md
+docs/reunioes/*-pauta-aprovacoes.md
+/.local-output/
