@@ -90,6 +90,7 @@ const MENSAGENS_ERRO: [string, string][] = [
   ['Cannot confirm notification', 'Este aviso não pode mais ser confirmado.'],
   ['Location retention is not configured', 'A clínica ainda não configurou o prazo de retenção da localização.'],
   ['Queue entry not found', 'Paciente não encontrado na fila.'],
+  ['Queue changed', 'A fila mudou enquanto você reordenava. Ela foi recarregada; tente de novo.'],
   ['Notification not found', 'Aviso não encontrado.'],
   ['Tutor not found', 'Tutor não encontrado.'],
   ['Animal not found', 'Animal não encontrado.'],

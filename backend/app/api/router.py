@@ -13,7 +13,7 @@ from app.models.domain import (
 from app.schemas.domain import *
 from app.services.audit import audit
 from app.services.estimation import (
-    calculate_estimate, finalize_estimates, persist_estimate,
+    WAITING_STATUSES, calculate_estimate, finalize_estimates, persist_estimate,
     recalculate_waiting_estimates, sample_readiness,
 )
 
@@ -223,6 +223,32 @@ def update_priority(entry_id:int,payload:PriorityUpdate,db:Session=Depends(get_d
     audit(db,'QueueEntry',q.id,'PRIORITY_UPDATE',user.id,payload.model_dump(exclude_unset=True)); db.commit(); db.refresh(q)
     recalculate_waiting_estimates(db, 'PRIORITY_CHANGED')
     return q
+
+# O veterinário arrasta a fila e manda a lista inteira na ordem nova.
+# A regra de ordem continua a mesma (emergência, nível, check-in, ID): aqui só
+# gravamos o nível a partir da ordem. O primeiro recebe o maior nível; quem entra
+# depois chega com nível 0 e vai para o fim. Emergência fica fora e segue no topo.
+@router.put('/queue/order', response_model=list[QueueOut])
+def reorder_queue(payload: QueueOrderIn, db: Session = Depends(get_db), user=Depends(require_roles('VETERINARIAN', 'ADMIN'))):
+    ordenaveis = {e.id: e for e in db.scalars(select(QueueEntry).where(
+        QueueEntry.status.in_(WAITING_STATUSES), QueueEntry.emergency.is_(False))).all()}
+    ids = payload.entry_ids
+    # A lista precisa ter exatamente quem está esperando agora; se a fila mudou, a tela recarrega.
+    if len(set(ids)) != len(ids) or set(ids) != set(ordenaveis):
+        raise HTTPException(409, 'Queue changed; reload and try again')
+    # Mesmos pacientes, mas outra pessoa pode ter mudado a ordem depois que a tela carregou.
+    ordem_atual = [e.id for e in sorted(ordenaveis.values(), key=lambda e: (-e.priority_level, e.checked_in_at, e.id))]
+    if payload.previous_ids is not None and payload.previous_ids != ordem_atual:
+        raise HTTPException(409, 'Queue changed; reload and try again')
+    for indice, entry_id in enumerate(ids):
+        q = ordenaveis[entry_id]
+        novo = len(ids) - indice
+        if q.priority_level != novo:
+            audit(db, 'QueueEntry', q.id, 'QUEUE_REORDER', user.id, {'from': q.priority_level, 'to': novo})
+            q.priority_level = novo
+    db.commit()
+    recalculate_waiting_estimates(db, 'QUEUE_REORDERED')
+    return [ordenaveis[i] for i in ids]
 
 @router.post('/queue/{entry_id}/estimate', response_model=EstimateOut)
 def recalc_estimate(entry_id:int,db:Session=Depends(get_db),user=STAFF):

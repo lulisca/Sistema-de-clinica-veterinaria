@@ -1,13 +1,15 @@
 // R2/R3 · Fila de hoje. Também cobre R9 (fila vazia), R10 (sem estimativa) e R11 (erro de rede).
 // F3: filtros por espécie e tipo de atendimento (os dois eixos de segregação da API).
 // A ordem vem pronta da API: emergência → nível de prioridade → horário de check-in.
-import { useCallback, useEffect, useState } from 'react'
+// O veterinário muda a ordem arrastando a linha ou com os botões ↑ e ↓ (PUT /queue/order).
+import { type DragEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { listarFila, listarRecursos, listarRevisoes } from '../../api'
+import { listarFila, listarRecursos, listarRevisoes, reordenarFila } from '../../api'
 import AcoesPaciente from '../../componentes/AcoesPaciente'
 import { Marcadores, SeloEstado, SeloPrioridade } from '../../componentes/Selos'
 import { INTERVALO_ATUALIZACAO_MS } from '../../config'
 import { agora, faixa, hora } from '../../formato'
+import { lerSessao, podeDeclararEmergencia } from '../../sessao'
 import { especieETipo, mensagemDeErro, nomeDoPaciente } from '../../textos'
 import type { EntradaFila, Recurso, RevisaoEstimativa } from '../../tipos'
 
@@ -39,6 +41,22 @@ const FILTRO_STATUS = [
 
 type Filtros = { species: string; appointment_type: string; status: string }
 type Resultado = { tipo: 'sucesso' | 'erro'; texto: string }
+type Direcao = 'subir' | 'descer'
+
+// Tira o item da posição "de" e coloca na posição "para".
+function mover<T>(lista: T[], de: number, para: number): T[] {
+  const copia = [...lista]
+  const [item] = copia.splice(de, 1)
+  copia.splice(para, 0, item)
+  return copia
+}
+
+// Põe as linhas móveis na ordem nova; emergência e em atendimento ficam onde estão.
+function aplicarOrdem(lista: EntradaFila[], novaOrdem: EntradaFila[]): EntradaFila[] {
+  const moveis = new Set(novaOrdem.map((e) => e.id))
+  let proxima = 0
+  return lista.map((e) => (moveis.has(e.id) ? novaOrdem[proxima++] : e))
+}
 
 export default function Fila() {
   const [filtros, setFiltros] = useState<Filtros>({ species: '', appointment_type: '', status: '' })
@@ -49,7 +67,22 @@ export default function Fila() {
   const [atualizadaAs, setAtualizadaAs] = useState<string | null>(null)
   const [resultado, setResultado] = useState<Resultado | null>(null)
 
+  // Reordenar (só veterinário/admin)
+  const [arrastandoId, setArrastandoId] = useState<number | null>(null)
+  const [alvoId, setAlvoId] = useState<number | null>(null)
+  const [salvando, setSalvando] = useState(false)
+  const [focarDepois, setFocarDepois] = useState<{ id: number; direcao: Direcao } | null>(null)
+  // A atualização automática de 20 s pula enquanto alguém arrasta ou a ordem está sendo salva;
+  // senão ela trocaria a lista no meio do movimento. (Ref, porque o intervalo lê o valor na hora.)
+  const pausadoRef = useRef({ arrastando: false, salvando: false })
+  // Cada carga da fila ganha um número; só a mais recente pode trocar a lista na tela.
+  // Começar a arrastar ou salvar também conta: uma carga que já estava a caminho
+  // traria a ordem antiga e desfaria o movimento.
+  const cargaRef = useRef(0)
+
   const carregar = useCallback(async () => {
+    if (pausadoRef.current.arrastando || pausadoRef.current.salvando) return
+    const minha = ++cargaRef.current
     try {
       const [lista, listaRecursos] = await Promise.all([listarFila(filtros), listarRecursos()])
       const visiveis = filtros.status ? lista : lista.filter((e) => ATIVOS.includes(e.status))
@@ -60,13 +93,14 @@ export default function Fila() {
           .filter((e) => ESPERANDO.includes(e.status))
           .map(async (e) => [e.id, (await listarRevisoes(e.id)).at(-1)] as const),
       )
+      if (minha !== cargaRef.current) return // chegou depois de algo mais novo: descarta
       setRevisoes(Object.fromEntries(pares))
       setEntradas(visiveis)
       setRecursos(listaRecursos)
       setErro(null)
       setAtualizadaAs(agora())
     } catch (e) {
-      setErro(mensagemDeErro(e))
+      if (minha === cargaRef.current) setErro(mensagemDeErro(e))
     }
   }, [filtros])
 
@@ -75,6 +109,19 @@ export default function Fila() {
     const intervalo = setInterval(carregar, INTERVALO_ATUALIZACAO_MS)
     return () => clearInterval(intervalo)
   }, [carregar])
+
+  // Depois de ↑ ou ↓ a linha muda de lugar e o botão perde o foco: devolve o foco a ele
+  // (ou ao outro botão da mesma linha, se este ficou desabilitado no topo ou no fim).
+  useEffect(() => {
+    if (!focarDepois) return
+    const { id, direcao } = focarDepois
+    const outra = direcao === 'subir' ? 'descer' : 'subir'
+    const botao =
+      document.querySelector<HTMLButtonElement>(`[data-mover="${id}-${direcao}"]:not(:disabled)`) ??
+      document.querySelector<HTMLButtonElement>(`[data-mover="${id}-${outra}"]`)
+    botao?.focus()
+    setFocarDepois(null)
+  }, [entradas, focarDepois])
 
   function aoTerminarAcao(r: Resultado) {
     setResultado(r)
@@ -85,6 +132,58 @@ export default function Fila() {
   const esperando = entradas?.filter((e) => ESPERANDO.includes(e.status)) ?? []
   const semFaixa = esperando.filter((e) => !revisoes[e.id]).length
   const temFiltro = Boolean(filtros.species || filtros.appointment_type || filtros.status)
+
+  // Só quem espera e não é emergência pode mudar de lugar. Com filtro, a lista na tela
+  // não é a fila inteira, então reordenar fica desligado.
+  const decidePrioridade = podeDeclararEmergencia(lerSessao()?.perfil)
+  const ordenaveis = esperando.filter((e) => !e.emergency)
+  const podeReordenar = decidePrioridade && !temFiltro
+
+  async function salvarOrdem(novaOrdem: EntradaFila[]) {
+    pausadoRef.current.salvando = true
+    cargaRef.current++
+    setSalvando(true)
+    const ordemNaTela = ordenaveis.map((e) => e.id)
+    // Mostra a ordem nova na hora; se a fila tiver mudado (outro encaixe, outra pessoa
+    // reordenou), a API responde 409 e a tela recarrega.
+    setEntradas((atual) => atual && aplicarOrdem(atual, novaOrdem))
+    try {
+      await reordenarFila(novaOrdem.map((e) => e.id), ordemNaTela)
+      setResultado({ tipo: 'sucesso', texto: 'Ordem da fila salva.' })
+    } catch (e) {
+      setResultado({ tipo: 'erro', texto: mensagemDeErro(e) })
+    } finally {
+      pausadoRef.current.salvando = false
+      setSalvando(false)
+      carregar()
+    }
+  }
+
+  function moverComBotao(de: number, direcao: Direcao) {
+    if (salvando) return
+    const para = direcao === 'subir' ? de - 1 : de + 1
+    setFocarDepois({ id: ordenaveis[de].id, direcao })
+    salvarOrdem(mover(ordenaveis, de, para))
+  }
+
+  function comecarArrastar(evento: DragEvent, id: number) {
+    pausadoRef.current.arrastando = true
+    cargaRef.current++
+    evento.dataTransfer.effectAllowed = 'move'
+    evento.dataTransfer.setData('text/plain', String(id)) // o Firefox só arrasta com algum dado
+    setArrastandoId(id)
+  }
+
+  function soltar(para: number) {
+    const de = ordenaveis.findIndex((e) => e.id === arrastandoId)
+    if (de >= 0 && de !== para) salvarOrdem(mover(ordenaveis, de, para))
+  }
+
+  function terminarArrastar() {
+    pausadoRef.current.arrastando = false
+    setArrastandoId(null)
+    setAlvoId(null)
+  }
 
   return (
     <>
@@ -136,6 +235,10 @@ export default function Fila() {
         </p>
       )}
 
+      {decidePrioridade && temFiltro && ordenaveis.length > 0 && (
+        <p className="faixa-aviso faixa-aviso-info">Para reordenar, limpe os filtros.</p>
+      )}
+
       {entradas === null && !erro && <p className="corpo-md texto-secundario" role="status">Carregando fila…</p>}
 
       {/* R9: fila vazia */}
@@ -153,7 +256,7 @@ export default function Fila() {
       )}
 
       {entradas && entradas.length > 0 && (
-        <section className="fila" aria-label="Pacientes na fila">
+        <section className={decidePrioridade ? 'fila fila-ordenavel' : 'fila'} aria-label="Pacientes na fila">
           <div className="fila-cabecalho etiqueta-sm" aria-hidden="true">
             <span>Pos.</span>
             <span>Paciente</span>
@@ -167,14 +270,71 @@ export default function Fila() {
             {entradas.map((entrada) => {
               const posicao = esperando.indexOf(entrada) + 1
               const revisao = revisoes[entrada.id]
+              const nome = nomeDoPaciente(entrada)
+              const indice = ordenaveis.indexOf(entrada) // -1: emergência ou em atendimento
+              const movel = podeReordenar && indice >= 0
+              // Barra de destino: acima do alvo quando sobe, abaixo quando desce.
+              const deArrasto = ordenaveis.findIndex((e) => e.id === arrastandoId)
+              const destino = alvoId === entrada.id && deArrasto !== indice ? (deArrasto < indice ? 'depois' : 'antes') : null
+              const classes = ['fila-linha', arrastandoId === entrada.id && 'arrastando', destino && `destino-${destino}`]
               return (
-                <li key={entrada.id} className="fila-linha">
-                  <span className="numero-md" aria-label={posicao ? `Posição ${posicao}` : 'Sem posição'}>
-                    {posicao || '—'}
-                  </span>
+                <li
+                  key={entrada.id}
+                  className={classes.filter(Boolean).join(' ')}
+                  draggable={movel && !salvando}
+                  onDragStart={movel ? (e) => comecarArrastar(e, entrada.id) : undefined}
+                  onDragOver={
+                    movel && arrastandoId !== null
+                      ? (e) => {
+                          e.preventDefault() // sem isso o navegador não deixa soltar aqui
+                          setAlvoId(entrada.id)
+                        }
+                      : undefined
+                  }
+                  onDrop={movel ? (e) => { e.preventDefault(); soltar(indice) } : undefined}
+                  onDragEnd={terminarArrastar}
+                >
+                  <div className="posicao">
+                    {movel && <IconeAlca />}
+                    <span className="numero-md" aria-label={posicao ? `Posição ${posicao}` : 'Sem posição'}>
+                      {posicao || '—'}
+                    </span>
+                    {movel && (
+                      <span className="mover">
+                        <button
+                          type="button"
+                          className="botao-icone"
+                          data-mover={`${entrada.id}-subir`}
+                          aria-label={`Subir ${nome}`}
+                          title="Subir"
+                          disabled={indice === 0}
+                          aria-disabled={salvando || undefined}
+                          onClick={() => moverComBotao(indice, 'subir')}
+                        >
+                          <IconeSeta direcao="subir" />
+                        </button>
+                        <button
+                          type="button"
+                          className="botao-icone"
+                          data-mover={`${entrada.id}-descer`}
+                          aria-label={`Descer ${nome}`}
+                          title="Descer"
+                          disabled={indice === ordenaveis.length - 1}
+                          aria-disabled={salvando || undefined}
+                          onClick={() => moverComBotao(indice, 'descer')}
+                        >
+                          <IconeSeta direcao="descer" />
+                        </button>
+                      </span>
+                    )}
+                  </div>
                   <div className="celula">
-                    <span className="corpo-md-forte">{nomeDoPaciente(entrada)}</span>
+                    <span className="corpo-md-forte">{nome}</span>
                     <span className="corpo-sm texto-secundario">{especieETipo(entrada)}</span>
+                    {/* Sintomas: é com isso que o veterinário decide quem sobe. Texto inteiro no Detalhe. */}
+                    {entrada.symptoms && (
+                      <span className="corpo-sm sintomas-linha" title={entrada.symptoms}>{entrada.symptoms}</span>
+                    )}
                     <Marcadores entrada={entrada} />
                   </div>
                   <div className="celula"><SeloEstado estado={entrada.status} /></div>
@@ -215,6 +375,29 @@ function EsperaEstimada({ entrada, revisao }: { entrada: EntradaFila; revisao?: 
       <span className="corpo-md-forte">{principal}</span>
       {detalhe && <span className="corpo-sm texto-secundario">{detalhe}</span>}
     </div>
+  )
+}
+
+// Ícones desenhados em SVG (mesma espessura de traço), decorativos: o nome fica no botão.
+function IconeAlca() {
+  return (
+    <svg className="alca" width="12" height="20" viewBox="0 0 12 20" aria-hidden="true">
+      <title>Arraste para mudar a ordem</title>
+      {[4, 10, 16].map((y) => (
+        <g key={y}>
+          <circle cx="3" cy={y} r="1.6" />
+          <circle cx="9" cy={y} r="1.6" />
+        </g>
+      ))}
+    </svg>
+  )
+}
+
+function IconeSeta({ direcao }: { direcao: Direcao }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points={direcao === 'subir' ? '3,9 7,5 11,9' : '3,5 7,9 11,5'} />
+    </svg>
   )
 }
 
