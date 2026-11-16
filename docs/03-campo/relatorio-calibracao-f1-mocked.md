@@ -1,15 +1,15 @@
 # Relatorio de calibracao F1 com dados `MOCKED`
 
-> Relatorio tecnico para desenvolvimento e apresentacao. Nao valida o C1. O backend usa esta massa somente com `ALLOW_MOCKED_ESTIMATES=true` e identifica a origem como `MOCKED`.
+> Relatorio tecnico integrante do C1-MOCKED aprovado pelo GP. Nao representa calibracao clinica obtida por coleta real. O backend usa esta massa somente com `ALLOW_MOCKED_ESTIMATES=true` e identifica a origem como `MOCKED`.
 
 ## Base
 
 - 40 atendimentos;
-- quatro janelas;
+- quatro janelas ficticias;
 - quatro tipos;
 - origem unica: `MOCKED`.
 
-## Percentis da massa mockada
+## Percentis conferidos
 
 | Tipo | N | p50 da duracao | p90 da duracao |
 |---|---:|---:|---:|
@@ -18,14 +18,16 @@
 | Retorno | 8 | 17,5 min | 19,3 min |
 | Vacina | 11 | 12,0 min | 13,0 min |
 
-## Interpretacao
+## Interpretacao tecnica
 
 - os tipos possuem duracoes diferentes, confirmando que uma media global seria inadequada;
-- p50 funciona como referencia central;
-- p90 oferece limite conservador para a faixa;
+- p50 funciona como referencia central da massa mockada;
+- p90 oferece um limite conservador para a faixa demonstrada;
 - a massa permite testar telas, scripts e casos de borda;
-- os numeros nao devem alimentar a calibracao oficial enquanto a origem for `MOCKED`.
+- os numeros descrevem somente o cenario `MOCKED` e nao devem ser apresentados como estatistica de uma clinica real.
 
 ## Decisao de desenvolvimento
 
-Manter p50/p90 por tipo. Na apresentacao, habilitar `ALLOW_MOCKED_ESTIMATES=true` e exibir a origem `MOCKED`; com o modo desligado, manter `insufficient_data`.
+Manter p50/p90 por tipo. Na apresentacao, habilitar `ALLOW_MOCKED_ESTIMATES=true` e exibir `data_source=MOCKED`. Com o modo desligado e sem fonte aceita, manter `insufficient_data`.
+
+Uma coleta real futura, se autorizada pelo professor, deve gerar novo relatorio com origem, datas e evidencia verificaveis, sem alterar retroativamente este documento.
