@@ -92,7 +92,9 @@ export default function Fila() {
         <div>
           <h1 className="titulo-lg">Fila de hoje</h1>
           <p className="corpo-sm texto-secundario">
-            {entradas ? `${esperando.length} ${esperando.length === 1 ? 'paciente' : 'pacientes'} na fila` : 'Carregando'}
+            {entradas
+              ? `${esperando.length} ${esperando.length === 1 ? 'paciente' : 'pacientes'} na fila`
+              : erro ? 'Fila indisponível' : 'Carregando'}
             {atualizadaAs && ` · atualizada às ${atualizadaAs}`}
           </p>
         </div>
