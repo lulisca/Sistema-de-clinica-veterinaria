@@ -29,9 +29,13 @@ export function comSinal(valor: number | null | undefined, casas = 1): string {
 }
 
 // Faixa da estimativa (F1): p50 é o valor central e p90 o limite conservador.
-// 20.4 e 35.2 -> "20–35 min"
+// 20.4 e 35.2 -> "20–35 min". Faixa muito curta vira "até 1 min" ou "12 min".
 export function faixa(p50: number, p90: number): string {
-  return `${Math.round(p50)}–${Math.round(p90)} min`
+  const inicio = Math.round(p50)
+  const fim = Math.round(p90)
+  if (fim < 1) return 'até 1 min'
+  if (inicio === fim) return `${fim} min`
+  return `${inicio}–${fim} min`
 }
 
 // 0.78 -> "78%"
