@@ -1,10 +1,11 @@
-# Bancada cruzada - 15 casos preparados
+# Bancada cruzada - 16 casos preparados
 
 > Casos prontos para execucao no sistema da outra empresa. Resultados permanecem `NAO EXECUTADO` ate existir acesso; nenhum defeito e inventado.
 
 - **Sistema avaliado:** preencher ao receber acesso.
 - **URL/versao:** pendente externa.
-- **Executor:** G3.
+- **Executor:** G3 (Kauã e Nathan), com casos sugeridos por G1 e G2.
+- **Prazo de entrega do relatorio:** 23/11.
 
 | ID | Feature | Caso | Passos resumidos | Esperado | Resultado |
 |---|---|---|---|---|---|
@@ -23,10 +24,11 @@
 | BC13 | F3 | perfil indevido | recepcao tenta emergencia | operacao negada | NAO EXECUTADO |
 | BC14 | F3 | segregacao | filtrar especie e motivo | grupos corretos | NAO EXECUTADO |
 | BC15 | F3 | recurso ocupado | alocar mesmo recurso duas vezes | segunda alocacao rejeitada | NAO EXECUTADO |
+| BC16 | Borda | entrada invalida | cadastrar com campo obrigatorio vazio, duracao negativa ou tipo inexistente | sistema recusa com mensagem clara e nao cria registro | NAO EXECUTADO |
 
 ## Cobertura de borda
 
-- entrada invalida: BC03 ou payload invalido complementar;
+- entrada invalida: BC16 (BC03 cobre falta de dados, nao entrada invalida);
 - permissao negada: BC07 e BC13;
 - estado impossivel: BC10 e BC15.
 

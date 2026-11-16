@@ -1,6 +1,6 @@
 # Plano de testes
 
-> **Versao:** 2026-11-15. Existem 30 testes backend e todos passaram no Windows com Python 3.13 em 15/11/2026.
+> **Versao:** 2026-11-16. Existem 30 testes backend, que passaram em 15/11/2026. O frontend foi integrado em 15/11 e passou em build e lint em 16/11. Resultados detalhados em [resultados-testes.md](resultados-testes.md).
 
 ## Objetivos
 
@@ -14,6 +14,7 @@
 | Nivel | Escopo | Responsavel | Evidencia |
 |---|---|---|---|
 | Estatico | compile, contrato, segredo e documentacao | G3 | comandos e diff |
+| Estatico frontend | tipos TypeScript e lint | G2 + G3 | saida de `npm run build` e `npm run lint` |
 | Automatizado API | `backend/tests` | G1 + G3 | saida `pytest -q` |
 | Integracao | frontend, API e banco | G2 + G3 | casos e capturas |
 | Ponta a ponta | jornadas de tutor/recepcao/vet | G3 | roteiro preenchido |
@@ -68,10 +69,28 @@
 | CT18 | Seguranca | JWT ausente | 401 nas rotas internas |
 | CT19 | Integracao | jornada completa | check-in ate conclusao sem inconsistencia |
 | CT20 | Publicacao | acesso externo | frontend/API respondem por HTTPS |
+| CT21 | F1 tela | tipo sem amostras suficientes | tutor e fila mostram "Indisponivel", nunca "0 min" |
+| CT22 | F2 tela | tutor clica em "Agora nao" | tela "Voce segue na fila" com aviso por tempo fixo; a fila continua |
+| CT23 | F2 tela | tutor permite localizacao | requisicao enviada a API contem so minutos, sem latitude/longitude (conferir na aba Rede do navegador) |
+| CT24 | F3 tela | login como recepcao | botao "Emergencia" nao aparece |
+| CT25 | Seguranca tela | abrir `/recepcao/fila` sem login | redireciona para `/recepcao/login` |
+| CT26 | Entrada invalida | duracao prevista 0 ou 500 no agendamento | formulario recusa; nada e criado |
+
+## Roteiro comum do professor (Anexo H)
+
+| Passo do roteiro | Casos que cobrem |
+|---|---|
+| 1. Chegada e estimativa com faixa | CT01, CT03, CT21 |
+| 2. Caso que exige segregacao | CT15, CT16 |
+| 3. Emergencia e efeito na fila | CT12, CT13, CT24 |
+| 4. Tutor distante e proximo | CT06, CT23 |
+| 5. Recusar localizacao | CT07, CT22 |
+| 6. Encerrar e comparar previsto com realizado | CT04 |
+| 7. Historico do dia e erro medio | CT04 (tela Indicadores) |
 
 ## Regressao obrigatoria
 
-Reexecutar CT01-CT20 e testes automatizados apos mudanca em contrato, estados, estimacao, consentimento, prioridade, migrations ou deploy.
+Reexecutar CT01-CT26 e testes automatizados apos mudanca em contrato, estados, estimacao, consentimento, prioridade, migrations ou deploy.
 
 ## Registro de defeito
 

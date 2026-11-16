@@ -1,10 +1,11 @@
 # Checklist de congelamento
 
-> Conferir em 16/11/2026 e atualizar com evidencias reais.
+> Conferido em 16/11/2026 pelo G3. Marcar somente com evidencia.
 
 - [x] Repositorio unico e branch G3 criada.
+- [ ] Commits de todos os integrantes (4 dos 9 ainda sem commit proprio em 16/11).
 - [x] Backend integrado a `main`.
-- [ ] Frontend integrado.
+- [x] Frontend integrado na `development` (PR #2), com build e lint aprovados em 16/11.
 - [ ] Sistema publicado e acessivel externamente.
 - [x] F1 implementada no backend.
 - [ ] F1 demonstrada no frontend e calibrada com fonte aceita.
@@ -18,10 +19,10 @@
 - [x] Arquitetura e contrato consolidados.
 - [x] Esquema de hardware preparado.
 - [ ] Inventario/cotacao de hardware anexado.
-- [x] Plano de testes preparado.
-- [x] Testes automatizados executados: 30 aprovados.
+- [x] Plano de testes preparado, com casos de tela e mapa do roteiro comum.
+- [x] Testes automatizados executados: 30 aprovados em 15/11 (nao reproduzidos em 16/11, ver resultados-testes.md).
 - [ ] Testes ponta a ponta executados.
-- [ ] Manual ajustado ao frontend final.
+- [x] Manual conferido com as telas do frontend (faltam capturas).
 - [x] Registro de IA iniciado.
 - [ ] ADRs propostos aprovados na data real.
 - [ ] URL e versao entregues a Empresa 02.

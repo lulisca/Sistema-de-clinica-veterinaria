@@ -4,7 +4,7 @@
 
 ## Topologia alvo
 
-- frontend web em servico compativel com seu framework;
+- frontend React + Vite (site estatico gerado por `npm run build` em `frontend/dist`), com `VITE_API_URL` apontando para a API publicada;
 - API FastAPI em runtime Python;
 - PostgreSQL gerenciado;
 - HTTPS em todos os acessos;
