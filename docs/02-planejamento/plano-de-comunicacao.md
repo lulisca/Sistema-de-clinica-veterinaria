@@ -5,9 +5,9 @@
 | Comunicacao | Participantes | Canal | Frequencia/prazo | Registro | Responsavel |
 |---|---|---|---|---|---|
 | Reuniao de marco | Todos | Presencial ou chamada | Segunda-feira | Ata no repositorio no mesmo dia | GP |
-| Status das frentes | Lideres G1/G2/G3, GP e arquiteta | Grupo da equipe | Diario durante a execucao | Resumo ou checklist | Cada frente |
-| Decisao arquitetural | Arquiteta, GP e afetados | Reuniao + PR | Antes da implementacao definitiva | ADR datado e PR | Arquiteta |
-| Alteracao de contrato | G1, G2 e G3 | Issue/PR | Antes do merge | Contrato e testes atualizados | Arquiteta |
+| Status das frentes | Lideres G1/G2/G3, GP e arquiteto | Grupo da equipe | Diario durante a execucao | Resumo ou checklist | Cada frente |
+| Decisao arquitetural | Arquiteto, GP e afetados | Reuniao + PR | Antes da implementacao definitiva | ADR datado e PR | Arquiteto |
+| Alteracao de contrato | G1, G2 e G3 | Issue/PR | Antes do merge | Contrato e testes atualizados | Arquiteto |
 | Bloqueio critico | Qualquer integrante + GP | Canal imediato | Ao identificar | Issue ou impedimento | Quem detectou |
 | Revisao de risco | GP e G3 | Reuniao de marco | A cada marco | Plano de riscos | G3 |
 | Validacao externa | Equipe avaliadora | Canal do professor | Quando houver acesso | Relatorios e evidencias | G3 |
@@ -34,6 +34,6 @@
 | Nivel | Exemplo | Prazo | Acao |
 |---|---|---:|---|
 | 1 - local | duvida ou pequena correcao | mesmo dia | Resolver na frente e registrar no PR |
-| 2 - integracao | contrato ou conflito entre frentes | 4 horas uteis | Acionar arquiteta e GP |
+| 2 - integracao | contrato ou conflito entre frentes | 4 horas uteis | Acionar arquiteto e GP |
 | 3 - marco | risco de nao publicar/testar/entregar | imediato | GP reduz escopo extra |
 | 4 - academico | C1, Empresa 02, professor ou parceiro | imediato | GP solicita orientacao formal |

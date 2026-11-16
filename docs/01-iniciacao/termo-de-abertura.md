@@ -64,12 +64,12 @@ Os marcos anteriores permanecem registrados no cronograma. Artefatos produzidos 
 ## 6. Equipe
 
 - **Gerente de Projeto:** Alisson
-- **Arquiteta:** Luísa
+- **Arquiteto:** Nathan
 - **Grupo 1 — Backend:** Lucas Kather, Pedro Valença, Rafael Lindquist e Rafael Nicolas
 - **Grupo 2 — Frontend:** Alisson, Leo e Luísa
-- **Grupo 3 — Qualidade e Projeto:** Kauan e Nathan
+- **Grupo 3 — Qualidade e Projeto:** Kauã e Nathan
 
-GP e arquiteta acumulam participação nas frentes. A equipe possui nove integrantes.
+GP e arquiteto acumulam participação nas frentes. A equipe possui nove integrantes.
 
 ## 7. Stakeholders e seus interesses
 
@@ -117,5 +117,5 @@ O cenário fictício Vila Nova EC não é tratado como parceiro real.
 ## 11. Assinatura
 
 - **Gerente de Projeto:** Alisson — confirmação documental pendente
-- **Arquiteta:** Luísa — confirmação documental pendente
+- **Arquiteto:** Nathan — confirmação documental pendente
 - **Data da aprovação formal:** a registrar na data real da deliberação

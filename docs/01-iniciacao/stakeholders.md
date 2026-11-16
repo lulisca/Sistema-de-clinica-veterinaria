@@ -9,7 +9,7 @@
 | Professor/cliente | Define o enunciado, esclarece dúvidas e homologa o produto | Alto | Alto | Status objetivo, demonstrações e decisões rastreáveis |
 | Coordenação/UNASP | Avaliação, integridade acadêmica e extensão | Alto | Alto | Entregas formais e transparência sobre limitações |
 | GP — Alisson | Coordenação, cronograma, bloqueios e apresentação | Alto | Alto | Acompanhamento diário e distribuição nominal de tarefas |
-| Arquiteta — Luísa | Stack, ADRs, contrato e integração | Alto | Alto | Revisão técnica e validação entre frentes |
+| Arquiteto — Nathan | Stack, ADRs, contrato e integração | Alto | Alto | Revisão técnica e validação entre frentes |
 | Grupo 1 — Backend | API, dados e regras F1/F2/F3 | Médio | Alto | PRs revisados, contrato estável e testes |
 | Grupo 2 — Frontend | Experiência do tutor e da recepção | Médio | Alto | Protótipos, integração frequente e feedback do backend |
 | Grupo 3 — Qualidade e Projeto | Gestão, documentação, testes, deploy e manual | Médio | Alto | Checklist, evidências e revisão do GP |
