@@ -57,7 +57,8 @@ src/
 
 - **F1:** a espera aparece como faixa p50–p90 por tipo de atendimento. Sem amostras suficientes, a tela mostra "Indisponível", nunca "0 min".
 - **F2:** a posição é pedida só em 3 momentos (entrada, chamada e retorno). Latitude e longitude ficam no navegador; a API recebe só os minutos de deslocamento. Quem nega a permissão continua na fila, com aviso por tempo fixo.
-- **F3:** a fila filtra por espécie e tipo de atendimento. Só veterinário ou admin vê o botão de emergência. A sala de isolamento é alocada antes de iniciar o atendimento.
+- **F3:** a fila filtra por espécie e tipo de atendimento. Só veterinário ou admin declara ou remove emergência e muda a ordem da fila (arrastando a linha ou com ↑ e ↓, só sem filtro). A recepção vê a ordem. A sala de isolamento é alocada antes de iniciar o atendimento.
+- **Sintomas:** o que o tutor (ou a recepção) escreveu aparece na linha da fila e no detalhe do caso, para o veterinário decidir quem sobe. O link do tutor não mostra sintomas.
 - O canal de aviso é `SIMULATOR`: nenhuma tela diz que mandou WhatsApp ou SMS.
 - Erros 401, 403, 404, 409 e 422 aparecem traduzidos, sem apagar o que foi digitado.
 
