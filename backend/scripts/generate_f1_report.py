@@ -4,8 +4,8 @@ Usage:
     python scripts/generate_f1_report.py
     python scripts/generate_f1_report.py docs/RELATORIO_CALIBRACAO_F1.md
 
-The report never claims academic calibration when clinic data are absent. It reports
-what the database actually contains and leaves the field-data conclusion explicit.
+The report identifies whether the database contains C1-MOCKED, real field data or
+no samples. It never presents mocked samples as real clinic observations.
 """
 from __future__ import annotations
 
@@ -34,10 +34,10 @@ def main() -> None:
         field_samples = [s for s in samples if s.source in {'DIRECT_OBSERVATION', 'RETROSPECTIVE'}]
         system_samples = [s for s in samples if s.source == 'SYSTEM']
         mocked_samples = [s for s in samples if s.source == 'MOCKED']
-        accepted_by_type = defaultdict(int)
+        eligible_by_type = defaultdict(int)
         for sample in samples:
-            if sample.source != 'MOCKED':
-                accepted_by_type[sample.appointment_type] += 1
+            if sample.source != 'MOCKED' or settings.allow_mocked_estimates:
+                eligible_by_type[sample.appointment_type] += 1
         readiness = [
             {
                 'appointment_type': appointment_type,
@@ -45,7 +45,7 @@ def main() -> None:
                 'minimum_configured': settings.min_samples_for_estimate,
                 'ready_for_software_estimate': count >= settings.min_samples_for_estimate,
             }
-            for appointment_type, count in sorted(accepted_by_type.items())
+            for appointment_type, count in sorted(eligible_by_type.items())
         ]
 
         initial_rows = list(db.scalars(
@@ -71,15 +71,19 @@ def main() -> None:
             if entry:
                 by_type[entry.appointment_type].append(row)
 
-    has_field_data = bool(field_samples)
-    status = 'PENDENTE DE DADOS DE CAMPO' if not has_field_data else 'DADOS DE CAMPO PRESENTES — revisar cobertura antes de declarar calibração concluída'
+    if field_samples:
+        status = 'DADOS REAIS PRESENTES — revisar origem e cobertura antes de atribuir resultado à clínica'
+    elif mocked_samples:
+        status = 'C1-MOCKED PRESENTE — aprovado para a entrega, sem alegação de coleta real'
+    else:
+        status = 'SEM AMOSTRAS — importar uma fonte identificada antes de calcular estimativas'
 
     lines = [
         '# Relatório de calibração e avaliação — F1',
         '',
         f'**Status:** {status}',
         '',
-        'Este relatório é gerado a partir do banco atual. Ele não substitui a verificação acadêmica da coleta exigida pelo projeto.',
+        'Este relatório reflete o banco atual e mantém cada origem identificada. Dados MOCKED não são apresentados como observação de clínica real.',
         '',
         '## 1. Método implementado',
         '',
@@ -94,10 +98,11 @@ def main() -> None:
         '',
         f'- Amostras de observação direta/retrospectiva: **{len(field_samples)}**',
         f'- Amostras produzidas pelo sistema em operação: **{len(system_samples)}**',
-        f'- Amostras mockadas, excluídas da calibração: **{len(mocked_samples)}**',
-        f'- Limiar técnico configurado por tipo: **{settings.min_samples_for_estimate}** amostras não mockadas.',
+        f'- Amostras mockadas: **{len(mocked_samples)}**',
+        f'- Uso de MOCKED habilitado: **{sim if settings.allow_mocked_estimates else não}**',
+        f'- Limiar técnico configurado por tipo: **{settings.min_samples_for_estimate}** amostras elegíveis.',
         '',
-        '| Tipo | Amostras não mockadas | Limiar técnico | Backend pode estimar? |',
+        '| Tipo | Amostras elegíveis | Limiar técnico | Backend pode estimar? |',
         '|---|---:|---:|---|',
     ]
 
@@ -135,9 +140,9 @@ def main() -> None:
 
     lines.extend([
         '',
-        '## 4. Critério para encerramento da calibração',
+        '## 4. Interpretação da base',
         '',
-        'Antes de declarar a F1 calibrada para a entrega, a equipe deve substituir/ complementar os dados de desenvolvimento pela série real da clínica, verificar a cobertura exigida no Caderno do Aluno e então regenerar este relatório.',
+        'A massa MOCKED integra o C1-MOCKED aprovado para a entrega e pode alimentar a apresentação quando habilitada. Ela não representa coleta real. Uma série real futura deve ser registrada separadamente e gerar nova análise.',
         '',
         'O valor de `MIN_SAMPLES_FOR_ESTIMATE` é uma trava técnica do software, não uma afirmação de suficiência estatística nem substitui o mínimo acadêmico de coleta.',
         '',

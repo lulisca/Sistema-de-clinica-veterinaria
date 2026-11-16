@@ -2,14 +2,14 @@
 
 ## Estado
 
-Implementação backend para demonstração com notificação simulada. A integração com provedor real não está incluída porque o canal ainda não foi escolhido. Parâmetros operacionais pendentes permanecem configuráveis e não são apresentados como decisões aprovadas.
+Implementação integrada com notificação simulada. O canal real permanece fora do escopo congelado. A configuração `MOCKED` aprovada usa aviso de 20 minutos, retenção de 60 minutos e margem de 10 minutos.
 
 ## Fluxo
 
 1. O tutor abre o link público do próprio atendimento.
 2. A interface consulta `GET /api/public/status/{token}/location-consent` e apresenta a finalidade antes de solicitar permissão do navegador.
-3. Se o tutor consentir, o cliente obtém a posição apenas naquele momento, consulta o serviço de rotas escolhido pela equipe e envia somente `travel_minutes` para `POST /api/public/status/{token}/location`. Coordenadas não são enviadas ao backend.
-4. Se o tutor negar, a interface envia `consent_given=false` sem dados de deslocamento. O sistema continua funcionando e usa o acionamento por tempo fixo se a clínica o tiver configurado.
+3. Se o tutor consentir, o cliente obtém a posição apenas naquele momento, calcula o deslocamento por Haversine no navegador e envia somente `travel_minutes` para `POST /api/public/status/{token}/location`. Coordenadas não são enviadas ao backend.
+4. Se o tutor negar, a interface envia `consent_given=false` sem dados de deslocamento. O sistema continua funcionando e usa o aviso fixo `MOCKED` de 20 minutos.
 5. A recepção consulta `GET /api/queue/{id}/return-decision?safety_margin_minutes=N` ou chama o endpoint `notifications/evaluate`.
 6. O cálculo compara p50 de espera com tempo de deslocamento + margem. A resposta indica se a chegada é viável, está em risco ou é inviável pelo p50.
 7. O simulador registra o evento sem alegar entrega externa. O tutor confirma pelo link público; a fila passa de `CALLED` para `RETURNING`.
@@ -25,15 +25,15 @@ Implementação backend para demonstração com notificação simulada. A integr
 - Snapshots expirados são apagados nas operações F2; o script de limpeza deve ser agendado no ambiente publicado.
 - O fluxo sem GPS não bloqueia o acesso do tutor.
 
-## Parâmetros que exigem decisão da equipe/clínica
+## Parâmetros adotados
 
-- `LOCATION_RETENTION_MINUTES`: prazo de retenção.
-- `DEFAULT_FIXED_NOTICE_MINUTES`: antecedência para quem negar localização.
-- `safety_margin_minutes`: margem de segurança usada no cálculo.
-- Canal real de notificação e credenciais do provedor.
-- Serviço que converte a localização obtida no navegador em tempo estimado de deslocamento.
+- `LOCATION_RETENTION_MINUTES=60`.
+- `DEFAULT_FIXED_NOTICE_MINUTES=20`.
+- `safety_margin_minutes=10` na demonstração.
+- cálculo Haversine no navegador com coordenadas de referência `MOCKED`.
+- canal `SIMULATOR`, sem provedor externo.
 
-O valor `60` mostrado como exemplo local em `.env.example` é apenas um valor provisório de desenvolvimento, não uma decisão aprovada. Não publicar sem substituir por valor validado.
+Os valores 20/60/10 formam a linha `MOCKED` aprovada para a entrega e permanecem configuráveis. Uma mudança futura deve receber nova decisão e novos testes.
 
 ## Testes automatizados
 

@@ -1,4 +1,4 @@
-'''Cria dados MOCKED para desenvolver UI e testes. Nao calibram a F1 oficial.'''
+'''Cria a massa C1-MOCKED usada em desenvolvimento, testes e apresentacao.'''
 from datetime import datetime, timedelta, timezone
 
 from app.core.database import Base, SessionLocal, engine
