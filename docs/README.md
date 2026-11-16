@@ -18,7 +18,7 @@ docs/
 ├── README.md              este índice
 ├── COMMITS.md             regras de commit e de autoria
 ├── registro-de-ia.md      Registro de IA (obrigatório)
-├── responsabilidades.md   quem faz o quê (proposta, a formalizar no ADR-000)
+├── responsabilidades.md   quem faz o quê, por frente (sem GP nem arquiteto, ver ADR-000)
 ├── referencias/           materiais de trabalho preservados, sem substituir os documentos oficiais
 ├── adr/                   um arquivo por decisão: NNN-titulo-curto.md
 ├── reunioes/              atas das segundas-feiras: AAAA-MM-DD-ata.md
@@ -33,7 +33,7 @@ docs/
 
 Arquivos que começam com `_modelo` são modelos: copie, renomeie e preencha. Não edite o modelo.
 
-O planejamento detalhado preparado pelo GP está preservado em `referencias/ETAPAS-planejamento-detalhado.md`. Ele serve como fonte para os entregáveis do projeto e não substitui o `ETAPAS.md` da raiz.
+O planejamento detalhado preparado no início do projeto está preservado em `referencias/ETAPAS-planejamento-detalhado.md`. Ele serve como fonte para os entregáveis do projeto e não substitui o `ETAPAS.md` da raiz.
 
 ## Entregáveis: onde cada um fica
 
@@ -81,7 +81,7 @@ O planejamento detalhado preparado pelo GP está preservado em `referencias/ETAP
 
 ### ADRs obrigatórios
 
-- **ADR-000:** critério de divisão da turma, as três frentes, nomes e papéis (já na S1).
+- **ADR-000:** critério de divisão da turma, as três frentes e os nomes (a equipe não designa GP nem arquiteto).
 - **ADR da F2:** como a posição do tutor é obtida.
 - **ADR do hardware.**
 
@@ -97,7 +97,7 @@ Toda decisão relevante vira ADR, incluindo stack, forma de integração, hosped
 - Manual, demo e encerramento: `07-encerramento/`.
 - Rastreabilidade: `08-controle/matriz-de-rastreabilidade.md`.
 
-Diagnosticos, auditorias de leitura e listas pessoais de pendencias do GP sao controles locais e nao integram o pacote versionado.
+Diagnosticos, auditorias de leitura e listas pessoais de pendencias sao controles locais e nao integram o pacote versionado.
 
 ### Esquema de hardware (`04-arquitetura/esquema-de-hardware.md`)
 

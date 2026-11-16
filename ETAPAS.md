@@ -10,12 +10,10 @@ Esses pontos **não são negociáveis** — todo entregável técnico precisa co
 
 ---
 
-## Papéis individuais
+## Divisão dos 3 grupos
 
-- **Gerente de Projeto (GP)** — conduz as reuniões de segunda, cuida de cronograma, destrava bloqueios.
-- **Arquiteto** — decide stack, escreve ADRs, revisa integração entre grupos.
+A equipe não designa gerente de projeto nem arquiteto (ADR-000). Quem faz o quê está em [docs/responsabilidades.md](docs/responsabilidades.md).
 
-## Sugestão de divisão dos 3 grupos
 
 - **Grupo 1 — Backend:** API, regras da fila, prioridade, notificações, banco.
 - **Grupo 2 — Frontend:** telas do tutor, da recepção e (se v1 incluir) do veterinário/gestor.
@@ -43,7 +41,6 @@ Os marcos são às segundas-feiras, com a coordenação. Entre um marco e outro,
 
 **S1 · 05/10 — Kickoff**
 - Critério de divisão declarado e **ADR-000** (divisão e frentes).
-- GP e Arquiteto designados.
 - Repositório criado e termo de abertura.
 
 **S2 · 12/10 — Campo**
@@ -98,7 +95,7 @@ Os marcos são às segundas-feiras, com a coordenação. Entre um marco e outro,
 
 ## Rotina que corre o projeto inteiro
 
-- **Ata da segunda-feira** (5 linhas), commitada no mesmo dia. O status é exposto por um integrante **sorteado na hora**, nunca pelo GP.
+- **Ata da segunda-feira** (5 linhas), commitada no mesmo dia. O status é exposto por um integrante **sorteado na hora**.
 - **Plano de comunicação** (canais e cadência) e plano de riscos revisado a cada marco.
 - **Registro de IA** no repositório, com uma linha por uso relevante (o que pediu, o que voltou, o que mudamos e por quê). No fim, registramos **um erro da ferramenta** que a equipe identificou.
 - **ADR commitado na data da decisão.** Um arquivo por decisão, em `docs/adr/NNN-titulo-curto.md`.
@@ -161,7 +158,7 @@ O esquema precisa conter: diagrama de blocos, componentes com justificativa (do 
 
 ## Decisões nossas (cada uma vira ADR)
 
-- [ ] Critério de divisão, as 3 frentes, nomes e papéis (**ADR-000**, já na S1)
+- [x] Critério de divisão, as 3 frentes e nomes (**ADR-000**, registrado em 15/11)
 - [ ] Perfis atendidos na v1 (tutor + recepção? inclui veterinário?)
 - [ ] Canal de notificação da demo (painel, WhatsApp, SMS, e-mail ou push)
 - [ ] Eixos de segregação, pesos e regra de desempate (levantados com o veterinário da clínica)

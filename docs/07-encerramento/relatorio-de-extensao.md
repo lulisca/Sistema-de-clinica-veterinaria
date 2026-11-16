@@ -39,5 +39,5 @@ Registrar o que nao foi possivel realizar e qualquer diferenca entre o planejado
 ## Aprovacao
 
 - Responsavel pelo relatorio:
-- Revisao do GP:
+- Revisao (um integrante de outra frente):
 - Data:

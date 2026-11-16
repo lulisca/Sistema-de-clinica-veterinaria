@@ -44,4 +44,4 @@ As horas nao sao valoradas financeiramente por ser projeto academico, mas consta
 
 ## Controle
 
-Qualquer gasto requer aprovacao do GP, responsavel pelo pagamento e comprovante. Servico pago recorrente nao sera contratado sem decisao formal.
+Qualquer gasto requer aprovacao da equipe em ata, responsavel pelo pagamento e comprovante. Servico pago recorrente nao sera contratado sem decisao formal.
