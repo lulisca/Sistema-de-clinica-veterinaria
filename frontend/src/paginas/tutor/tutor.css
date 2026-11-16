@@ -59,6 +59,11 @@
   object-position: 50% 77%;
 }
 
+/* Foto do gato: enquadra o rosto, nas duas alturas de foto */
+.tutor-foto img.foto-gato {
+  object-position: 50% 40%;
+}
+
 .tutor-foto .selo {
   position: absolute;
   top: var(--espaco-md);

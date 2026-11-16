@@ -18,6 +18,7 @@ import { mensagemDeErro } from '../../textos'
 import type { MomentoLocalizacao, StatusPublico, Viabilidade } from '../../tipos'
 import fotoStatus from '../../assets/foto-status.jpg'
 import fotoSuaVez from '../../assets/foto-sua-vez.jpg'
+import fotoGato from '../../assets/foto-gato.jpg'
 import iconeLocalizacao from '../../assets/icone-localizacao.svg'
 import iconeSemConexao from '../../assets/icone-sem-conexao.svg'
 import iconeLinkInvalido from '../../assets/icone-link-invalido.svg'
@@ -216,7 +217,7 @@ export default function StatusTutor() {
       <PaginaTutor numero={status.queue_entry_id}>
         {avisoConexao}
         <div className="tutor-foto tutor-foto-baixa">
-          <img src={fotoSuaVez} alt="" />
+          <FotoPaciente especie={status.species} fotoCao={fotoSuaVez} />
           <SeloEstado estado={status.status} />
         </div>
         <div className="tutor-texto">
@@ -261,7 +262,7 @@ export default function StatusTutor() {
       {avisoConexao}
       {(temFaixa || !naFila) && (
         <div className="tutor-foto">
-          <img src={fotoStatus} alt="" />
+          <FotoPaciente especie={status.species} fotoCao={fotoStatus} />
           <SeloEstado estado={status.status} />
         </div>
       )}
@@ -313,6 +314,12 @@ function PaginaTutor({ numero, children }: { numero?: number; children: ReactNod
       </div>
     </main>
   )
+}
+
+// Foto do topo: gato para pacientes felinos, cão para os demais. É só ilustração (alt vazio).
+function FotoPaciente({ especie, fotoCao }: { especie: string; fotoCao: string }) {
+  if (especie === 'CAT') return <img src={fotoGato} alt="" className="foto-gato" />
+  return <img src={fotoCao} alt="" />
 }
 
 function SemConexao({ ultimaAtualizacao, tentarDeNovo }: { ultimaAtualizacao: string | null; tentarDeNovo: () => void }) {
