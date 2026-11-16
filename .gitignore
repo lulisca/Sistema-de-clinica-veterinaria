@@ -20,7 +20,7 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Controles locais da equipe - nao sao entregaveis do repositorio
+# Controles locais do GP - nao sao entregaveis do repositorio
 docs/00-diagnostico-g3.md
 docs/04-arquitetura/decisoes-pendentes.md
 docs/08-controle/auditoria-backend.md

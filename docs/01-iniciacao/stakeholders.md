@@ -8,9 +8,11 @@
 |---|---|---|---|---|
 | Professor/cliente | Define o enunciado, esclarece dúvidas e homologa o produto | Alto | Alto | Status objetivo, demonstrações e decisões rastreáveis |
 | Coordenação/UNASP | Avaliação, integridade acadêmica e extensão | Alto | Alto | Entregas formais e transparência sobre limitações |
-| Grupo 1 — Backend | API, dados e regras F1/F2/F3 | Alto | Alto | PRs revisados, contrato estável e testes |
-| Grupo 2 — Frontend | Experiência do tutor e da recepção | Alto | Alto | Protótipos, integração frequente e feedback do backend |
-| Grupo 3 — Qualidade e Projeto | Gestão, documentação, testes, publicação e manual | Médio | Alto | Checklist, evidências e revisão entre frentes |
+| GP — Alisson | Coordenação, cronograma, bloqueios e apresentação | Alto | Alto | Acompanhamento diário e distribuição nominal de tarefas |
+| Arquiteta — Luísa | Stack, ADRs, contrato e integração | Alto | Alto | Revisão técnica e validação entre frentes |
+| Grupo 1 — Backend | API, dados e regras F1/F2/F3 | Médio | Alto | PRs revisados, contrato estável e testes |
+| Grupo 2 — Frontend | Experiência do tutor e da recepção | Médio | Alto | Protótipos, integração frequente e feedback do backend |
+| Grupo 3 — Qualidade e Projeto | Gestão, documentação, testes, deploy e manual | Médio | Alto | Checklist, evidências e revisão do GP |
 | Tutor do animal | Previsão, privacidade e retorno no momento adequado | Baixo | Alto | Interface clara, consentimento e alternativa sem GPS |
 | Recepção | Operação da agenda/fila e resolução de falhas | Médio | Alto | Fluxo simples e informação acionável |
 | Médico-veterinário | Classificação de emergência e regras clínicas | Alto | Alto | Validar regras; sistema não substitui decisão clínica |

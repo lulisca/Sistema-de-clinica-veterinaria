@@ -1,6 +1,6 @@
 # Termo de abertura
 
-> **Status:** rascunho consolidado em 2026-11-15, revisado pelo G3 em 2026-11-16. Equipe e escopo-base confirmados; parceiro comunitário real, evidências do C1 e assinatura formal permanecem a validar.
+> **Status:** rascunho consolidado pelo GP em 2026-11-15. Equipe e escopo-base confirmados; parceiro comunitário real, evidências do C1 e assinatura formal permanecem a validar.
 
 ## 1. Nome da empresa e do projeto
 
@@ -63,11 +63,13 @@ Os marcos anteriores permanecem registrados no cronograma. Artefatos produzidos 
 
 ## 6. Equipe
 
+- **Gerente de Projeto:** Alisson
+- **Arquiteta:** Luísa
 - **Grupo 1 — Backend:** Lucas Kather, Pedro Valença, Rafael Lindquist e Rafael Nicolas
 - **Grupo 2 — Frontend:** Alisson, Leo e Luísa
-- **Grupo 3 — Qualidade e Projeto:** Kauã e Nathan
+- **Grupo 3 — Qualidade e Projeto:** Kauan e Nathan
 
-A equipe possui nove integrantes e não designa gerente de projeto nem arquiteto (ADR-000). Decisões entre frentes são tomadas em conjunto e registradas em ADR ou ata.
+GP e arquiteta acumulam participação nas frentes. A equipe possui nove integrantes.
 
 ## 7. Stakeholders e seus interesses
 
@@ -114,5 +116,6 @@ O cenário fictício Vila Nova EC não é tratado como parceiro real.
 
 ## 11. Assinatura
 
-- **Aprovação:** um representante de cada frente (G1, G2 e G3) — confirmação documental pendente
+- **Gerente de Projeto:** Alisson — confirmação documental pendente
+- **Arquiteta:** Luísa — confirmação documental pendente
 - **Data da aprovação formal:** a registrar na data real da deliberação

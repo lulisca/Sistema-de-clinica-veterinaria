@@ -41,7 +41,7 @@
 - estimativa de apresentacao: `ALLOW_MOCKED_ESTIMATES=true`;
 - CORS local: `http://localhost:3000`.
 
-Os valores sao linha de trabalho para concluir a interface; G1 e G2 podem altera-los em conjunto antes do fechamento.
+Os valores sao linha de trabalho para concluir a interface; a arquiteta pode altera-los antes do fechamento.
 
 ## Criterio de aceite do G2
 

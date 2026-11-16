@@ -2,7 +2,7 @@
 
 > **Versao planejada:** 1.0 - 2026-10-19
 > **Consolidacao documental:** 2026-11-15, sem retroatividade
-> **Responsavel:** G3
+> **Responsavel:** G3, sob coordenacao do GP
 > **Status:** base de execucao; decisoes clinicas e hospedagem permanecem a aprovar.
 
 ## Objetivo do produto

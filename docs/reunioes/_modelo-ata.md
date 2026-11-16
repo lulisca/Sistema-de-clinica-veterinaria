@@ -1,6 +1,6 @@
 # ATA — Empresa 01 — AAAA-MM-DD
 
-> Cinco linhas, commitada **no mesmo dia** da reunião, em `docs/reunioes/AAAA-MM-DD-ata.md`. O status é exposto por um integrante sorteado na hora.
+> Cinco linhas, commitada **no mesmo dia** da reunião, em `docs/reunioes/AAAA-MM-DD-ata.md`. O status é exposto por um integrante sorteado na hora, nunca pelo gerente de projeto.
 
 - **Presentes:**
 - **Ausentes:**
