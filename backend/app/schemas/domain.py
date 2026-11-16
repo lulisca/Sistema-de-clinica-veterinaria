@@ -20,6 +20,31 @@ class TokenOut(BaseModel):
     token_type: str = 'bearer'
     role: str
 
+class TutorRegisterIn(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    name: str = Field(min_length=2, max_length=120)
+    email: str = Field(min_length=3, max_length=180)
+    password: str = Field(min_length=8, max_length=128)
+    contact: str | None = Field(default=None, max_length=120)
+
+class TutorAccountOut(BaseModel):
+    user_id: int
+    tutor_id: int
+    name: str
+    email: str
+    contact: str | None
+
+class TutorAnimalCreate(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    species: str = Field(min_length=2, max_length=40)
+    name: str | None = Field(default=None, max_length=120)
+
+class TutorQueueCreate(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    animal_id: int
+    appointment_type: str = Field(min_length=2, max_length=50)
+    symptoms: str = Field(min_length=3, max_length=2000)
+
 class TutorCreate(BaseModel):
     name: str
     contact: str | None = None
@@ -91,6 +116,7 @@ class QueueOut(ORMModel):
     appointment_id: int | None
     animal_id: int
     appointment_type: str
+    symptoms: str | None
     species: str
     status: str
     priority_level: int

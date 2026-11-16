@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta, timezone
+import secrets
+from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
-from app.core.security import create_access_token, hash_password, require_roles, verify_password
+from app.core.security import create_access_token, current_user, hash_password, require_roles, verify_password
 from app.models.domain import (
     Animal, Appointment, LocationSnapshot, Notification, QueueEntry, Resource, ResourceAllocation,
     ServiceDurationSample, Tutor, User, WaitEstimate
@@ -25,8 +27,10 @@ def health():
 
 @router.post('/auth/bootstrap', response_model=TokenOut)
 def bootstrap(payload: BootstrapIn, db: Session = Depends(get_db)):
-    if db.scalar(select(func.count(User.id))) > 0:
-        raise HTTPException(409, 'Bootstrap is allowed only when there are no users')
+    if db.scalar(select(func.count(User.id)).where(User.role != 'TUTOR')) > 0:
+        raise HTTPException(409, 'Bootstrap is allowed only when there are no staff users')
+    if payload.role.upper() not in {'RECEPTION','VETERINARIAN','ADMIN'}:
+        raise HTTPException(422, 'Invalid staff role')
     user = User(name=payload.name, email=payload.email.lower(), password_hash=hash_password(payload.password), role=payload.role.upper())
     db.add(user); db.commit(); db.refresh(user)
     return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
@@ -34,9 +38,93 @@ def bootstrap(payload: BootstrapIn, db: Session = Depends(get_db)):
 @router.post('/auth/login', response_model=TokenOut)
 def login(payload: LoginIn, db: Session = Depends(get_db)):
     user = db.scalar(select(User).where(User.email == payload.email.lower()))
-    if not user or not verify_password(payload.password, user.password_hash):
+    if not user or not user.active or not verify_password(payload.password, user.password_hash):
         raise HTTPException(401, 'Invalid credentials')
     return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
+
+# Cadastro público: nunca aceita papel de equipe, tutor_id ou privilégios informados pelo cliente.
+@router.post('/auth/register-tutor', response_model=TokenOut, status_code=201)
+def register_tutor(payload: TutorRegisterIn, db: Session = Depends(get_db)):
+    email = payload.email.strip().lower()
+    if not email or '@' not in email or email.startswith('@') or email.endswith('@'):
+        raise HTTPException(422, 'Invalid email')
+    if db.scalar(select(User.id).where(User.email == email)):
+        raise HTTPException(409, 'Email already registered')
+    user = User(name=payload.name.strip(), email=email, password_hash=hash_password(payload.password), role='TUTOR')
+    db.add(user)
+    try:
+        db.flush()
+        tutor = Tutor(name=payload.name.strip(), contact=payload.contact, user_id=user.id)
+        db.add(tutor)
+        db.flush()
+        audit(db, 'Tutor', tutor.id, 'SELF_REGISTER', user.id)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(409, 'Email already registered')
+    return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
+
+
+def _my_tutor(db: Session, user: User) -> Tutor:
+    tutor = db.scalar(select(Tutor).where(Tutor.user_id == user.id))
+    if not tutor:
+        raise HTTPException(409, 'Tutor profile not linked to this account')
+    return tutor
+
+
+@router.get('/me', response_model=TutorAccountOut)
+def tutor_me(db: Session = Depends(get_db), user=Depends(require_roles('TUTOR'))):
+    tutor = _my_tutor(db, user)
+    return TutorAccountOut(user_id=user.id, tutor_id=tutor.id, name=tutor.name, email=user.email, contact=tutor.contact)
+
+
+@router.post('/me/animals', response_model=AnimalOut, status_code=201)
+def tutor_add_animal(payload: TutorAnimalCreate, db: Session = Depends(get_db), user=Depends(require_roles('TUTOR'))):
+    tutor = _my_tutor(db, user)
+    animal = Animal(tutor_id=tutor.id, code='PET-' + secrets.token_hex(12),
+                    species=payload.species.strip().upper(), name=payload.name)
+    db.add(animal)
+    db.flush()
+    audit(db, 'Animal', animal.id, 'SELF_CREATE', user.id)
+    db.commit()
+    db.refresh(animal)
+    return animal
+
+
+@router.get('/me/animals', response_model=list[AnimalOut])
+def tutor_animals(db: Session = Depends(get_db), user=Depends(require_roles('TUTOR'))):
+    tutor = _my_tutor(db, user)
+    return list(db.scalars(select(Animal).where(Animal.tutor_id == tutor.id).order_by(Animal.id)).all())
+
+
+@router.post('/me/queue', response_model=QueueOut, status_code=201)
+def tutor_enter_queue(payload: TutorQueueCreate, db: Session = Depends(get_db), user=Depends(require_roles('TUTOR'))):
+    tutor = _my_tutor(db, user)
+    animal = db.get(Animal, payload.animal_id)
+    if not animal or animal.tutor_id != tutor.id:
+        raise HTTPException(404, 'Animal not found')
+    existing = db.scalar(select(QueueEntry.id).where(
+        QueueEntry.animal_id == animal.id,
+        QueueEntry.status.in_(['PENDING_TRIAGE', 'WAITING', 'CALLED', 'RETURNING', 'READY', 'IN_SERVICE'])
+    ).limit(1))
+    if existing:
+        raise HTTPException(409, 'Animal already has an active queue entry')
+    q = QueueEntry(animal_id=animal.id, appointment_type=payload.appointment_type.strip().upper(),
+                   species=animal.species, symptoms=payload.symptoms.strip(), status='PENDING_TRIAGE')
+    db.add(q)
+    db.flush()
+    audit(db, 'QueueEntry', q.id, 'REMOTE_REQUEST', user.id)
+    db.commit()
+    db.refresh(q)
+    return q
+
+
+@router.get('/me/queue', response_model=list[QueueOut])
+def tutor_queue(db: Session = Depends(get_db), user=Depends(require_roles('TUTOR'))):
+    tutor = _my_tutor(db, user)
+    animal_ids = select(Animal.id).where(Animal.tutor_id == tutor.id)
+    return list(db.scalars(select(QueueEntry).where(QueueEntry.animal_id.in_(animal_ids))
+        .order_by(QueueEntry.checked_in_at.desc(), QueueEntry.id.desc())).all())
 
 @router.post('/tutors', response_model=TutorOut)
 def create_tutor(payload: TutorCreate, db: Session = Depends(get_db), user=STAFF):
@@ -144,6 +232,10 @@ def get_queue_entry(entry_id:int,db:Session=Depends(get_db),user=STAFF):
 def update_priority(entry_id:int,payload:PriorityUpdate,db:Session=Depends(get_db),user=Depends(require_roles('VETERINARIAN','ADMIN'))):
     q=db.get(QueueEntry,entry_id)
     if not q: raise HTTPException(404,'Queue entry not found')
+    if q.status == 'PENDING_TRIAGE':
+        if payload.emergency is None and payload.priority_level is None:
+            raise HTTPException(422, 'A triage decision is required')
+        q.status = 'WAITING'
     if payload.emergency is not None: q.emergency=payload.emergency
     if payload.priority_level is not None: q.priority_level=payload.priority_level
     audit(db,'QueueEntry',q.id,'PRIORITY_UPDATE',user.id,payload.model_dump(exclude_unset=True)); db.commit(); db.refresh(q)
