@@ -24,6 +24,14 @@ npm run dev
 | `npm run build` | Confere os tipos (TypeScript) e gera a versão de produção em `dist/` |
 | `npm run lint` | Procura erros comuns no código |
 
+## Publicação (Vercel)
+
+Decisão no [ADR-003](../docs/adr/003-hospedagem-vercel.md). No projeto da Vercel:
+
+- **Root Directory:** `frontend`, com o preset **Vite** (build `npm run build`, saída `dist`). Com a raiz do repositório, nada é construído e todo endereço dá 404.
+- **Variável de ambiente:** `VITE_API_URL` com a URL da API publicada. Sem ela, o site chama `http://localhost:8000/api` e o login falha.
+- **`vercel.json`:** manda toda rota para o `index.html`. Sem ele, abrir ou recarregar `/recepcao/fila` ou o link do tutor (`/t/<token>`) dá 404, porque quem conhece essas rotas é o React Router, não o servidor.
+
 ## Onde fica cada tela
 
 | Figma | Rota | Arquivo |
