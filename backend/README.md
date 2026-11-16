@@ -13,6 +13,7 @@ Backend executável para o Projeto Integrador **Agenda + Fila Virtual** de clín
 - **F2:** captura pontual com consentimento, sem persistir coordenadas, fallback configurável sem GPS, cálculo de viabilidade do retorno, notificação simulada, confirmação pública, prevenção de duplicidade e ação da recepção em caso de falha.
 - Trilha de auditoria para ações críticas.
 - Link público aleatório para o tutor consultar somente o próprio atendimento.
+- Cadastro/login do tutor, cadastro dos próprios animais e autoentrada na fila com sintomas.
 - PostgreSQL suportado; SQLite funciona para desenvolvimento rápido.
 - Migrations Alembic e testes automatizados.
 
@@ -34,6 +35,8 @@ uvicorn app.main:app --reload
 ```
 
 Abra `http://127.0.0.1:8000/docs` para o Swagger.
+
+O frontend abre o fluxo do tutor em `/tutor/acesso`; depois do cadastro/login, `/tutor/entrada` permite cadastrar o animal, relatar sintomas e entrar na fila.
 
 > Observação: o código lê variáveis do ambiente. O arquivo `.env` é referência; carregue-as no terminal/IDE ou use Docker Compose.
 

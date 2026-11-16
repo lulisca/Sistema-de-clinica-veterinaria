@@ -2,7 +2,7 @@
 // Quais botões aparecem depende do estado (regra do "Cartão de fila" no Figma).
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { chamarPaciente, declararEmergencia, finalizarAtendimento, iniciarAtendimento } from '../api'
+import { chamarPaciente, declararEmergencia, finalizarAtendimento, iniciarAtendimento, removerEmergencia } from '../api'
 import { lerSessao, podeDeclararEmergencia } from '../sessao'
 import { mensagemDeErro, nomeDoPaciente } from '../textos'
 import type { EntradaFila } from '../tipos'
@@ -35,8 +35,10 @@ export default function AcoesPaciente({ entrada, aoTerminar, mostrarDetalhe = tr
   const podeIniciar = ['CALLED', 'RETURNING', 'READY'].includes(estado)
   const podeFinalizar = estado === 'IN_SERVICE'
   // Emergência: só veterinário/admin, e só para quem ainda espera.
-  const podeEmergencia =
-    podeDeclararEmergencia(perfil) && !entrada.emergency && ['WAITING', 'READY'].includes(estado)
+  const esperaAtendimento = podeDeclararEmergencia(perfil) && ['WAITING', 'READY'].includes(estado)
+  const podeEmergencia = esperaAtendimento && !entrada.emergency
+  // Remover devolve o paciente à posição do nível que ele já tinha.
+  const podeRemoverEmergencia = esperaAtendimento && entrada.emergency
 
   return (
     <>
@@ -74,6 +76,15 @@ export default function AcoesPaciente({ entrada, aoTerminar, mostrarDetalhe = tr
           onClick={() => executar(() => declararEmergencia(entrada.id), `Emergência declarada para ${nome}.`)}
         >
           {mostrarDetalhe ? 'Emergência' : 'Declarar emergência'}
+        </button>
+      )}
+      {podeRemoverEmergencia && (
+        <button
+          className="botao botao-contorno"
+          disabled={ocupado}
+          onClick={() => executar(() => removerEmergencia(entrada.id), `Emergência removida de ${nome}.`)}
+        >
+          Remover emergência
         </button>
       )}
       {mostrarDetalhe && (

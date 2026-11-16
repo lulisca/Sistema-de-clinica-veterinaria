@@ -21,6 +21,7 @@ class User(Base):
 class Tutor(Base):
     __tablename__ = 'tutors'
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey('users.id'), nullable=True, unique=True, index=True)
     name: Mapped[str] = mapped_column(String(120))
     contact: Mapped[str | None] = mapped_column(String(120), nullable=True)
     animals: Mapped[list[Animal]] = relationship(back_populates='tutor')
@@ -61,6 +62,7 @@ class QueueEntry(Base):
     animal_id: Mapped[int] = mapped_column(ForeignKey('animals.id'))
     appointment_type: Mapped[str] = mapped_column(String(50), index=True)
     species: Mapped[str] = mapped_column(String(40), index=True)
+    symptoms: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(30), default='WAITING', index=True)
     priority_level: Mapped[int] = mapped_column(Integer, default=0)
     emergency: Mapped[bool] = mapped_column(Boolean, default=False)

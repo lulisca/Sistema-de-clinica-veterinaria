@@ -39,6 +39,7 @@
 5. Emergencia so fica editavel para veterinario/admin.
 6. Falha de aviso precisa aparecer na lista de acoes da recepcao.
 7. Tratar `401`, `403`, `404`, `409` e `422` sem apagar dados digitados.
+8. A ordem da fila so e alterada por veterinario/admin, enviando a lista inteira (`PUT /queue/order`); a recepcao so ve a ordem.
 
 ## Congelamento e mudanca
 

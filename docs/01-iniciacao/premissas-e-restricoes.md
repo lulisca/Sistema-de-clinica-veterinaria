@@ -8,7 +8,7 @@
 |---|---|---|---|
 | P01 | Os nove integrantes permanecem disponíveis até a entrega final | Confirmação em reunião e commits/atas | A validar |
 | P02 | O frontend consumirá a API REST já integrada à `main` | Teste ponta a ponta | A validar |
-| P03 | A hospedagem poderá usar plano gratuito ou infraestrutura já disponível | Prova de publicação | A validar |
+| P03 | A hospedagem poderá usar plano gratuito ou infraestrutura já disponível | Prova de publicação | Decidida no ADR-003 (Vercel + Neon, plano gratuito); falta a prova de publicação |
 | P04 | Dados mockados identificados podem ser usados no desenvolvimento e na demo técnica | Relatórios e telas marcam `MOCKED` | Confirmada para desenvolvimento |
 | P05 | O professor poderá orientar uma alternativa para a pendência do C1 | Registro da resposta formal | A validar |
 | P06 | O veterinário continuará sendo o único responsável por classificar emergência | Regras, permissões e testes | Implementada no backend |

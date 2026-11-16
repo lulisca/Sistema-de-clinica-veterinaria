@@ -3,7 +3,7 @@
 > **Versao planejada:** 1.0 - 2026-10-19
 > **Consolidacao documental:** 2026-11-15, sem retroatividade
 > **Responsavel:** G3, sob coordenacao do GP
-> **Status:** base de execucao; decisoes clinicas e hospedagem permanecem a aprovar.
+> **Status:** base de execucao; decisoes clinicas permanecem a aprovar. Hospedagem decidida no ADR-003 (2026-11-16).
 
 ## Objetivo do produto
 
@@ -66,7 +66,7 @@ O nome `Clinica Vila Nova EC`, de Engenheiro Coelho/SP, identifica somente o cen
 ## Dependencias e pendencias
 
 - frontend e integracao ponta a ponta;
-- decisao e execucao da hospedagem;
+- execucao da hospedagem (decisao no ADR-003: Vercel + Neon);
 - aprovacao dos parametros F2 e regras finais F3;
 - execucao dos testes em ambiente com dependencias;
 - acesso ao sistema da Empresa 02 para bancada cruzada;

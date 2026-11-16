@@ -1,6 +1,6 @@
 # Arquitetura do sistema
 
-> **Estado em 2026-11-15:** backend integrado; frontend e hospedagem ainda precisam ser incorporados e validados.
+> **Estado em 2026-11-16:** backend integrado; hospedagem decidida no ADR-003 (Vercel + Neon); frontend e publicacao ainda precisam ser validados.
 
 ## Visao geral
 
@@ -46,16 +46,18 @@ flowchart LR
 - amostras `MOCKED` ficam fora da calibracao oficial F1;
 - segredos permanecem em variaveis de ambiente.
 
-## Implantacao proposta
+## Implantacao
 
-1. frontend em hospedagem web estatica/Node compativel com o framework real;
-2. API em servico com Python e processo `uvicorn`;
-3. PostgreSQL gerenciado;
-4. migrations antes de subir a nova versao;
-5. tarefa agendada para remover snapshots F2 expirados;
+Decidida no [ADR-003](../adr/003-hospedagem-vercel.md):
+
+1. frontend estatico (Vite) na Vercel, projeto com raiz `frontend/`;
+2. API FastAPI como funcao Python na Vercel, projeto com raiz `backend/` (sem processo `uvicorn` continuo);
+3. PostgreSQL gerenciado na Neon, pela integracao da Vercel;
+4. migrations executadas manualmente antes de subir a nova versao;
+5. snapshots F2 expirados removidos nas operacoes F2; agendamento por cron diario depende de endpoint ainda nao implementado;
 6. HTTPS obrigatorio e CORS restrito ao dominio publicado.
 
-A plataforma ainda precisa ser escolhida pela equipe. Este documento nao declara URL ou disponibilidade inexistente.
+Este documento nao declara URL ou disponibilidade inexistente; as URLs entram no plano de publicacao quando o smoke test passar.
 
 ## Referencias tecnicas
 

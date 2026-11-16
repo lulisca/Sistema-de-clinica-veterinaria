@@ -13,7 +13,13 @@ class BootstrapIn(BaseModel):
     name: str = 'Admin'
     email: str
     password: str = Field(min_length=8)
-    role: str = 'RECEPTION'
+    role: Literal['RECEPTION', 'VETERINARIAN', 'ADMIN'] = 'RECEPTION'
+
+class TutorRegisterIn(BaseModel):
+    name: str = Field(min_length=2, max_length=120)
+    email: str = Field(min_length=5, max_length=180)
+    password: str = Field(min_length=8, max_length=128)
+    contact: str | None = Field(default=None, max_length=120)
 
 class TokenOut(BaseModel):
     access_token: str
@@ -27,6 +33,10 @@ class TutorOut(ORMModel):
     id: int
     name: str
     contact: str | None
+
+class TutorAnimalCreate(BaseModel):
+    species: str = Field(min_length=2, max_length=40)
+    name: str | None = Field(default=None, max_length=120)
 
 class AnimalCreate(BaseModel):
     tutor_id: int
@@ -73,6 +83,7 @@ class AppointmentOut(ORMModel):
     status: str
 
 class CheckInIn(BaseModel):
+    symptoms: str | None = Field(default=None, max_length=2000)
     reactive: bool = False
     infectious_risk: bool = False
     isolation_required: bool = False
@@ -80,6 +91,7 @@ class CheckInIn(BaseModel):
 class WalkInCreate(BaseModel):
     animal_id: int
     appointment_type: str
+    symptoms: str | None = Field(default=None, max_length=2000)
     veterinarian_resource_id: int | None = None
     reactive: bool = False
     infectious_risk: bool = False
@@ -92,6 +104,7 @@ class QueueOut(ORMModel):
     animal_id: int
     appointment_type: str
     species: str
+    symptoms: str | None
     status: str
     priority_level: int
     emergency: bool
@@ -107,6 +120,17 @@ class QueueOut(ORMModel):
 class PriorityUpdate(BaseModel):
     emergency: bool | None = None
     priority_level: int | None = Field(default=None, ge=0, le=100)
+
+class QueueOrderIn(BaseModel):
+    # IDs dos pacientes que esperam (sem emergência), na ordem que o veterinário quer.
+    entry_ids: list[int] = Field(min_length=1, max_length=100)
+    # A ordem que a tela estava mostrando. Se outra pessoa reordenou nesse meio-tempo, dá 409.
+    previous_ids: list[int] | None = Field(default=None, max_length=100)
+
+class TutorQueueCreate(BaseModel):
+    animal_id: int
+    appointment_type: str = Field(min_length=2, max_length=50)
+    symptoms: str = Field(min_length=3, max_length=2000)
 
 class DurationSampleIn(BaseModel):
     appointment_type: str

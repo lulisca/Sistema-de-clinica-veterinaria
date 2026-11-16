@@ -1,6 +1,6 @@
 # Plano de testes
 
-> **Versao:** 2026-11-16. Existem 30 testes backend, que passaram em 15/11/2026. O frontend foi integrado em 15/11 e passou em build e lint em 16/11. Resultados detalhados em [resultados-testes.md](resultados-testes.md).
+> **Versao:** 2026-11-16. Existem 30 testes backend, que passaram em 15/11/2026 e de novo em 16/11/2026, com cobertura de 85% do `backend/app`. O frontend foi integrado em 15/11 e passou em build e lint em 16/11. Resultados detalhados em [resultados-testes.md](resultados-testes.md).
 
 ## Objetivos
 

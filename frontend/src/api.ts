@@ -18,7 +18,7 @@ export class ErroApi extends Error {
 }
 
 interface Opcoes {
-  metodo?: 'GET' | 'POST' | 'PATCH' | 'DELETE'
+  metodo?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
   corpo?: unknown
   publico?: boolean // rotas do tutor e o login não usam o token da equipe
 }
@@ -103,6 +103,13 @@ export const finalizarAtendimento = (id: number) => chamar<EntradaFila>(`/queue/
 // Só veterinário ou admin (a API devolve 403 para a recepção).
 export const declararEmergencia = (id: number) =>
   chamar<EntradaFila>(`/queue/${id}/priority`, { metodo: 'PATCH', corpo: { emergency: true } })
+export const removerEmergencia = (id: number) =>
+  chamar<EntradaFila>(`/queue/${id}/priority`, { metodo: 'PATCH', corpo: { emergency: false } })
+
+// O veterinário arrasta a fila: manda todos que esperam (sem emergência) na ordem nova
+// e a ordem que a tela mostrava. Se a fila mudou nesse meio-tempo, a API responde 409.
+export const reordenarFila = (ids: number[], ordemNaTela: number[]) =>
+  chamar<EntradaFila[]>('/queue/order', { metodo: 'PUT', corpo: { entry_ids: ids, previous_ids: ordemNaTela } })
 
 // "Chamar" cria um aviso simulado e muda o estado para CALLED.
 // Assim o tutor consegue tocar em "Estou voltando" (precisa de um aviso pendente).

@@ -22,7 +22,7 @@
 - [x] Plano de testes preparado, com casos de tela e mapa do roteiro comum.
 - [x] Testes automatizados executados: 30 aprovados em 15/11 (nao reproduzidos em 16/11, ver resultados-testes.md).
 - [ ] Testes ponta a ponta executados.
-- [x] Manual conferido com as telas do frontend (faltam capturas).
+- [x] Manual conferido com as telas do frontend, com 12 capturas da versao local (16/11).
 - [x] Registro de IA iniciado.
 - [ ] ADRs propostos aprovados na data real.
 - [ ] URL e versao entregues a Empresa 02.
