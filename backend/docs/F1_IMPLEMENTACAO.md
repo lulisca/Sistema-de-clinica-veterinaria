@@ -2,12 +2,12 @@
 
 ## Estado do software
 
-A implementação de software da F1 está fechada para desenvolvimento e integração. A única parte que não pode ser concluída sem a clínica é a **calibração/validação com a série real exigida pelo projeto**.
+A implementação de software da F1 está fechada para desenvolvimento e integração. A entrega atual usa o C1-MOCKED aprovado pelo GP; uma série real futura, se autorizada, será uma evolução separada.
 
 ## Fluxo
 
 1. Durações são registradas por tipo de atendimento.
-2. Amostras `MOCKED` entram somente quando `ALLOW_MOCKED_ESTIMATES=true`; a resposta informa `data_source=MOCKED` e nao valida o C1.
+2. Amostras `MOCKED` entram somente quando `ALLOW_MOCKED_ESTIMATES=true`; a resposta informa `data_source=MOCKED` e integra o C1-MOCKED sem alegar coleta real.
 3. O backend calcula p50 e p90 de cada tipo envolvido na fila.
 4. A espera é simulada considerando a ordem da fila, veterinários disponíveis e atendimentos em andamento.
 5. Cada previsão é persistida como revisão numerada.
@@ -39,9 +39,9 @@ Também existe recálculo manual para inspeção/teste por `POST /api/queue/{id}
 
 `MIN_SAMPLES_FOR_ESTIMATE` é configurável e funciona como uma **trava técnica**: abaixo dela, o backend retorna `insufficient_data` em vez de inventar um número. O valor não deve ser apresentado como comprovação estatística nem como substituto dos requisitos de coleta do projeto.
 
-## O que permanece externo ao software
+## Evolução possível fora da entrega congelada
 
-- Inserir a série real da clínica.
-- Conferir que a coleta satisfaz a cobertura acadêmica exigida.
-- Regenerar o relatório com esses dados.
-- Interpretar os indicadores e sustentar, no relatório/apresentação, por que o método ficou adequado ou quais limitações restaram.
+- obter autorização para uma coleta real;
+- registrar origem, datas e cobertura verificáveis;
+- regenerar o relatório sem misturar a nova série com o cenário `MOCKED`;
+- comparar os indicadores e documentar as diferenças.

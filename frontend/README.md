@@ -77,4 +77,4 @@ src/
 - Não existe lista de alocações abertas. A ocupação da sala de isolamento é deduzida da fila (paciente em atendimento que requer isolamento).
 - A rota de decisão de retorno é só da equipe. Na tela do tutor (T3), o "Dá tempo?" é recalculado no navegador com a mesma regra do backend.
 - A fila da recepção mostra a última revisão salva da estimativa. O tutor vê a estimativa calculada na hora, então os valores podem diferir em alguns minutos.
-- Os quadros "A DEFINIR" do Figma são anotações de decisões pendentes e não aparecem no sistema.
+- Os quadros históricos "A DEFINIR" do Figma não fazem parte da interface implementada; as decisões atuais estão no contrato e nos ADRs do repositório.

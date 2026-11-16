@@ -1,28 +1,30 @@
 # Checklist de congelamento
 
-> Conferido em 16/11/2026 pelo G3. Marcar somente com evidencia.
+> **Conferido em 2026-11-16 pelo GP e G3.** Os estados abaixo refletem as pastas 01 a 04 e nao substituem evidencia de publicacao externa.
 
-- [x] Repositorio unico e branch G3 criada.
-- [ ] Commits de todos os integrantes (4 dos 9 ainda sem commit proprio em 16/11).
-- [x] Backend integrado a `main`.
-- [x] Frontend integrado na `development` (PR #2), com build e lint aprovados em 16/11.
-- [ ] Sistema publicado e acessivel externamente.
-- [x] F1 implementada no backend.
-- [ ] F1 demonstrada no frontend e calibrada com fonte aceita.
-- [x] F2 implementada no backend com simulador.
-- [ ] F2 integrada e parametros aprovados.
-- [x] Estruturas F3 implementadas no backend.
-- [ ] F3 final aprovada, integrada e testada.
-- [x] Massa mockada separada e identificada.
-- [ ] C1 validado pelo professor.
-- [x] Planejamento e riscos preparados.
-- [x] Arquitetura e contrato consolidados.
-- [x] Esquema de hardware preparado.
-- [ ] Inventario/cotacao de hardware anexado.
-- [x] Plano de testes preparado, com casos de tela e mapa do roteiro comum.
-- [x] Testes automatizados executados: 30 aprovados em 15/11 (nao reproduzidos em 16/11, ver resultados-testes.md).
-- [ ] Testes ponta a ponta executados.
-- [x] Manual conferido com as telas do frontend, com 12 capturas da versao local (16/11).
-- [x] Registro de IA iniciado.
-- [ ] ADRs propostos aprovados na data real.
-- [ ] URL e versao entregues a Empresa 02.
+| Item | Estado no congelamento | Evidencia ou observacao |
+|---|---|---|
+| Repositorio e branch de revisao | Concluido | Trabalho consolidado em `feature/revisao-final` a partir da `development` |
+| Responsabilidades da equipe | Concluido | GP, arquiteto e grupos registrados na iniciacao |
+| Autoria do backend inicial | Documentada | Lucas Kather e Rafael Lindquist dividiram o desenvolvimento; os commits desse lote foram publicados por Lucas |
+| Identidade de Rafael Nicolas | Documentada | Aparece no Git como Rafael Carvalho |
+| Contribuicao de Pedro | Documentada | Existe em branch preservada, nao integrada a versao atual |
+| Backend | Concluido | F1, F2, F3, cadastro, autoatendimento e reordenacao integrados |
+| Frontend | Concluido | Integrado na `development`, com build e lint aprovados |
+| Testes automatizados | Concluido | Suite backend atual com 49 testes aprovados |
+| F1 no frontend | Concluido | Status publico e indicadores exibem p50/p90 ou indisponibilidade |
+| C1 | Concluido como `C1-MOCKED` | 40 registros, quatro janelas e origem identificada; sem alegacao de coleta real |
+| F2 | Concluido | Fluxo integrado com `SIMULATOR` e parametros 20/60/10 `MOCKED` aprovados |
+| F3 | Concluido | Emergencia autorizada, segregacao, recursos e reordenacao implementados |
+| Arquitetura e contrato | Concluido | Documentos conferidos contra frontend e backend |
+| Hardware | Concluido como prototipo documental | Construcao fisica, inventario e cotacao fora do escopo |
+| Plano e resultados de testes | Concluido documentalmente | Casos, resultados e limites registrados; pasta 06 registra 49 testes e o CT19 |
+| Manual | Concluido | Conferido com 12 capturas da versao local |
+| Registro de IA | Concluido para os usos registrados | Manter atualizacao em novos usos relevantes |
+| Empresa 02 | Concluido como simulacao `MOCKED` | Nao exige URL ou participacao externa real nesta versao |
+| Publicacao Vercel + Neon | Em execucao | Topologia aprovada no ADR-003; URLs ainda nao registradas |
+| Teste ponta a ponta e smoke externo | Em execucao | Executar somente depois de banco, API e frontend publicados |
+
+## Criterio de liberacao externa
+
+A versao somente pode ser chamada de publicada depois de registrar URL do frontend, URL da API, commit, migrations, CORS e resultado do smoke test. Ate la, a execucao local documentada e a evidencia valida da demonstracao tecnica.

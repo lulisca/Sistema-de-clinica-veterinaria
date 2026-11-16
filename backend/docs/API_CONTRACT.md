@@ -50,7 +50,7 @@ Ordenação base: emergência declarada pelo veterinário → `priority_level` �
 - `GET /metrics/wait-estimates/by-type` — os mesmos indicadores segmentados por tipo.
 - `GET /metrics/f1-readiness` — quantidade de amostras e prontidão técnica por tipo.
 
-O backend calcula percentis por **tipo de atendimento**. Por padrao, `MOCKED` e excluido. Com `ALLOW_MOCKED_ESTIMATES=true`, a apresentacao calcula p50/p90 com a massa mockada e retorna `data_source=MOCKED`; isso nao valida o C1. Sem amostras elegiveis, retorna `insufficient_data`.
+O backend calcula percentis por **tipo de atendimento**. Por padrao, `MOCKED` e excluido. Com `ALLOW_MOCKED_ESTIMATES=true`, calcula p50/p90 com a massa mockada e retorna `data_source=MOCKED`; essa configuracao integra o C1-MOCKED aprovado e nao representa coleta real. Sem amostras elegiveis, retorna `insufficient_data`.
 
 A primeira previsão persistida é marcada como `is_initial=true`. Cada revisão recebe `revision_number`, `trigger_event` e `calculated_at`. Check-in, encaixe, alteração de prioridade, início/fim do atendimento, atualização das amostras e mudança de capacidade veterinária recalculam automaticamente os pacientes em espera quando houver dados suficientes. Quando o atendimento começa, o backend grava a espera real e calcula erro assinado, erro absoluto e se a espera caiu entre p50 e p90 em todas as revisões daquele paciente.
 
@@ -73,9 +73,9 @@ Rotas da recepção/equipe:
 - `GET /notifications/reception-actions` — lista falhas que exigem ação.
 - `POST /notifications/{id}/resolve-reception-action` — registra a providência da recepção.
 
-O backend não recebe nem persiste latitude/longitude. O contrato recebe somente o tempo estimado de deslocamento (`travel_minutes`) calculado pelo cliente/serviço de rotas escolhido pela equipe. A captura deve ocorrer apenas nos momentos definidos, mediante consentimento explícito. `LOCATION_RETENTION_MINUTES` é configuração do servidor; o cliente não pode escolher o prazo. Snapshots expirados são excluídos nas operações F2 e também podem ser removidos pelo script `python scripts/purge_expired_location_snapshots.py` (agendar no ambiente publicado).
+O backend não recebe nem persiste latitude/longitude. O contrato recebe somente o tempo estimado de deslocamento (`travel_minutes`) calculado no navegador pela regra Haversine do frontend. A captura ocorre apenas nos momentos definidos, mediante consentimento explícito. `LOCATION_RETENTION_MINUTES=60` é a configuração `MOCKED` da entrega; o cliente não pode escolher o prazo. Snapshots expirados são excluídos nas operações F2 e também podem ser removidos pelo script `python scripts/purge_expired_location_snapshots.py`.
 
-Sem consentimento, o backend não guarda tempo de deslocamento e usa `FIXED_NOTICE` somente se `DEFAULT_FIXED_NOTICE_MINUTES` estiver configurado. Caso contrário retorna `FIXED_NOTICE_NOT_CONFIGURED`; o tutor continua podendo usar o sistema, mas a clínica precisa definir a antecedência fixa antes da operação final. A margem de segurança é parâmetro explícito (`safety_margin_minutes`) porque ainda depende de validação com a clínica. A resposta também indica `return_viable` e `return_feasibility` (`FEASIBLE`, `AT_RISK`, `INFEASIBLE`, `UNKNOWN`).
+Sem consentimento, o backend não guarda tempo de deslocamento e usa `FIXED_NOTICE` com `DEFAULT_FIXED_NOTICE_MINUTES=20`. A margem de segurança adotada na entrega é 10 minutos. Os três valores permanecem configuráveis e identificados como cenário `MOCKED`. A resposta também indica `return_viable` e `return_feasibility` (`FEASIBLE`, `AT_RISK`, `INFEASIBLE`, `UNKNOWN`).
 
 O canal real de mensagem ainda não foi escolhido. `SIMULATOR` cria um registro `SIMULATED`, sem alegar envio por WhatsApp/SMS/e-mail. Falhas abrem uma ação pendente para a recepção; uma nova tentativa automática fica bloqueada até a recepção registrar a providência. O endpoint de avaliação impede avisos duplicados enquanto houver um aviso pendente não confirmado.
 

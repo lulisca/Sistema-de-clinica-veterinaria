@@ -6,7 +6,7 @@
 
 ## Contexto
 
-O passo 1 do [plano de publicação](../05-publicacao/plano-de-publicacao.md) é escolher a plataforma e registrar a decisão. Sem isso o risco R02 (sistema não publicado para teste externo) continua aberto e a Empresa 02 não recebe a URL para a bancada cruzada.
+O passo 1 do [plano de publicação](../05-publicacao/plano-de-publicacao.md) é escolher a plataforma e registrar a decisão. A bancada Empresa 02 foi congelada como simulação `MOCKED` e não depende de URL externa; a publicação continua necessária para o smoke CT20 e para demonstrar acesso HTTPS fora do ambiente local.
 
 Restrições que pesam na escolha:
 

@@ -10,8 +10,8 @@
 8. Hardware: painel, protocolo e alimentacao.
 9. Qualidade: testes, bordas e bancada.
 10. Gestao: cronograma, riscos e recuperacao.
-11. Publicacao e demonstracao.
-12. Limites, C1 a validar e proximos passos.
+11. Publicacao local concluida e publicacao externa em execucao.
+12. C1-MOCKED aprovado para a entrega, limites da simulacao e evolucao para coleta real.
 13. Licoes e contribuicao dos integrantes.
 
-Cada slide deve usar evidencia da versao real. Nao incluir URL, resultado de teste, coleta ou aprovacao ainda inexistentes.
+Cada slide deve usar evidencia da versao apresentada. O C1-MOCKED deve ser identificado como simulacao aprovada pelo GP, sem alegacao de coleta real. URLs externas, CT19 e CT20 somente podem ser apresentados como concluidos depois da respectiva execucao e do registro das evidencias.

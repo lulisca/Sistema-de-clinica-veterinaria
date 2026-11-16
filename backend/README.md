@@ -17,9 +17,9 @@ Backend executável para o Projeto Integrador **Agenda + Fila Virtual** de clín
 - PostgreSQL suportado; SQLite funciona para desenvolvimento rápido.
 - Migrations Alembic e testes automatizados.
 
-## Regras propositalmente NÃO inventadas
+## Linha de base e limites
 
-O planejamento da equipe ainda marca como pendentes: tolerância de atraso, reinserção, precedência agendado × encaixe, desempate final, níveis de prioridade além de emergência, canal real de notificação, margem de retorno, antecedência fixa sem GPS, serviço de rotas e prazo de retenção. O backend deixa essas decisões abertas em vez de criar regra acadêmica sem validação da clínica.
+A entrega usa p50/p90 por tipo, F2 com configuracao `MOCKED` 20/60/10, distancia Haversine calculada no navegador e canal `SIMULATOR`. Tolerancia de atraso, falta, reinsercao automatica, canal real de notificacao e rastreamento continuo nao integram o escopo congelado.
 
 ## Executar localmente (mais simples)
 
@@ -29,8 +29,7 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 copy .env.example .env
-# edite as variáveis necessárias (especialmente JWT_SECRET). Para F2, defina LOCATION_RETENTION_MINUTES
-# e, após validação da clínica, DEFAULT_FIXED_NOTICE_MINUTES.
+# edite as variáveis necessárias, especialmente JWT_SECRET e as URLs do ambiente
 uvicorn app.main:app --reload
 ```
 
@@ -92,12 +91,12 @@ Origens previstas no backend:
 - `SYSTEM`
 - `MOCKED`
 
-Amostras `MOCKED` nao validam a calibracao academica. Com `ALLOW_MOCKED_ESTIMATES=true`, elas alimentam a estimativa de apresentacao, que retorna `data_source=MOCKED`.
+Amostras `MOCKED` compoem o C1-MOCKED aprovado pelo GP para esta entrega e nao representam coleta real. Com `ALLOW_MOCKED_ESTIMATES=true`, elas alimentam a estimativa, que retorna `data_source=MOCKED`.
 
 ## Fluxo de demonstração S5
 
 1. Cadastrar tutor e animal.
-2. Importar a massa mockada e habilitar `ALLOW_MOCKED_ESTIMATES=true`, ou registrar ao menos 3 amostras aceitas. A validacao academica permanece separada.
+2. Importar a massa mockada e habilitar `ALLOW_MOCKED_ESTIMATES=true`, ou registrar ao menos 3 amostras de outra origem elegivel. A origem usada permanece explicita na resposta.
 3. Criar agendamento ou encaixe.
 4. Fazer check-in.
 5. A previsão inicial já é criada automaticamente quando houver dados suficientes; `POST /queue/{id}/estimate` continua disponível para recálculo manual.
@@ -120,8 +119,8 @@ pytest -q
 - `docs/MODELO_DADOS.md` — ER em Mermaid e decisões do modelo
 - `docs/DEMO_S5.md` — roteiro da fatia vertical F1
 - `docs/F1_IMPLEMENTACAO.md` — descrição técnica e critérios de fechamento da F1
-- `docs/F2_IMPLEMENTACAO.md` — fluxo, privacidade, parâmetros pendentes e testes da F2
-- `docs/adr/0002-f2-localizacao-e-acionamento.md` — proposta de decisão F2, ainda não aprovada
+- `docs/F2_IMPLEMENTACAO.md` — fluxo, privacidade, parâmetros adotados e testes da F2
+- `docs/adr/0002-f2-localizacao-e-acionamento.md` — decisão técnica aplicada na F2
 - `docs/RELATORIO_CALIBRACAO_F1.md` — gerado pelo script de relatório
 - `../docs/registro-de-ia.md` — registro consolidado e obrigatório do uso de IA
 - `docs/adr/0001-backend-stack-e-f1.md` — ADR proposto

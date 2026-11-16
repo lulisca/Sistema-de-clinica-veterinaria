@@ -775,9 +775,9 @@ def f1_readiness(db:Session=Depends(get_db),user=STAFF):
     return F1ReadinessOut(
         minimum_configured=settings.min_samples_for_estimate,
         note=(
-            'MOCKED samples are enabled for development/presentation. Academic C1 validation remains pending.'
+            'MOCKED samples are enabled for the approved C1-MOCKED delivery and remain identified as non-real data.'
             if settings.allow_mocked_estimates
-            else 'MOCKED samples are excluded. Academic calibration requires an accepted field/system dataset.'
+            else 'MOCKED samples are excluded. Enable them explicitly or provide another eligible data source.'
         ),
         types=sample_readiness(db),
     )

@@ -1,74 +1,72 @@
-# Protótipo de telas — Fila Virtual
+# Prototipo de telas - Fila Virtual
 
-- **Arquivo:** [clinica-vet (Figma)](https://www.figma.com/design/MXo1MePOBJzkHhYrD2kczF/clinica-vet) — o nome combinado era "Fila Virtual - Protótipo"; a API do Figma não renomeia o documento, então o título é ajustado à mão.
-- **Responsável:** Grupo 2 · Frontend
-- **Fonte do conteúdo:** `backend/docs/API_CONTRACT.md` e `backend/docs/F2_IMPLEMENTACAO.md`
+> **Estado em 2026-11-16:** referencia visual alinhada ao frontend integrado na `development`. O codigo e as 12 capturas do manual representam a versao atual; o Figma permanece como artefato de concepcao.
+
+- **Referencia:** [clinica-vet (Figma)](https://www.figma.com/design/MXo1MePOBJzkHhYrD2kczF/clinica-vet)
+- **Responsavel:** Grupo 2 - Frontend
+- **Fontes:** contrato da API, F2 e `contrato-de-interface.md`
 
 ## Identidade visual
 
-Inspirada em um app de pet shop de referência: verde, laranja, cantos bem arredondados e fotos de pets.
-
-| Item | Decisão |
+| Item | Decisao aplicada |
 |---|---|
-| Cores | Verde-floresta (marca), menta (fundo e destaque), laranja (ação principal). Variáveis `cor/fundo/*` e `cor/acao/*` |
-| Fonte | Plus Jakarta Sans, a mais próxima da referência. Identificada por comparação visual, não confirmada. Trocar a fonte é mudar 13 estilos de texto |
-| Formas | Cantos de 8, 16 e 24 px; botões em pílula |
-| Contraste | Todos os pares passam em AA. O menor é 4,8:1 (texto verde-escuro no botão laranja) |
-| Texto | Pouco. O tutor vê 1 número, 1 faixa de espera e 1 botão; explicações e regras ficam na documentação |
+| Cores | Verde, menta e laranja |
+| Tipografia | Plus Jakarta Sans ou fallback configurado |
+| Formas | Cantos arredondados e alvos de toque adequados |
+| Conteudo | Posicao, faixa de espera, estado e acao principal sem excesso de texto |
 
-### Fotos
+## Rotas implementadas
 
-Pexels, licença Pexels (uso livre). Fotógrafos não conferidos.
-
-- T1: [Obedient Golden Retriever](https://www.pexels.com/photo/obedient-golden-retriever-18106144/)
-- T3: [Brown Short-coat Dog](https://www.pexels.com/photo/brown-short-coat-dog-3148115/)
-- R1 (login): [Golden Retriever Portrait in Natural Light](https://www.pexels.com/photo/golden-retriever-portrait-in-natural-light-30810888/)
-
-## Páginas do arquivo
-
-| Página | Conteúdo |
+| Rota | Interface |
 |---|---|
-| 00 · Leia-me | Índice e as duas regras fixas |
-| 01 · Fundamentos | Cor, tipografia, espaçamento, raio e alvo de toque |
-| 02 · Componentes | Botão, selos, aviso, campo, cartões, com variantes |
-| 03 · Tutor (390) | 6 telas e a folha de variações do indicador |
-| 04 · Recepção (1440) | 11 telas |
-| 05 · A DEFINIR | Decisões em aberto |
-| 06 · Arquivo | Telas do tutor da primeira versão, com mais texto (guardadas, não apagadas) |
+| `/t/{token}` | Status publico, estimativa, localizacao e retorno |
+| `/recepcao/login` | Login da equipe |
+| `/recepcao/fila` | Fila, filtros, reordenacao e acoes |
+| `/recepcao/cadastro` | Tutor, animal, agenda, check-in e encaixe |
+| `/recepcao/caso/{id}` | Detalhe, sintomas, F2, recursos e historico |
+| `/recepcao/recursos` | Recursos compartilhados |
+| `/recepcao/avisos` | Falhas e providencias da recepcao |
+| `/recepcao/indicadores` | Metricas e prontidao F1 |
 
-## Telas do tutor — mobile 390 px, sem login
+O backend possui autoatendimento autenticado do tutor, mas o frontend atual nao inclui telas proprias para esse fluxo. A interface aprovada usa cadastro assistido e acompanhamento por link publico.
 
-| Frame | O que mostra | Origem no contrato |
-|---|---|---|
-| `T1` Status | Foto, posição, faixa de espera, selo de estado | `GET /public/status/{token}` |
-| `T2` Localização | Pedido de permissão em 3 momentos, Permitir e Agora não | `GET .../location-consent`, `POST .../location` |
-| `T3` É a sua vez | Foto, indicador de retorno, Estou voltando | `POST .../confirm-return`, `GET /queue/{id}/return-decision` |
-| `T3b` Indicador | As 4 variações: dá tempo, em risco, não dá tempo, sem dados | `return_feasibility` |
-| `T4` Sem estimativa | Posição mantida, faixa indisponível | `estimate.status = insufficient_data` |
-| `T5` Localização negada | Aviso por tempo fixo | `FIXED_NOTICE` |
-| `T6` Erros | Sem conexão e link inválido | `404 Invalid status link` |
+## Estados do tutor
 
-## Telas da recepção — desktop 1440 px, com login
+| Estado | Comportamento |
+|---|---|
+| Normal | Posicao e p50/p90 quando disponiveis |
+| Sem estimativa | Posicao mantida e faixa indisponivel, nunca zero |
+| Localizacao permitida | Minutos calculados no navegador; somente `travel_minutes` e enviado |
+| Localizacao negada | Acesso mantido e aviso fixo de 20 min `MOCKED` |
+| Retorno | Viabilidade com margem de 10 min `MOCKED` e confirmacao |
+| Erro | Diferencia link invalido, falha da API e ausencia de conexao |
 
-`R1` Login · `R2` Fila (veterinário) · `R3` Fila (recepção, sem emergência) · `R4` Cadastro · `R5` Detalhe do caso · `R6` Recursos e sala de isolamento · `R7` Avisos com falha · `R8` Indicadores · `R9` Fila vazia · `R10` Fila sem estimativa · `R11` Erro de rede.
+## Estados da equipe
 
-Os parágrafos explicativos que existiam nessas telas foram ocultados, não apagados: são as camadas ocultas chamadas `Descrição`, `Nota`, `Rodapé da tabela`, `Explicação`, `Observação` e similares.
+- fila vazia, carregando, erro e ausencia de estimativa;
+- filtros por especie, tipo e estado;
+- emergencia declarada ou removida por veterinario/admin;
+- reordenacao por arrastar ou botoes subir/descer;
+- conflito `409` recarrega a fila antes de nova tentativa;
+- sintomas restritos a equipe;
+- recursos, avisos com falha e indicadores F1.
 
-## Em aberto (A DEFINIR)
+Os nomes oficiais exibidos sao **Retornando** para `RETURNING` e **Concluído** para `COMPLETED`.
 
-- Níveis de prioridade além de emergência
-- Canal de notificação (hoje, simulador)
-- Outros eixos de segregação (risco, recurso)
-- Prazo de retenção da localização, antecedência fixa sem GPS e margem de segurança do retorno (hoje 60, 20 e 10 min, só de demonstração)
-- Serviço que converte a posição em tempo de deslocamento
-- Tolerância de atraso, reinserção e precedência agendado × encaixe
-- Faixa da estimativa: p50/p90 ou média ± desvio
-- Telas do veterinário e do gestor
+## Decisoes consolidadas
 
-A faixa de espera aparece na tela do tutor porque `GET /public/status/{token}` já devolve `estimate` ([router.py:704](../../backend/app/api/router.py)). O `API_CONTRACT.md` ainda não diz isso e deve ser atualizado.
+- F1 usa faixa p50/p90;
+- F2 usa 20 min de aviso fixo, 60 min de retencao e 10 min de margem como configuracao `MOCKED` aprovada;
+- canal da demonstracao: `SIMULATOR`;
+- distancia calculada no navegador por Haversine e velocidade media configuravel;
+- F3 usa especie, tipo/motivo, emergencia autorizada, riscos e recursos exclusivos;
+- veterinario/admin controla emergencia e ordem;
+- `GET /public/status/{token}` retorna `estimate` para a tela do tutor.
 
-## Regras que o protótipo sustenta
+## Integridade
 
-- O sistema não diagnostica nem classifica gravidade. A emergência só aparece depois de declarada pelo veterinário.
-- LGPD: nenhuma tela pede ou mostra latitude e longitude; quem nega a localização continua usando o sistema.
-- Dados fictícios: animais por código `AN-xxx`, tutores por código `T-xxx`, sem nome real de pessoa.
+- o sistema nao diagnostica nem classifica gravidade;
+- negar localizacao nao bloqueia o tutor;
+- sintomas, contato e coordenadas nao aparecem publicamente;
+- dados de demonstracao permanecem `MOCKED`;
+- fluxos nao implementados nao sao apresentados como existentes.

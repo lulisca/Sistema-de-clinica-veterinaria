@@ -1,52 +1,52 @@
 # Esquema de hardware - painel de chamada
 
-> **Status:** proposta documental em 2026-11-15. Prototipo fisico e opcional; inventario/cotacao e modelo exato dos componentes ainda precisam ser anexados.
+> **Status em 2026-11-16:** prototipo documental aprovado pelo GP. Construcao fisica, compra e cotacao estao fora do escopo desta versao.
 
 ## Objetivo
 
-Exibir na recepcao uma chamada anonimizada do atendimento e emitir sinal visual/sonoro, sem armazenar dados clinicos no dispositivo.
+Representar um painel que exiba chamada anonimizada e emita sinal visual e sonoro sem armazenar dados clinicos.
 
-## Diagrama de blocos
+## Diagrama
 
 ```mermaid
 flowchart LR
-    API[API Fila Virtual - HTTPS] -->|polling GET a cada 5 s| ESP[ESP32]
-    ESP --> DISP[Display OLED/LCD]
-    ESP --> LED[LED de chamada]
-    ESP --> BUZ[Buzzer]
-    FONTE[Fonte 5 V / 1 A] --> PROT[Protecao: fusivel/Polyfuse e desacoplamento]
+    API[API HTTPS] -.->|polling conceitual| ESP[ESP32]
+    ESP --> DISP[Display 3,3 V]
+    ESP --> LED[LED + resistor]
+    ESP --> DRV[Transistor + resistor]
+    DRV --> BUZ[Buzzer 5 V]
+    FONTE[Fonte 5 V / 1 A] --> PROT[Polyfuse 750 mA]
     PROT --> ESP
-    ESP -->|3,3 V regulado conforme modulo| DISP
+    PROT --> BUZ
 ```
 
-## Componentes propostos
+## Componentes
 
-| Componente | Qtd. | Funcao | Criterio de escolha |
-|---|---:|---|---|
-| ESP32 DevKit | 1 | Wi-Fi, consulta API e controle | Disponivel, baixo custo, HTTPS e ampla documentacao |
-| Display OLED I2C ou LCD | 1 | Mostrar codigo e orientacao | Leitura local; modelo depende do inventario |
-| LED + resistor | 1 | Sinal visual | Indicacao simples de nova chamada |
-| Buzzer ativo 5 V | 1 | Sinal sonoro curto | Nao exige geracao de audio complexa |
-| Fonte 5 V / 1 A certificada | 1 | Alimentacao | Margem sobre consumo estimado |
-| Polyfuse/fusivel 500-750 mA | 1 | Protecao | Limitar falha na alimentacao |
-| Capacitores e cabos | conjunto | Estabilidade e montagem | Conforme datasheets finais |
+| Componente | Funcao e criterio |
+|---|---|
+| ESP32 DevKit | Wi-Fi, HTTPS e controle do painel |
+| Display OLED I2C 3,3 V | Mostrar codigo e destino sem incompatibilidade logica |
+| LED + resistor | Sinal visual com corrente limitada |
+| Buzzer ativo 5 V | Sinal sonoro acionado por transistor, nunca direto no GPIO |
+| Transistor NPN ou MOSFET + resistor | Isolar o GPIO da corrente do buzzer |
+| Diodo de protecao | Usar se o datasheet indicar carga indutiva |
+| Fonte 5 V / 1 A | Alimentacao com margem |
+| Polyfuse 750 mA | Protecao com folga sobre a corrente calculada |
+| Capacitores e cabos | Desacoplamento e conexoes |
 
-## Comunicacao
+## Comunicacao conceitual
 
-- ESP32 conecta por Wi-Fi da clinica.
-- Consulta endpoint dedicado somente leitura por HTTPS.
-- Payload minimo proposto: `call_id`, `display_code`, `destination`, `created_at`.
-- Nao enviar nome do tutor, animal, contato ou informacao clinica.
-- Dispositivo confirma localmente o ultimo `call_id` para evitar repeticao.
-- Token do dispositivo deve ser revogavel e ficar fora do codigo-fonte.
+- consulta por HTTPS a endpoint dedicado somente leitura;
+- payload minimo: `call_id`, `display_code`, `destination`, `created_at`;
+- nenhum nome, contato, sintoma ou dado clinico;
+- token revogavel fora do codigo-fonte;
+- ultimo `call_id` memorizado para evitar repeticao.
 
-O endpoint dedicado ainda nao existe no backend; sua implementacao depende de aprovacao. Sem prototipo, o esquema permanece como entrega documental.
+O endpoint dedicado nao existe porque o hardware fisico esta fora do escopo. A interface fica documentada para eventual etapa futura autorizada.
 
-## Alimentacao e consumo estimado
+## Alimentacao
 
-Valores conservadores para dimensionamento inicial; conferir datasheets dos modelos reais.
-
-| Carga | Corrente de pico estimada |
+| Carga | Pico estimado |
 |---|---:|
 | ESP32 com Wi-Fi | 240 mA |
 | Display | 40 mA |
@@ -54,22 +54,17 @@ Valores conservadores para dimensionamento inicial; conferir datasheets dos mode
 | LED | 20 mA |
 | **Subtotal** | **330 mA** |
 | Margem de 50% | 165 mA |
-| **Corrente minima calculada** | **495 mA** |
+| **Minimo calculado** | **495 mA** |
 
-Escolha proposta: fonte de **5 V / 1 A**, potencia nominal de **5 W**. A fonte oferece margem para picos, perdas e variacao do display. O regulador da placa alimenta a logica de 3,3 V; perifericos devem respeitar os niveis do modelo escolhido.
+A fonte adotada e **5 V / 1 A (5 W)**. O polyfuse de 750 mA evita a falta de folga de uma protecao de 500 mA. Em montagem futura, corrente de manutencao/disparo, cabos e componentes devem ser conferidos nos datasheets.
 
-## Modos de falha e seguranca
+O buzzer recebe 5 V pela linha protegida e e chaveado pelo transistor. O GPIO fornece somente o sinal de controle em 3,3 V.
 
-- sem rede: mostrar “Painel offline” e nao repetir chamada antiga;
-- API indisponivel: retry com intervalo crescente;
-- token invalido: bloquear exibicao e sinalizar manutencao;
-- reinicio: recuperar somente chamadas posteriores ao ultimo ID confirmado;
-- falha eletrica: protecao de entrada, caixa isolante e cabos sem partes expostas.
+## Falhas e limite do entregavel
 
-## Evidencias ainda necessarias
+- sem rede ou API: mostrar painel offline e nao repetir chamada antiga;
+- token invalido: bloquear exibicao;
+- reinicio: aceitar apenas chamada posterior ao ultimo ID;
+- falha eletrica: usar protecao, desacoplamento e caixa isolante.
 
-- inventario do campus ou cotacao com fornecedor, data, preco e prazo;
-- datasheets dos componentes exatos;
-- validacao do calculo com esses datasheets;
-- foto/esquema eletrico se houver prototipo;
-- teste de rede, repeticao, queda de energia e dados anonimizados.
+Este documento conclui o requisito de prototipo de hardware. Nao declara montagem, teste de bancada, foto, cotacao ou funcionamento fisico inexistentes.
