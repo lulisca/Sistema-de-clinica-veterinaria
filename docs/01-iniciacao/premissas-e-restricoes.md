@@ -1,38 +1,43 @@
 # Premissas e restrições
 
-> **Status:** rascunho do G3 em 2026-11-15. Premissas sem confirmação devem ser revistas a cada marco.
+> **Status:** aprovado pelo GP em 2026-11-16. As premissas estão classificadas como adotadas, implementadas, em execução ou `MOCKED` para a entrega técnica.
 
 ## Premissas
 
 | ID | Premissa | Como verificar | Situação |
 |---|---|---|---|
-| P01 | Os nove integrantes permanecem disponíveis até a entrega final | Confirmação em reunião e commits/atas | A validar |
-| P02 | O frontend consumirá a API REST já integrada à `main` | Teste ponta a ponta | A validar |
-| P03 | A hospedagem poderá usar plano gratuito ou infraestrutura já disponível | Prova de publicação | Decidida no ADR-003 (Vercel + Neon, plano gratuito); falta a prova de publicação |
-| P04 | Dados mockados identificados podem ser usados no desenvolvimento e na demo técnica | Relatórios e telas marcam `MOCKED` | Confirmada para desenvolvimento |
-| P05 | O professor poderá orientar uma alternativa para a pendência do C1 | Registro da resposta formal | A validar |
-| P06 | O veterinário continuará sendo o único responsável por classificar emergência | Regras, permissões e testes | Implementada no backend |
+| P01 | Os nove integrantes compõem a equipe registrada para a entrega | Responsabilidades, commits e histórico | Adotada pelo GP no fechamento |
+| P02 | O frontend consome a API REST consolidada na `development` | Integração no código e teste ponta a ponta | Implementação integrada; teste ponta a ponta em execução |
+| P03 | A hospedagem usa plano gratuito ou infraestrutura já disponível | ADR e smoke test externo | Vercel + Neon aprovados no ADR-003; implantação em execução |
+| P04 | Dados mockados identificados podem ser usados no desenvolvimento e na demo técnica | Relatórios e telas marcam `MOCKED` | Aprovada pelo GP para desenvolvimento, testes e demonstração |
+| P05 | O C1 da entrega é uma verificação técnica `MOCKED`, sem alegação de coleta real | Relatório C1-MOCKED e aviso de limitação | Aprovada pelo GP para a entrega técnica |
+| P06 | Veterinário ou administrador autorizado registra emergência; a decisão clínica permanece profissional | Regras, permissões e testes | Implementada no backend |
 | P07 | O tutor pode negar geolocalização sem perder o acesso ao sistema | Teste da F2 | Implementada no backend |
+| P08 | Extensão e bancada cruzada são simulações documentais com organizações fictícias | Identificação `MOCKED` nos artefatos | Aprovada pelo GP; substituir somente se houver execução real autorizada |
+| P09 | Os parâmetros F2 de demonstração são 20/60/10 minutos | Configuração, telas e documentação | Aprovada pelo GP como configuração `MOCKED` |
 
 ## Restrições
 
 | ID | Restrição | Efeito no projeto |
 |---|---|---|
 | RST01 | Apresentação em 30/11/2026 e entrega final em 03/12/2026 | Priorizar piso funcional e reduzir escopo extra |
-| RST02 | Congelamento previsto para 16/11/2026 | Registrar atraso real e disponibilizar versão assim que possível |
+| RST02 | Congelamento técnico em 16/11/2026 | Consolidar código, documentação e cenários `MOCKED`; concluir publicação e ponta a ponta no fechamento |
 | RST03 | Orçamento operacional próximo de zero | Preferir serviços gratuitos e componentes disponíveis |
-| RST04 | C1 exige dado de campo verificável | Base mockada não valida C1; manter como “a validar” |
+| RST04 | Não existe coleta de campo real nesta versão | Apresentar somente C1-MOCKED e não alegar validação externa |
 | RST05 | LGPD e minimização de dados | Não persistir coordenadas sem justificativa; retenção curta |
 | RST06 | Sistema não toma decisão clínica | Emergência depende de veterinário/admin autorizado |
 | RST07 | ADR e ata contam pela data real | Não retrodatá-los nem representar proposta como decisão histórica |
 | RST08 | Repositório deve preservar autoria individual | Código por PR e merge sem squash |
 | RST09 | Código precisa ser explicado pela equipe | Revisão, documentação e ensaio obrigatórios |
 
-## Pendências que não bloqueiam o desenvolvimento
+## Decisões de fechamento
 
-- evidência real do C1;
-- entrevista clínica;
-- aprovação final de parâmetros F2;
-- parceiro comunitário real.
+- cenário clínico: Vila Nova EC fictícia, com dados `MOCKED`;
+- C1: verificação técnica C1-MOCKED, sem coleta real;
+- extensão: simulação documental congelada em 16/11, sem alegação de ação comunitária real;
+- bancada cruzada: Empresa 02 fictícia e execução simulada;
+- F2: parâmetros 20/60/10 aprovados como `MOCKED`;
+- hardware: protótipo documental, sem construção física no escopo;
+- publicação Vercel + Neon e teste ponta a ponta: atividades em execução no fechamento.
 
-Esses itens permanecem visíveis como risco, mas a equipe pode continuar implementando e testando com dados mockados identificados.
+Toda evidência simulada deve permanecer identificada como `MOCKED`. Uma atividade real futura somente substitui a simulação quando houver autorização, data e evidência verificável.

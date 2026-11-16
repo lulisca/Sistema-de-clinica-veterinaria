@@ -1,12 +1,12 @@
 # Termo de abertura
 
-> **Status:** rascunho consolidado pelo GP em 2026-11-15. Equipe e escopo-base confirmados; parceiro comunitário real, evidências do C1 e assinatura formal permanecem a validar.
+> **Status:** aprovado pelo GP em 2026-11-16. Equipe, escopo e responsabilidades estão consolidados. A entrega técnica utiliza cenário, dados, C1 e bancada cruzada `MOCKED`, identificados como simulação. Publicação externa e teste ponta a ponta estão em execução no fechamento.
 
 ## 1. Nome da empresa e do projeto
 
 - **Empresa:** Empresa 01
 - **Projeto:** Agenda + Fila Virtual para Clínica Veterinária
-- **Cenário de demonstração:** Clínica Vila Nova EC, Engenheiro Coelho/SP — entidade fictícia, usada somente em dados e telas de teste.
+- **Cenário de demonstração:** Clínica Vila Nova EC, Engenheiro Coelho/SP — entidade fictícia aprovada pelo GP para dados, telas, testes e demonstração `MOCKED`.
 
 ## 2. Justificativa
 
@@ -25,7 +25,7 @@ Critérios de sucesso:
 5. Testes próprios e roteiro comum do professor possuem resultado e evidência registrados.
 6. O esquema de hardware contém componentes, comunicação, alimentação e consumo.
 7. A documentação, o Registro de IA e o histórico do repositório permanecem rastreáveis.
-8. O C1 somente será considerado validado quando houver evidência de clínica real aceita pelo professor; a base mockada atual valida apenas desenvolvimento e testes.
+8. O C1-MOCKED verifica tecnicamente a solução com massa controlada e identificada; não representa coleta de campo real nem deve ser apresentado como evidência externa.
 
 ## 4. Escopo
 
@@ -37,8 +37,9 @@ Critérios de sucesso:
 - F2 com consentimento, captura pontual, tempo de deslocamento e alternativa sem GPS;
 - F3 com espécie, motivo/tipo, risco e alocação exclusiva de recursos;
 - telas mínimas de tutor, recepção e indicadores;
-- testes, publicação, manual, documentação de gestão, arquitetura e hardware;
+- testes, publicação, manual, documentação de gestão, arquitetura e protótipo documental de hardware;
 - dados mockados identificados para desenvolvimento e demonstração.
+- simulação documental de extensão e bancada cruzada com organizações fictícias, sempre identificada como `MOCKED`.
 
 **Excluído:**
 
@@ -54,9 +55,9 @@ Critérios de sucesso:
 
 | Data | Entrega ou marco |
 |---|---|
-| 16/11/2026 | Congelamento previsto: sistema publicado, manual, riscos e acessos para teste externo |
-| 23/11/2026 | Relatório de bancada cruzada e respostas iniciais |
-| 30/11/2026 | Apresentação final, demonstração e relatório de extensão |
+| 16/11/2026 | Congelamento técnico com código integrado, documentação, manual, dados e cenários `MOCKED`; publicação e teste ponta a ponta em execução |
+| 23/11/2026 | Relatório da bancada cruzada simulada com Empresa 02 fictícia; substituir por evidência real somente se o professor autorizar nova etapa |
+| 30/11/2026 | Apresentação final, demonstração e relatório da simulação extensionista `MOCKED` |
 | 03/12/2026 | Versão final corrigida, documentação e lições aprendidas |
 
 Os marcos anteriores permanecem registrados no cronograma. Artefatos produzidos após a data planejada devem declarar a data real, sem retroatividade.
@@ -77,19 +78,20 @@ GP e arquiteto acumulam participação nas frentes. A equipe possui nove integra
 - **Equipe Empresa 01:** execução, integração, documentação e defesa das decisões.
 - **Tutores:** previsão compreensível, privacidade e aviso no momento adequado.
 - **Recepção:** visão da fila, tratamento de falhas e operação simples.
-- **Médico-veterinário:** autoridade exclusiva sobre emergência e apoio à alocação clínica.
-- **Clínica parceira real:** stakeholder ainda não confirmado no repositório.
-- **Empresa 02:** acesso à versão congelada para bancada cruzada.
+- **Médico-veterinário:** responsabilidade clínica sobre emergência e apoio à alocação; veterinário/admin registram a decisão no sistema.
+- **Clínica Vila Nova EC (MOCKED):** cenário fictício oficial da entrega técnica, sem alegação de parceria ou coleta real.
+- **Empresa 02 (MOCKED):** organização fictícia usada para simular a bancada cruzada da versão congelada.
 - **Coordenação/UNASP:** integridade acadêmica, extensão e aderência ao cronograma.
 
-O cenário fictício Vila Nova EC não é tratado como parceiro real.
+Os cenários Vila Nova EC e Empresa 02 são simulações documentais. Se o professor autorizar atividade real posterior, os documentos e evidências correspondentes serão substituídos com a data verdadeira da nova execução.
 
 ## 8. Premissas assumidas
 
 - desenvolvimento com ferramentas gratuitas ou já disponíveis à equipe;
 - acesso à internet e computadores pessoais;
 - frontend consumindo contrato REST do backend;
-- uso de dados mockados identificados enquanto a evidência de campo estiver pendente;
+- uso de dados mockados identificados, aprovado pelo GP para desenvolvimento, testes e demonstração;
+- parâmetros F2 de demonstração aprovados como `MOCKED`: aviso fixo de 20 minutos, retenção de 60 minutos e margem de segurança de 10 minutos;
 - participação dos integrantes na revisão e capacidade de explicar os artefatos;
 - decisões clínicas permanecem sob responsabilidade do veterinário.
 
@@ -99,23 +101,23 @@ O cenário fictício Vila Nova EC não é tratado como parceiro real.
 - equipe de nove integrantes e trabalho dividido em três frentes;
 - orçamento operacional próximo de zero e preferência por hospedagem gratuita;
 - proteção de dados e minimização da geolocalização;
-- ausência atual de parceiro e coleta real verificável para o C1;
-- frontend ainda não integrado e testes do backend ainda não executados no ambiente atual;
+- a entrega de 16/11 utiliza cenário fictício e não declara parceria, entrevista ou coleta de campo real;
+- frontend integrado à `development` e backend com 43 testes aprovados; publicação externa e jornada ponta a ponta estão em execução no fechamento;
+- hardware limitado ao protótipo documental, sem construção física prevista no escopo aprovado;
 - ADRs e atas não podem ser retrodatados.
 
 ## 10. Riscos iniciais conhecidos
 
-- C1 não ser validado por falta de evidência de campo real;
-- frontend não integrar as três features antes da demonstração;
-- testes não serem executados ou corrigidos a tempo;
-- sistema não ser publicado para acesso externo;
-- parâmetros de F2 e regras finais de F3 permanecerem sem aprovação;
-- hardware e manual não serem concluídos;
+- a avaliação acadêmica exigir evidência de campo real além do C1-MOCKED aprovado pelo GP;
+- o teste ponta a ponta identificar incompatibilidade entre frontend, API e banco;
+- a publicação Vercel + Neon ou o smoke test externo falhar durante o fechamento;
+- parâmetros F2 `MOCKED` serem interpretados incorretamente como parâmetros clínicos reais;
+- o protótipo documental de hardware ser interpretado incorretamente como protótipo físico;
 - concentração do trabalho do G3 em poucos integrantes;
 - integrantes não conseguirem sustentar o trabalho na arguição.
 
 ## 11. Assinatura
 
-- **Gerente de Projeto:** Alisson — confirmação documental pendente
-- **Arquiteto:** Nathan — confirmação documental pendente
-- **Data da aprovação formal:** a registrar na data real da deliberação
+- **Gerente de Projeto:** Alisson — termo aprovado em 2026-11-16
+- **Arquiteto:** Nathan — função e responsabilidade técnica formalizadas pelo GP em 2026-11-16
+- **Data da aprovação formal:** 2026-11-16
