@@ -58,7 +58,7 @@
 
 - [x] 6.1 Testes automatizados escritos no backend
 - [x] 6.2 Plano de testes consolidado
-- [x] 6.3 Suite backend executada com 49 testes aprovados
+- [x] 6.3 Suite backend executada com 55 testes aprovados
 - [x] 6.4 Casos manuais F1/F2/F3 e bordas documentados
 - [x] 6.5 Evidencias locais, resultados e 12 capturas do manual
 - [x] 6.6 Bancada cruzada simulada com Empresa 02 ficticia `MOCKED`
@@ -69,9 +69,9 @@
 - [x] 7.1 Execucao local documentada
 - [x] 7.2 Docker Compose local do backend
 - [x] 7.3 Plataforma escolhida no ADR-003: Vercel + Neon
-- [ ] 7.4 Banco e variaveis de producao - **em execucao**
-- [ ] 7.5 API e frontend publicados - **em execucao**
-- [ ] 7.6 Migrations, CORS, limpeza F2 e smoke test externo - **em execucao**
+- [x] 7.4 Banco Neon e variaveis de producao configurados
+- [x] 7.5 API e frontend publicados na Vercel
+- [x] 7.6 CORS e smoke test externo CT20 aprovados; limpeza F2 mantida nas operacoes existentes
 - [x] 7.7 Bancada da Empresa 02 representada por simulacao `MOCKED`, sem alegacao de entrega externa real
 
 ## 8. Encerramento e defesa
@@ -85,4 +85,4 @@
 
 ## Pacotes criticos do G3
 
-O G3 responde pelos pacotes 1, 2, 5, 6, 7 e 8 e pela consolidacao documental do pacote 3. G1 e G2 mantem backend e frontend; o GP aprova a linha de base e o arquiteto revisa o conteudo tecnico. O CT19 local foi aprovado com ressalvas. Publicacao e CT20 permanecem como atividades de fechamento em execucao, sem serem apresentados como concluidos antes da evidencia.
+O G3 responde pelos pacotes 1, 2, 5, 6, 7 e 8 e pela consolidacao documental do pacote 3. G1 e G2 mantem backend e frontend; o GP aprova a linha de base e o arquiteto revisa o conteudo tecnico. O CT19 local foi aprovado com ressalvas. Publicacao e CT20 foram concluidos com evidencia HTTPS em 16/11.

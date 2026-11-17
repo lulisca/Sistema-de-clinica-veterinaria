@@ -1,6 +1,6 @@
 # Roteiro da demonstração
 
-> Meta: demonstrar o piso funcional local sem improviso. A publicação externa e o smoke CT20 permanecem em execução até o registro das URLs Vercel/Neon e da evidência HTTPS.
+> Meta: demonstrar o piso funcional sem improviso. A publicação externa Vercel + Neon e o smoke CT20 foram concluídos em 16/11.
 
 ## Preparação
 
@@ -11,7 +11,7 @@
 | Navegador da recepção e janela anônima do tutor | Concluído |
 | Plano B local | Concluído |
 | Revisão para não exibir segredo ou dado pessoal real | Concluído |
-| URLs externas e smoke CT20 | Em execução |
+| URLs externas e smoke CT20 | Concluídos |
 
 ## Sequência de 10 a 12 minutos
 
@@ -21,7 +21,7 @@
 4. **F2 (2 min):** consentir, informar deslocamento, avaliar aviso e confirmar retorno.
 5. **Borda F2 (1 min):** negar localização e demonstrar o aviso por tempo fixo.
 6. **F3 (2 min):** espécie/tipo, emergência autorizada, reordenação e recurso exclusivo.
-7. **Qualidade (1 min):** 49 testes do backend, privacidade, CT19 aprovado com ressalvas e limites do cenário `MOCKED`.
+7. **Qualidade (1 min):** 55 testes do backend, privacidade, CT19 aprovado com ressalvas, CT20 aprovado e limites do cenário `MOCKED`.
 8. **Hardware/arquitetura (1 min):** protótipo documental do painel ESP32, protocolo e fluxo HTTPS.
 9. **Fechamento (1 min):** resultados, atividades em execução e lições aprendidas.
 
@@ -31,7 +31,7 @@
 - se o serviço de rotas falhar, usar o tempo de deslocamento `MOCKED` declarado;
 - se a notificação falhar, mostrar o tratamento de falha da recepção;
 - se a estimativa estiver sem amostras elegíveis, explicar `insufficient_data` e habilitar apenas a massa `MOCKED` identificada para a apresentação;
-- se a publicação externa não estiver concluída, demonstrar localmente e apresentar Vercel, Neon e CT20 como atividades em execução.
+- se a publicação externa estiver indisponível durante a apresentação, usar a execução local documentada e citar o CT20 aprovado em 16/11 no commit `0fd8c67`.
 
 ## Perguntas que todos devem saber responder
 

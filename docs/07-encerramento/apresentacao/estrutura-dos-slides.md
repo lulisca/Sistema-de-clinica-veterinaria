@@ -10,7 +10,7 @@
 8. Hardware: painel, protocolo e alimentacao.
 9. Qualidade: testes, bordas e bancada.
 10. Gestao: cronograma, riscos e recuperacao.
-11. Publicacao local concluida e publicacao externa em execucao.
+11. Publicacao externa concluida na Vercel + Neon; CT20 aprovado.
 12. C1-MOCKED aprovado para a entrega, limites da simulacao e evolucao para coleta real.
 13. Licoes e contribuicao dos integrantes.
 

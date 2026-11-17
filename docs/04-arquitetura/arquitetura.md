@@ -1,6 +1,6 @@
 # Arquitetura do sistema
 
-> **Estado em 2026-11-16:** linha de base aprovada pelo GP. Frontend e backend estao integrados na `development`; hospedagem definida no ADR-003; publicacao e teste ponta a ponta externo permanecem em execucao. O hardware integra a entrega somente como prototipo documental.
+> **Estado em 2026-11-16:** linha de base aprovada pelo GP. Frontend e backend foram publicados na Vercel com PostgreSQL Neon; o CT20 externo foi aprovado. O hardware integra a entrega somente como prototipo documental.
 
 ## Visao geral
 

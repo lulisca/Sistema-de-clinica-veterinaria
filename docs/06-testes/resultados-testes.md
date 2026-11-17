@@ -1,14 +1,14 @@
 # Resultados de testes
 
-> **Atualizado em:** 2026-11-16. Consolida a revisao final, o CT19 do Rafa e o PR #12 de seguranca do tutor.
+> **Atualizado em:** 2026-11-16. Consolida a revisao final, o CT19 local, a publicacao do PR #20 e o CT20 externo.
 
 ## Resultado consolidado
 
 | Verificacao | Resultado | Evidencia/observacao |
 |---|---|---|
 | Compilacao Python | Aprovada (15/11) | `python -m compileall -q backend` executado sem erro |
-| Quantidade de testes escritos | 49 apos o PR #12 | Eram 30 no commit `71ab334` e 43 no commit `3e2e853`; o PR #12 acrescentou 6 casos de seguranca do tutor |
-| Pytest | Aprovado | Historico de 30 e 43 testes preservado; resultado combinado atual: `49 passed in 54.91s` |
+| Quantidade de testes escritos | 55 na versao publicada | Eram 30 no commit `71ab334`, 43 no commit `3e2e853` e 49 depois do PR #12; publicacao e fila autenticada do tutor acrescentaram 6 casos |
+| Pytest | Aprovado | Historico preservado; resultado atual: `55 passed in 54.50s` |
 | Cobertura do backend | 85% (16/11) | `pytest-cov` com cobertura de linhas e desvios sobre `backend/app`, commit `71ab334`. Detalhe na secao [Cobertura do backend](#cobertura-do-backend) |
 | 40 registros mockados | Aprovado | CSVs possuem 40 linhas de dados e origem `MOCKED` |
 | Quatro tipos | Aprovado para massa mockada | consulta 12, exame 9, retorno 8, vacina 11 |
@@ -18,7 +18,7 @@
 | Lint do frontend | Aprovado (16/11) | `npm run lint` (oxlint) sem erro. Repetido no commit `3e2e853` |
 | Testes automatizados do frontend | Inexistentes | O frontend nao tem testes automatizados; a interface e verificada pelos casos manuais CT21-CT26 |
 | Jornada ponta a ponta (CT19), local | Aprovado com ressalvas (16/11) | Commit `3e2e853`, backend e frontend rodando juntos na maquina local. Jornada de cadastro/check-in ate a conclusao passou sem inconsistencia de estado; 3 defeitos abertos (1 medio, 2 baixos). Detalhe na secao [Jornada ponta a ponta local (CT19)](#jornada-ponta-a-ponta-local-ct19) |
-| Smoke externo (CT20) | Em execucao | O CT19 foi local e nao conta como smoke externo; executar depois da publicacao Vercel/Neon |
+| Smoke externo (CT20) | Aprovado (16/11) | Commit `0fd8c67`: frontend, rota SPA, Swagger, health, CORS, login e leitura autenticada da fila por HTTPS |
 
 ## Comandos da verificacao atual
 
@@ -29,7 +29,7 @@ py -m pytest -q .\backend\tests
 Resultado:
 
 ```text
-49 passed in 54.91s
+55 passed in 54.50s
 ```
 
 O warning foi exclusivamente sobre a impossibilidade de criar o cache do pytest e nao representa falha da aplicacao.
@@ -45,16 +45,16 @@ npm run lint
 
 ## Cobertura historica
 
-A cobertura de **85%** foi medida em 16/11/2026 no commit `71ab334`, quando a suite possuia 30 testes, usando Python 3.11.6 e `pytest-cov` 7.1.0. Essa medicao continua valida como evidencia historica daquele commit, mas nao e atribuida automaticamente a suite atual de 49 testes.
+A cobertura de **85%** foi medida em 16/11/2026 no commit `71ab334`, quando a suite possuia 30 testes, usando Python 3.11.6 e `pytest-cov` 7.1.0. Essa medicao continua valida como evidencia historica daquele commit, mas nao e atribuida automaticamente a suite atual de 55 testes.
 
 | Medicao | Testes | Cobertura | Situacao |
 |---|---:|---:|---|
 | Commit `71ab334` | 30 aprovados | 85% de linhas/desvios em `backend/app` | Historica e reproduzivel |
-| Versao atual | 49 aprovados | Nao recalculada nesta sessao | Nao declarar percentual atual sem nova medicao |
+| Versao atual | 55 aprovados | Nao recalculada nesta sessao | Nao declarar percentual atual sem nova medicao |
 
 ## Evolucao da suite
 
-Os 19 testes adicionados depois da medicao historica cobrem:
+Os 25 testes adicionados depois da medicao historica cobrem:
 
 - cadastro autenticado do tutor;
 - animal proprio e bloqueio de animal de outro tutor;
@@ -71,6 +71,10 @@ Os 19 testes adicionados depois da medicao historica cobrem:
 - rejeicao de campos extras nos payloads do tutor;
 - bloqueio explicito de prioridade para tutor e recepcao;
 - tratamento de corrida de email duplicado como `409`.
+- normalizacao da URL Neon para o driver `psycopg` sem alterar outras URLs;
+- listagem do atendimento ativo somente para o tutor proprietario;
+- exclusao de atendimentos concluidos da lista do tutor;
+- bloqueio da rota do tutor para perfis internos.
 
 ## Registro de execucoes
 
@@ -82,12 +86,31 @@ Os 19 testes adicionados depois da medicao historica cobrem:
 | 2026-11-16 | `5c8bb16` | Windows, Python 3.13 | `py -m pytest -q .\backend\tests` | 43 aprovados em 44.13s |
 | 2026-11-16 | `5c8bb16` | Sandbox sem cache npm | `npm ci`, build e lint | dependencias indisponiveis; codigo nao executado |
 | 2026-11-16 | PR #12 aplicado sobre `main` | Windows, Python 3.13 | `py -m pytest -q backend\tests -p no:cacheprovider` | 49 aprovados em 55.86s |
+| 2026-11-16 | `0fd8c67` | Windows, Python 3.13 | `py -m pytest -q backend\tests -p no:cacheprovider` | 55 aprovados em 54.50s |
+| 2026-11-16 | `0fd8c67` | frontend sem `node_modules` local | `npm run build` e `npm run lint` | nao executados: `tsc` e `oxlint` ausentes; build publicado respondeu por HTTPS |
 
 Ficam sem teste os casos de borda: lista vazia, uma unica amostra, amostras descartadas no calculo e o metodo `_mixed`.
 
+## Smoke externo publicado (CT20)
+
+Execucao nao destrutiva sobre a versao `0fd8c67`, publicada na Vercel com PostgreSQL Neon.
+
+| Verificacao | Resultado |
+|---|---|
+| Frontend `https://clinica-veterinaria-mocha.vercel.app` | `200 OK` |
+| Rota SPA `/recepcao/login` acessada diretamente | `200 OK` |
+| Swagger da API | `200 OK` |
+| `/api/health` | `200 OK`, corpo `{"status":"ok"}` |
+| `/openapi.json` | `200 OK` |
+| CORS | origem exata do frontend aceita pela API |
+| Login da recepcao | `200 OK`, perfil `RECEPTION`; token nao registrado |
+| Leitura autenticada da fila | `200 OK`, banco publicado retornou uma entrada |
+
+O CT20 confirma acesso externo, roteamento SPA, API, CORS, autenticacao e leitura no PostgreSQL Neon. Os fluxos mutaveis F1/F2/F3 nao foram repetidos na base publicada durante este smoke; permanecem cobertos pela suite automatizada e pelo CT19 local.
+
 ## Jornada ponta a ponta local (CT19)
 
-Execucao **local**. Nao e o smoke externo (CT20), que depende da publicacao na Vercel/Neon.
+Execucao **local** distinta do CT20 externo, posteriormente aprovado na publicacao Vercel/Neon.
 
 ### Identificacao
 
@@ -189,3 +212,4 @@ O roteiro automatizado ficou fora do repositorio (nao ha Playwright no projeto).
 | 2026-11-16 | `3e2e853` | Docker, `python:3.12-slim` (Python 3.12.16), copia limpa de `backend/` | `pytest -q -p no:cacheprovider tests` | 43 | 0 | `43 passed, 1 warning in 22.28s` |
 | 2026-11-16 | `3e2e853` | Windows 11, Node 24.14.1, `frontend/` | `npm ci`, `npm run build` e `npm run lint` | build e lint | 0 | Sem erro; 52 modulos |
 | 2026-11-16 19:59-20:01 | `3e2e853` | Local: API e PostgreSQL 17 no Docker, frontend no Vite, Edge 157 automatizado | CT19 pela interface, cenarios A (12 passos) e B (2 encaixes) | 16 | 0 | Aprovado com ressalvas: defeitos E2E-01 (medio), E2E-02 e E2E-03 (baixos). Execucao local, nao e smoke externo |
+| 2026-11-16 | `0fd8c67` | Vercel + Neon por HTTPS | CT20 nao destrutivo: frontend, SPA, API, health, CORS, login e fila | 8 | 0 | Aprovado; fluxos mutaveis nao foram repetidos na base publicada |

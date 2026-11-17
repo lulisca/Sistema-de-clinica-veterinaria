@@ -34,10 +34,10 @@ O tutor de teste ainda não tem animal: na primeira entrada na fila, a tela pede
 ## Estado da versão
 
 - backend e frontend integrados;
-- 49 testes automatizados aprovados;
+- 55 testes automatizados aprovados;
 - C1 concluído como C1-MOCKED aprovado pelo GP, sem alegação de coleta real;
 - hardware concluído como protótipo documental;
-- CT19 local aprovado com ressalvas; publicação Vercel/Neon e CT20 em execução.
+- CT19 local aprovado com ressalvas; publicação Vercel/Neon e CT20 aprovados.
 
 ## Execução local
 

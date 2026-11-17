@@ -11,19 +11,19 @@
 | Contribuicao de Pedro | Documentada | Existe em branch preservada, nao integrada a versao atual |
 | Backend | Concluido | F1, F2, F3, cadastro, autoatendimento e reordenacao integrados |
 | Frontend | Concluido | Integrado na `development`, com build e lint aprovados |
-| Testes automatizados | Concluido | Suite backend atual com 49 testes aprovados |
+| Testes automatizados | Concluido | Suite backend atual com 55 testes aprovados |
 | F1 no frontend | Concluido | Status publico e indicadores exibem p50/p90 ou indisponibilidade |
 | C1 | Concluido como `C1-MOCKED` | 40 registros, quatro janelas e origem identificada; sem alegacao de coleta real |
 | F2 | Concluido | Fluxo integrado com `SIMULATOR` e parametros 20/60/10 `MOCKED` aprovados |
 | F3 | Concluido | Emergencia autorizada, segregacao, recursos e reordenacao implementados |
 | Arquitetura e contrato | Concluido | Documentos conferidos contra frontend e backend |
 | Hardware | Concluido como prototipo documental | Construcao fisica, inventario e cotacao fora do escopo |
-| Plano e resultados de testes | Concluido documentalmente | Casos, resultados e limites registrados; pasta 06 registra 49 testes e o CT19 |
+| Plano e resultados de testes | Concluido | Casos, resultados e limites registrados; pasta 06 registra 55 testes, CT19 e CT20 |
 | Manual | Concluido | Conferido com 12 capturas da versao local |
 | Registro de IA | Concluido para os usos registrados | Manter atualizacao em novos usos relevantes |
 | Empresa 02 | Concluido como simulacao `MOCKED` | Nao exige URL ou participacao externa real nesta versao |
-| Publicacao Vercel + Neon | Em execucao | Topologia aprovada no ADR-003; URLs ainda nao registradas |
-| Teste ponta a ponta e smoke externo | Em execucao | Executar somente depois de banco, API e frontend publicados |
+| Publicacao Vercel + Neon | Concluida | Frontend e API publicados por HTTPS; banco Neon respondeu em rota autenticada |
+| Teste ponta a ponta e smoke externo | Concluido | CT19 local aprovado com ressalvas; CT20 externo basico aprovado no commit `0fd8c67` |
 
 ## Criterio de liberacao externa
 
