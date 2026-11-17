@@ -1,104 +1,57 @@
-# Documentação do projeto — Fila Virtual (Empresa 01)
+# Documentação do projeto — Vila Nova EC
 
-Esta pasta guarda a documentação do projeto. O Caderno do Aluno trata o repositório como evidência de processo: o que não está commitado aqui não conta na avaliação (C2 Gestão, C3 Arquitetura e ADRs, C8 Processo).
+Esta pasta concentra a documentação oficial do sistema de fila virtual da Clínica Vila Nova EC, cenário `MOCKED` situado em Engenheiro Coelho/SP. Documentos históricos e materiais de trabalho permanecem identificados como referência e não substituem a linha de base revisada em 2026-11-16.
 
-A documentação técnica do backend fica em `backend/docs/`.
+## Fontes oficiais
 
-## Regras que valem para tudo aqui
+- **Gestão e entrega:** pastas numeradas `01` a `08`.
+- **Decisões:** `docs/adr/`.
+- **Uso de IA:** somente `docs/registro-de-ia.md`.
+- **Responsabilidades:** `docs/responsabilidades.md`.
+- **Contrato técnico detalhado:** `backend/docs/`.
+- **Planejamento original:** `ETAPAS.md` na raiz.
+- **Material preservado:** `docs/referencias/`, sem valor de estado atual.
 
-- **Commit no dia.** ADR e ata são commitados na data em que a decisão ou a reunião acontece. ADR sem commit na data da decisão não é computado.
-- **Cada integrante commita com a própria conta.** Regras completas em [COMMITS.md](COMMITS.md).
-- **Ninguém é identificado em dado de campo** (tutores, funcionários, nome do animal). Use código sequencial.
-- **Uso de IA é declarado** em [registro-de-ia.md](registro-de-ia.md).
+## Estrutura atual
 
-## Estrutura
-
-```
+```text
 docs/
-├── README.md              este índice
-├── COMMITS.md             regras de commit e de autoria
-├── registro-de-ia.md      Registro de IA (obrigatório)
-├── responsabilidades.md   quem faz o quê (proposta, a formalizar no ADR-000)
-├── referencias/           materiais de trabalho preservados, sem substituir os documentos oficiais
-├── adr/                   um arquivo por decisão: NNN-titulo-curto.md
-├── reunioes/              atas das segundas-feiras: AAAA-MM-DD-ata.md
-├── 01-iniciacao/          termo de abertura, stakeholders, premissas
-├── 02-planejamento/       escopo, EAP, cronograma, custos, riscos
-├── 03-campo/              dado de campo, entrevista, calibração da F1
-├── 04-arquitetura/        requisitos, modelo de dados, contrato, hardware
-├── 05-implementacao/      sprints e notas de publicação
-├── 06-testes/             plano de testes e bancada cruzada
-└── 07-encerramento/       manual, relatório de extensão, lições aprendidas
+├── 01-iniciacao/       abertura, stakeholders, premissas e restrições
+├── 02-planejamento/    escopo, EAP, cronograma, custos, comunicação e riscos
+├── 03-campo/           C1-MOCKED, entrevista, janelas e massa de 40 registros
+├── 04-arquitetura/     requisitos, contrato, modelo, arquitetura e hardware
+├── 05-publicacao/      plano de deploy e checklist de congelamento
+├── 06-testes/          plano, resultados, bancada e defeitos
+├── 07-encerramento/    manual, demonstração, extensão e lições aprendidas
+├── 08-controle/        integração frontend/backend e rastreabilidade
+├── adr/                decisões arquiteturais e de projeto
+├── referencias/        documentos históricos preservados
+├── reunioes/           modelo e atas reais, quando existirem
+├── COMMITS.md
+├── registro-de-ia.md
+└── responsabilidades.md
 ```
 
-Arquivos que começam com `_modelo` são modelos: copie, renomeie e preencha. Não edite o modelo.
+Arquivos `_modelo-*` são modelos vazios. Não representam atividade executada.
 
-O planejamento detalhado preparado pelo GP está preservado em `referencias/ETAPAS-planejamento-detalhado.md`. Ele serve como fonte para os entregáveis do projeto e não substitui o `ETAPAS.md` da raiz.
+## Estado consolidado
 
-## Entregáveis: onde cada um fica
+| Área | Estado em 2026-11-16 | Evidência principal |
+|---|---|---|
+| C1 | Concluído como C1-MOCKED aprovado pelo GP | `03-campo/` |
+| Planejamento | Consolidado | `01-iniciacao/` e `02-planejamento/` |
+| Arquitetura | Consolidada para a versão atual | `04-arquitetura/` e `adr/` |
+| Backend | Integrado e com 49 testes aprovados | `backend/` e `06-testes/resultados-testes.md` |
+| Frontend | Integrado ao contrato atual | `frontend/` e `08-controle/handoff-frontend.md` |
+| Hardware | Concluído como protótipo documental | `04-arquitetura/esquema-de-hardware.md` |
+| Manual e encerramento | Concluídos com 12 capturas | `07-encerramento/` |
+| Publicação externa | Em execução | `05-publicacao/` |
+| CT19 e CT20 | CT19 aprovado com ressalvas; CT20 em execução | `06-testes/resultados-testes.md` |
 
-"—" no prazo significa que o Caderno não fixa data; vale o cronograma interno. As referências a anexos são do Caderno do Aluno.
+## Regras de integridade
 
-| Entregável | Arquivo | Prazo | Modelo |
-|---|---|---|---|
-| **Gestão** | | | |
-| Termo de abertura | `01-iniciacao/termo-de-abertura.md` | S1 · 05/10 | Anexo B (criado) |
-| Mapa de stakeholders | `01-iniciacao/stakeholders.md` | S2 · 12/10 | — |
-| Premissas e restrições | `01-iniciacao/premissas-e-restricoes.md` | S2 · 12/10 | — |
-| Cronograma da empresa | `02-planejamento/cronograma.md` | S2 · 12/10 | — |
-| Escopo e EAP | `02-planejamento/escopo.md`, `eap.md` | S3 · 19/10 | — |
-| Plano de comunicação | `02-planejamento/plano-de-comunicacao.md` | — | — |
-| Estimativa de custos | `02-planejamento/custos.md` | S4 · 26/10 | — |
-| Plano de riscos (revisado a cada marco) | `02-planejamento/plano-de-riscos.md` | S4 · 26/10 | Anexo C (criado) |
-| Atas semanais | `reunioes/AAAA-MM-DD-ata.md` | toda segunda, commit no dia | Anexo G (criado) |
-| **Análise e arquitetura** | | | |
-| Requisitos e casos de uso | `04-arquitetura/requisitos-e-casos-de-uso.md` | S3 · 19/10 | — |
-| Contrato de interface (congelado) | `04-arquitetura/contrato-de-interface.md` | S4 · 26/10 | — |
-| Modelo de dados | `04-arquitetura/modelo-de-dados.md` | S4 · 26/10 | — |
-| Esquema de hardware | `04-arquitetura/esquema-de-hardware.md` | S4 · 26/10 | veja abaixo |
-| Documento de arquitetura | `04-arquitetura/arquitetura.md` | — | — |
-| Protótipo de telas | `04-arquitetura/prototipo-de-telas.md` | — | — |
-| ADRs | `adr/NNN-titulo-curto.md` | na data de cada decisão | Anexo A (criado) |
-| **Campo** | | | |
-| Entrevista com o responsável | `03-campo/entrevista.md` | S3 · 19/10 | roteiro no Anexo E (em `03-campo/README.md`) |
-| Fichas e série de atendimentos digitada | `03-campo/serie-de-atendimentos.csv` | S5 · 02/11 | Anexo D (criado) |
-| Relatório de calibração da F1 | `03-campo/relatorio-calibracao-f1.md` | S7 · 16/11 | — |
-| **Implementação** | | | |
-| Código, integração das três frentes, sistema publicado | raiz do repositório | S7 · 16/11 (congelamento) | — |
-| **Qualidade** | | | |
-| Plano de testes | `06-testes/plano-de-testes.md` | S6 · 09/11 | — |
-| Testes automatizados | junto ao código | — | — |
-| Relatório de bancada cruzada (produzido) | `06-testes/relatorio-bancada-cruzada.md` | S8 · 23/11 | Anexo F (criado) |
-| Respostas aos defeitos recebidos | `06-testes/respostas-aos-defeitos.md` | S8 · 23/11 | veja o Anexo F |
-| **Encerramento** | | | |
-| Manual do usuário | `07-encerramento/manual-do-usuario.md` | S7 · 16/11 | — |
-| Relatório de extensão | `07-encerramento/relatorio-de-extensao.md` | S9 · 30/11 | — |
-| Apresentação final (slides + roteiro da demo) | `07-encerramento/apresentacao/` | S9 · 30/11 | — |
-| Lições aprendidas | `07-encerramento/licoes-aprendidas.md` | 03/12 | — |
-| **Processo** | | | |
-| Registro de IA | `registro-de-ia.md` | contínuo | criado |
-| Histórico do repositório | o próprio Git | contínuo | — |
-
-### ADRs obrigatórios
-
-- **ADR-000:** critério de divisão da turma, as três frentes, nomes e papéis (já na S1).
-- **ADR da F2:** como a posição do tutor é obtida.
-- **ADR do hardware.**
-
-Toda decisão relevante vira ADR, incluindo stack, forma de integração, hospedagem, canal de notificação, eixos de segregação e faixa da estimativa (p50/p90 ou média ± desvio).
-
-## Pacote documental consolidado em 2026-11-15
-
-- Planejamento: `02-planejamento/`.
-- Campo mockado separado: `03-campo/`.
-- Arquitetura e hardware: `04-arquitetura/` e `adr/`.
-- Publicacao: `05-publicacao/`.
-- Qualidade: `06-testes/`.
-- Manual, demo e encerramento: `07-encerramento/`.
-- Rastreabilidade: `08-controle/matriz-de-rastreabilidade.md`.
-
-Diagnosticos, auditorias de leitura e listas pessoais de pendencias do GP sao controles locais e nao integram o pacote versionado.
-
-### Esquema de hardware (`04-arquitetura/esquema-de-hardware.md`)
-
-Precisa conter: diagrama de blocos; componentes com justificativa (inventário do campus ou orçamento de fornecedor com preço e prazo); protocolo de comunicação com o servidor; alimentação e consumo calculados (tensão, corrente, fonte, proteção); e um ADR da decisão.
+- dados `MOCKED` devem permanecer identificados e não podem ser apresentados como coleta real;
+- nenhuma URL, parceiro, teste ou aprovação externa é declarada sem evidência;
+- mudanças relevantes atualizam código, teste e documentação na mesma entrega;
+- todo uso relevante de IA é consolidado em `registro-de-ia.md`;
+- a integração segue Pull Request de feature para `development` e, após revisão, de `development` para `main`.

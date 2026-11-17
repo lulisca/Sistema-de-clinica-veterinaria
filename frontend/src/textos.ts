@@ -94,6 +94,8 @@ const MENSAGENS_ERRO: [string, string][] = [
   ['Notification not found', 'Aviso não encontrado.'],
   ['Tutor not found', 'Tutor não encontrado.'],
   ['Animal not found', 'Animal não encontrado.'],
+  ['Email already registered', 'Já existe uma conta com este e-mail. Entre com ela.'],
+  ['Animal already has an active queue entry', 'Este animal já está na fila.'],
 ]
 
 // Texto de erro pronto para mostrar na tela.

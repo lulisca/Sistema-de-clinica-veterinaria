@@ -24,10 +24,22 @@ npm run dev
 | `npm run build` | Confere os tipos (TypeScript) e gera a versão de produção em `dist/` |
 | `npm run lint` | Procura erros comuns no código |
 
+## Publicação (Vercel)
+
+Decisão no [ADR-003](../docs/adr/003-hospedagem-vercel.md). No projeto da Vercel:
+
+- **Root Directory:** `frontend`, com o preset **Vite** (build `npm run build`, saída `dist`). Com a raiz do repositório, nada é construído e todo endereço dá 404.
+- **Variável de ambiente:** `VITE_API_URL` com a URL da API publicada. Sem ela, o site chama `http://localhost:8000/api` e o login falha.
+- **`vercel.json`:** manda toda rota para o `index.html`. Sem ele, abrir ou recarregar `/recepcao/fila` ou o link do tutor (`/t/<token>`) dá 404, porque quem conhece essas rotas é o React Router, não o servidor.
+- **Publicação automática:** cada merge na `main` publica o site e a API pelo workflow `.github/workflows/publicar-vercel.yml`. Ele usa o segredo `VERCEL_TOKEN` do repositório. A Vercel não liga o repositório direto porque ele é de uma conta pessoal e o projeto da Vercel é de outra, então não há prévia por Pull Request. Migrations continuam à mão: rode `alembic upgrade head` no banco de produção antes do merge que mudar o banco.
+
 ## Onde fica cada tela
 
 | Figma | Rota | Arquivo |
 |---|---|---|
+| Página inicial (sem Figma): "Entrar na fila" ou "Entrar na recepção" | `/` | `src/paginas/Entrada.tsx` |
+| Tutor entra ou cria conta (sem Figma) | `/tutor/entrar`, `/tutor/criar-conta` | `src/paginas/tutor/AcessoTutor.tsx` |
+| Tutor entra na fila com os sintomas (sem Figma) | `/tutor` | `src/paginas/tutor/InicioTutor.tsx` |
 | T1–T6 (tutor) | `/t/<token>` | `src/paginas/tutor/StatusTutor.tsx` |
 | R1 Login | `/recepcao/login` | `src/paginas/recepcao/Login.tsx` |
 | R2/R3 Fila, R9 vazia, R10 sem estimativa, R11 erro de rede | `/recepcao/fila` | `src/paginas/recepcao/Fila.tsx` |
@@ -69,4 +81,4 @@ src/
 - Não existe lista de alocações abertas. A ocupação da sala de isolamento é deduzida da fila (paciente em atendimento que requer isolamento).
 - A rota de decisão de retorno é só da equipe. Na tela do tutor (T3), o "Dá tempo?" é recalculado no navegador com a mesma regra do backend.
 - A fila da recepção mostra a última revisão salva da estimativa. O tutor vê a estimativa calculada na hora, então os valores podem diferir em alguns minutos.
-- Os quadros "A DEFINIR" do Figma são anotações de decisões pendentes e não aparecem no sistema.
+- Os quadros históricos "A DEFINIR" do Figma não fazem parte da interface implementada; as decisões atuais estão no contrato e nos ADRs do repositório.

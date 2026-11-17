@@ -1,26 +1,28 @@
 # ADR-001 - Decisoes de F1, F2 e F3
 
-- **Data:** 2026-11-15
-- **Status:** proposta
+- **Data do registro:** 2026-11-15
+- **Data de aceite:** 2026-11-16
+- **Status:** aceito para a linha de base da entrega
+- **Decide:** Alisson, GP
 
 ## Contexto
 
-O backend ja implementa escolhas tecnicas que precisam de aprovacao formal antes de serem tratadas como linha de base da equipe.
+O backend e o frontend integrados implementam as escolhas abaixo. O ADR registra a linha adotada na versao congelada em 16/11.
 
-## Proposta
+## Decisao
 
-- F1: percentis p50/p90 por tipo; `MOCKED` permitido somente no modo configuravel de apresentacao, com origem identificada e sem validar o C1.
+- F1: percentis p50/p90 por tipo; `MOCKED` permitido no modo configuravel de apresentacao, com origem identificada, compondo o C1-MOCKED aprovado sem alegacao de coleta real.
 - F2: captura pontual; backend recebe somente `travel_minutes`; negacao usa fallback; canal de demo `SIMULATOR`.
 - F3: especie e tipo/motivo como eixos; ordem emergencia, prioridade, check-in e ID; recursos exclusivos por alocacao.
 
-Parametros 20/60/10 minutos permanecem somente para demo ate aprovacao especifica.
+Os parametros F2 de 20 minutos de aviso, 60 minutos de retencao e 10 minutos de margem formam a configuracao `MOCKED` aprovada para a entrega.
 
 ## Alternativas
 
-- media e desvio na F1: rejeitada na proposta por sensibilidade e menor clareza.
+- media e desvio na F1: rejeitada por sensibilidade e menor clareza.
 - coordenadas persistidas: rejeitada por minimizacao.
 - filas fisicas separadas: rejeitada porque dificulta recursos compartilhados.
 
 ## Consequencias
 
-Frontend e QA devem seguir o contrato. A equipe precisa aprovar ou alterar esta proposta e registrar a decisao real antes de mudar o status.
+Frontend e QA seguem o contrato integrado. Uma futura coleta real ou troca de parametros exige nova decisao e evidencia, sem alterar retroativamente esta linha `MOCKED`.

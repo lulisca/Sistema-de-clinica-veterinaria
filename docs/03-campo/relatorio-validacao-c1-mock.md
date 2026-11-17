@@ -1,70 +1,73 @@
-# Relatório de validação C1-MOCKED
+# Relatorio de validacao C1-MOCKED
 
-> **Status acadêmico do C1:** a validar. Este relatório usa dados mockados para exercitar o método e não declara coleta real.
+> **Status da entrega:** C1-MOCKED aprovado pelo GP em 2026-11-16. Este relatorio usa dados mockados para verificar o metodo e nao declara coleta, entrevista, parceria ou aprovacao externa real.
 
-## 1. Objetivo
+## 1. Contexto e objetivo
 
-Simular o fluxo completo de preparação, segmentação e análise dos dados exigidos pelo C1 sem bloquear o desenvolvimento da F1. A massa permite desenvolver telas, scripts, testes e apresentação técnica enquanto a evidência de campo permanece pendente.
+O planejamento original previa coleta em clinica real. Como a coleta e a entrevista nao foram executadas, o GP aprovou a substituicao por um cenario controlado `MOCKED` para que o desenvolvimento, os testes e a demonstracao da F1 fossem concluidos sem fabricar evidencia de campo.
+
+O objetivo deste relatorio e verificar o fluxo de preparacao, segmentacao, importacao e analise dos dados adotado no C1-MOCKED.
 
 ## 2. Base utilizada
 
 - 40 atendimentos mockados;
-- 4 janelas simuladas, com 10 registros cada;
+- 4 janelas ficticias, com 10 registros cada;
 - 4 tipos de atendimento: consulta, exame, retorno e vacina;
 - origem registrada como `MOCKED`;
-- nenhuma pessoa ou animal real identificado.
+- nenhuma pessoa, animal ou organizacao real identificada.
 
-Arquivos:
+Arquivos relacionados:
 
-- `serie-mock.csv`: formato documental do Caderno;
-- `janelas-mock.md`: contexto das quatro janelas mockadas;
+- `serie-mock.csv`: formato documental do projeto;
+- `janelas-mock.md`: contexto das quatro janelas ficticias;
+- `entrevista-mock.md`: regras operacionais simuladas;
 - `backend/data/amostras_mock.csv`: formato aceito pelo importador do backend.
 
-## 3. Resultado estatístico da massa mockada
+## 3. Resultado estatistico da massa mockada
 
-O cálculo abaixo reproduz a interpolação linear usada em `backend/app/services/estimation.py`.
+O calculo reproduz a interpolacao linear usada em `backend/app/services/estimation.py`.
 
-| Tipo | N | p50 (min) | p90 (min) | Média (min) |
+| Tipo | N | p50 (min) | p90 (min) | Media (min) |
 |---|---:|---:|---:|---:|
 | Consulta | 12 | 26,0 | 28,9 | 26,0 |
 | Exame | 9 | 27,0 | 29,2 | 26,3 |
 | Retorno | 8 | 17,5 | 19,3 | 17,4 |
 | Vacina | 11 | 12,0 | 13,0 | 12,1 |
 
-A separação confirma por que uma média global não deve representar todos os tipos: vacina e exame possuem distribuições operacionais diferentes.
+A segmentacao confirma por que uma media global nao deve representar todos os tipos: vacina e exame possuem distribuicoes operacionais diferentes.
 
-## 4. Comportamento esperado no backend
+## 4. Comportamento verificado no backend
 
-O importador aceita origem `MOCKED`. Por padrao, o calculo as exclui; com `ALLOW_MOCKED_ESTIMATES=true`, elas geram p50/p90 com origem identificada.
+O importador aceita origem `MOCKED`. Por padrao, o calculo a exclui; com `ALLOW_MOCKED_ESTIMATES=true`, a F1 gera p50/p90 com a origem identificada.
 
-1. a importação deve criar 40 registros mockados;
-2. `GET /api/metrics/f1-readiness` não deve considerá-los prontos para calibração;
+1. a importacao cria 40 registros mockados;
+2. `GET /api/metrics/f1-readiness` mantem separada a prontidao baseada em fonte aceita;
 3. com o modo desligado, uma estimativa baseada apenas nesses dados retorna `insufficient_data`;
-4. com o modo ligado, a estimativa retorna `data_source=MOCKED` e nao valida o C1;
-4. testes isolados da lógica podem usar fixtures controladas sem representar coleta real;
-5. dados reais ou retrospectivos verificáveis serão necessários para mudar o status acadêmico do C1.
+4. com o modo ligado, a estimativa retorna `data_source=MOCKED`;
+5. fixtures controladas podem testar a logica sem representar coleta real.
 
-Essa separação protege o sistema contra a apresentação acidental de massa mockada como calibração real.
+Essa separacao protege o sistema contra a apresentacao acidental da massa mockada como calibracao clinica real.
 
-## 5. Critérios técnicos validados pelo mock
+## 5. Criterios tecnicos atendidos
 
-- formato e volume da série;
-- segmentação por tipo;
-- cálculo de p50 e p90;
-- diferença entre distribuições de atendimento;
+- formato e volume da serie;
+- quatro janelas e quatro tipos de atendimento;
+- segmentacao por tipo;
+- calculo conferido de p50 e p90;
+- diferenca entre distribuicoes de atendimento;
 - compatibilidade com o importador;
-- rastreabilidade da origem mockada;
-- preparação dos componentes de interface e relatório.
+- rastreabilidade da origem `MOCKED`;
+- preparacao das telas, scripts, testes e relatorios da F1.
 
-## 6. Pendências para validação acadêmica
+## 6. Limites declarados
 
-- clínica parceira real ou alternativa formal aceita pelo professor;
-- autorização e método verificáveis;
-- quatro janelas reais ou registros retrospectivos autorizados;
-- entrevista de 30 minutos;
-- importação com origem legítima `DIRECT_OBSERVATION` ou `RETROSPECTIVE`;
-- geração do relatório final de calibração e erro observado.
+- nao houve autorizacao ou participacao de clinica real;
+- nao houve observacao, entrevista ou registro retrospectivo real;
+- os resultados nao representam desempenho clinico observado;
+- o C1-MOCKED e uma decisao do GP para a entrega atual, nao uma aprovacao atribuida ao professor.
 
-## 7. Conclusão
+Se o professor autorizar uma etapa real posterior, a equipe podera substituir esta base por dados `DIRECT_OBSERVATION` ou `RETROSPECTIVE`, com metodo, datas e evidencias verificaveis. Essa possibilidade nao deixa o pacote atual incompleto.
 
-O C1-MOCKED está pronto como validação de desenvolvimento. O C1 acadêmico permanece **a validar** e não bloqueia a evolução de F1, frontend, testes, documentação ou demonstração técnica.
+## 7. Conclusao
+
+O C1-MOCKED esta concluido para desenvolvimento, testes e demonstracao da versao congelada em 16/11/2026. A massa sustenta tecnicamente a F1 com origem identificada e preserva a transparencia de que nenhuma coleta real foi executada.

@@ -2,6 +2,7 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import delete, func, or_, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
@@ -37,7 +38,7 @@ def bootstrap(payload: BootstrapIn, db: Session = Depends(get_db)):
 @router.post('/auth/login', response_model=TokenOut)
 def login(payload: LoginIn, db: Session = Depends(get_db)):
     user = db.scalar(select(User).where(User.email == payload.email.lower()))
-    if not user or not verify_password(payload.password, user.password_hash):
+    if not user or not user.active or not verify_password(payload.password, user.password_hash):
         raise HTTPException(401, 'Invalid credentials')
     return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
 
@@ -50,13 +51,17 @@ def register_tutor(payload: TutorRegisterIn, db: Session = Depends(get_db)):
         name=payload.name.strip(), email=email,
         password_hash=hash_password(payload.password), role='TUTOR',
     )
-    db.add(user)
-    db.flush()
-    tutor = Tutor(user_id=user.id, name=user.name, contact=payload.contact)
-    db.add(tutor)
-    db.flush()
-    audit(db, 'Tutor', tutor.id, 'SELF_REGISTER', user.id)
-    db.commit()
+    try:
+        db.add(user)
+        db.flush()
+        tutor = Tutor(user_id=user.id, name=user.name, contact=payload.contact)
+        db.add(tutor)
+        db.flush()
+        audit(db, 'Tutor', tutor.id, 'SELF_REGISTER', user.id)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(409, 'Email already registered')
     return TokenOut(access_token=create_access_token(user.id, user.role), role=user.role)
 
 def _tutor_for_user(db: Session, user: User) -> Tutor:
@@ -111,6 +116,21 @@ def create_tutor_queue_entry(payload: TutorQueueCreate, db: Session = Depends(ge
     db.refresh(q)
     recalculate_waiting_estimates(db, 'TUTOR_SELF_ENTRY')
     return q
+
+@router.get('/tutor/queue', response_model=list[QueueOut])
+def list_tutor_queue_entries(db: Session = Depends(get_db), user=TUTOR):
+    # Atendimentos ainda ativos dos animais do tutor logado. Serve para ele achar
+    # o link de acompanhamento (public_token) quando volta ao site.
+    tutor = _tutor_for_user(db, user)
+    return list(db.scalars(
+        select(QueueEntry)
+        .join(Animal, Animal.id == QueueEntry.animal_id)
+        .where(
+            Animal.tutor_id == tutor.id,
+            QueueEntry.status.in_(['WAITING', 'CALLED', 'RETURNING', 'READY', 'IN_SERVICE']),
+        )
+        .order_by(QueueEntry.checked_in_at.desc(), QueueEntry.id.desc())
+    ).all())
 
 @router.post('/tutors', response_model=TutorOut)
 def create_tutor(payload: TutorCreate, db: Session = Depends(get_db), user=STAFF):
@@ -770,9 +790,9 @@ def f1_readiness(db:Session=Depends(get_db),user=STAFF):
     return F1ReadinessOut(
         minimum_configured=settings.min_samples_for_estimate,
         note=(
-            'MOCKED samples are enabled for development/presentation. Academic C1 validation remains pending.'
+            'MOCKED samples are enabled for the approved C1-MOCKED delivery and remain identified as non-real data.'
             if settings.allow_mocked_estimates
-            else 'MOCKED samples are excluded. Academic calibration requires an accepted field/system dataset.'
+            else 'MOCKED samples are excluded. Enable them explicitly or provide another eligible data source.'
         ),
         types=sample_readiness(db),
     )

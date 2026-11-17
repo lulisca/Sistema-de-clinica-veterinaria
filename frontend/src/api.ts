@@ -1,7 +1,7 @@
 // Todas as chamadas à API ficam aqui. As telas só chamam estas funções.
 // Contrato: backend/docs/API_CONTRACT.md
 import { API_URL } from './config'
-import { encerrarSessao, lerSessao } from './sessao'
+import { encerrarSessao, encerrarSessaoTutor, lerSessao, lerSessaoTutor } from './sessao'
 import type {
   Agendamento, Alocacao, Animal, Aviso, DecisaoRetorno, EntradaFila, Metricas,
   MetricasPorTipo, MomentoLocalizacao, PoliticaLocalizacao, Prontidao, Recurso, ResultadoAvaliacao,
@@ -20,15 +20,16 @@ export class ErroApi extends Error {
 interface Opcoes {
   metodo?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
   corpo?: unknown
-  publico?: boolean // rotas do tutor e o login não usam o token da equipe
+  publico?: boolean // link do tutor e login: sem token
+  tutor?: boolean // telas /tutor: usam o token da conta do tutor, não o da equipe
 }
 
 async function chamar<T>(caminho: string, opcoes: Opcoes = {}): Promise<T> {
   const cabecalhos: Record<string, string> = {}
   if (opcoes.corpo !== undefined) cabecalhos['Content-Type'] = 'application/json'
 
-  const sessao = lerSessao()
-  if (!opcoes.publico && sessao) cabecalhos.Authorization = `Bearer ${sessao.token}`
+  const token = opcoes.tutor ? lerSessaoTutor()?.token : lerSessao()?.token
+  if (!opcoes.publico && token) cabecalhos.Authorization = `Bearer ${token}`
 
   let resposta: Response
   try {
@@ -42,10 +43,15 @@ async function chamar<T>(caminho: string, opcoes: Opcoes = {}): Promise<T> {
   }
 
   if (!resposta.ok) {
-    // Token vencido ou inválido: volta para o login da recepção.
+    // Token vencido ou inválido: volta para o login (do tutor ou da recepção).
     if (resposta.status === 401 && !opcoes.publico) {
-      encerrarSessao()
-      window.location.assign('/recepcao/login')
+      if (opcoes.tutor) {
+        encerrarSessaoTutor()
+        window.location.assign('/tutor/entrar')
+      } else {
+        encerrarSessao()
+        window.location.assign('/recepcao/login')
+      }
     }
     throw new ErroApi(resposta.status, await lerDetalhe(resposta))
   }
@@ -71,6 +77,21 @@ async function lerDetalhe(resposta: Response): Promise<string> {
 // ---------- Login da equipe ----------
 export const entrar = (email: string, password: string) =>
   chamar<Token>('/auth/login', { metodo: 'POST', corpo: { email, password }, publico: true })
+
+// ---------- Tutor com conta (entra na fila sozinho, com os sintomas) ----------
+// Para entrar, o tutor usa o mesmo POST /auth/login da equipe (a resposta diz o papel).
+export const criarContaTutor = (dados: { name: string; email: string; password: string; contact?: string }) =>
+  chamar<Token>('/auth/tutors/register', { metodo: 'POST', corpo: dados, publico: true })
+
+export const buscarTutorLogado = () => chamar<Tutor>('/tutor/me', { tutor: true })
+export const listarMeusAnimais = () => chamar<Animal[]>('/tutor/animals', { tutor: true })
+export const cadastrarMeuAnimal = (dados: { name: string; species: string }) =>
+  chamar<Animal>('/tutor/animals', { metodo: 'POST', corpo: dados, tutor: true })
+
+// Atendimentos ainda ativos do tutor, com o public_token para abrir /t/<token>.
+export const listarMeusAtendimentos = () => chamar<EntradaFila[]>('/tutor/queue', { tutor: true })
+export const entrarNaFila = (dados: { animal_id: number; appointment_type: string; symptoms: string }) =>
+  chamar<EntradaFila>('/tutor/queue', { metodo: 'POST', corpo: dados, tutor: true })
 
 // ---------- Tutor (link público, sem login) ----------
 export const buscarStatusPublico = (token: string) =>

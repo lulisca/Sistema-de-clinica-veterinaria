@@ -1,46 +1,37 @@
-# Relatório de calibração e avaliação — F1
+# Relatório técnico da F1
 
-**Status:** PENDENTE DE DADOS DE CAMPO
+**Status:** C1-MOCKED presente e aprovado pelo GP para a entrega de 2026-11-16.
 
-Este relatório é gerado a partir do banco atual. Ele não substitui a verificação acadêmica da coleta exigida pelo projeto.
+Este documento resume a base disponível para a demonstração. Ele não declara coleta, calibração clínica ou aprovação externa real.
 
-## 1. Método implementado
+## Método implementado
 
-- Segmentação por tipo de atendimento.
-- Percentis históricos p50 e p90.
-- Simulação da fila considerando capacidade de veterinários e atendimentos em andamento.
-- Persistência da previsão inicial e de revisões automáticas com horário, número da revisão e evento disparador.
-- Comparação entre previsão inicial e espera real até o início do atendimento.
-- Indicadores: erro assinado médio, erro absoluto médio (MAE) e proporção dentro da faixa p50–p90.
+- segmentação por tipo de atendimento;
+- percentis históricos p50 e p90;
+- simulação da fila conforme ordem e capacidade;
+- revisões automáticas e versionadas;
+- comparação entre previsão e espera real;
+- erro assinado, MAE e proporção dentro da faixa.
 
-## 2. Base disponível
+## Base da entrega
 
-- Amostras de observação direta/retrospectiva: **0**
-- Amostras produzidas pelo sistema em operação: **0**
-- Amostras mockadas, excluídas da calibração: **0**
-- Limiar técnico configurado por tipo: **3** amostras não mockadas.
+- 40 amostras `MOCKED`;
+- quatro tipos de atendimento;
+- quatro janelas fictícias;
+- uso habilitado por `ALLOW_MOCKED_ESTIMATES=true`;
+- resposta identificada por `data_source=MOCKED`.
 
-| Tipo | Amostras não mockadas | Limiar técnico | Backend pode estimar? |
-|---|---:|---:|---|
-| — | 0 | 3 | Não |
+Os percentis conferidos e os limites da massa estão em `docs/03-campo/relatorio-calibracao-f1-mocked.md` e `docs/03-campo/relatorio-validacao-c1-mock.md` na raiz do repositório.
 
-## 3. Erro observado da previsão inicial
+## Comportamento esperado
 
-- Estimativas iniciais já avaliadas: **0**
-- Erro assinado médio: **— min**
-- MAE: **— min**
-- Proporção dentro da faixa: **—**
+- com o modo `MOCKED` habilitado, a F1 calcula p50/p90 da massa da apresentação;
+- com o modo desabilitado e sem outra origem elegível, retorna `insufficient_data`;
+- amostras `SYSTEM`, `DIRECT_OBSERVATION` ou `RETROSPECTIVE` permanecem separadas pela origem;
+- nenhuma métrica da massa `MOCKED` deve ser atribuída a uma clínica real.
 
-| Tipo | N avaliado | Erro assinado médio (min) | MAE (min) | Dentro da faixa |
-|---|---:|---:|---:|---:|
-| — | 0 | — | — | — |
+## Avaliação em operação
 
-## 4. Critério para encerramento da calibração
+As revisões podem ser auditadas por `GET /api/queue/{id}/estimates`. Quando atendimentos são iniciados, o sistema grava a espera real e calcula os erros disponíveis. O gerador `python scripts/generate_f1_report.py` reflete o conteúdo atual do banco e identifica se a base é `MOCKED`, real ou ausente.
 
-Antes de declarar a F1 calibrada para a entrega, a equipe deve substituir/ complementar os dados de desenvolvimento pela série real da clínica, verificar a cobertura exigida no Caderno do Aluno e então regenerar este relatório.
-
-O valor de `MIN_SAMPLES_FOR_ESTIMATE` é uma trava técnica do software, não uma afirmação de suficiência estatística nem substitui o mínimo acadêmico de coleta.
-
-## 5. Evidência de revisões
-
-As revisões de cada paciente podem ser auditadas por `GET /api/queue/{id}/estimates`. Eventos relevantes como check-in, entrada de encaixe, mudança de prioridade, início/fim de atendimento e atualização das amostras geram novas revisões automaticamente quando houver dados suficientes.
+Uma coleta real futura, se autorizada, deverá gerar um novo relatório com origem, datas e evidências verificáveis, sem alterar retroativamente o C1-MOCKED.

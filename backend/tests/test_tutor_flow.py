@@ -109,3 +109,94 @@ def test_tutor_account_does_not_block_first_staff_bootstrap(client):
         'role': 'ADMIN',
     })
     assert duplicate.status_code == 409
+
+
+def test_inactive_tutor_cannot_login(client):
+    from app.core.database import SessionLocal
+    from app.models.domain import User
+
+    register(client)
+    with SessionLocal() as db:
+        user = db.query(User).filter_by(email='tutor@example.com').one()
+        user.active = False
+        db.commit()
+    response = client.post('/api/auth/login', json={
+        'email': 'tutor@example.com', 'password': 'senha-segura-123',
+    })
+    assert response.status_code == 401
+
+
+def test_tutor_registration_rejects_role_field(client):
+    response = client.post('/api/auth/tutors/register', json={
+        'name': 'Marina Silva', 'email': 'role@example.com',
+        'password': 'senha-segura-123', 'role': 'ADMIN',
+    })
+    assert response.status_code == 422
+
+
+def test_tutor_animal_and_queue_reject_extra_fields(client):
+    headers = register(client)
+    invalid_animal = client.post('/api/tutor/animals', headers=headers, json={
+        'name': 'Luna', 'species': 'DOG', 'tutor_id': 999,
+    })
+    assert invalid_animal.status_code == 422
+    animal = client.post('/api/tutor/animals', headers=headers, json={
+        'name': 'Luna', 'species': 'DOG',
+    }).json()
+    invalid_queue = client.post('/api/tutor/queue', headers=headers, json={
+        'animal_id': animal['id'], 'appointment_type': 'CONSULTATION',
+        'symptoms': 'Sem apetite desde ontem.', 'emergency': True,
+    })
+    assert invalid_queue.status_code == 422
+
+
+def test_tutor_cannot_change_priority(client):
+    headers = register(client)
+    animal = client.post('/api/tutor/animals', headers=headers, json={
+        'name': 'Luna', 'species': 'DOG',
+    }).json()
+    entry = client.post('/api/tutor/queue', headers=headers, json={
+        'animal_id': animal['id'], 'appointment_type': 'CONSULTATION',
+        'symptoms': 'Sem apetite desde ontem.',
+    }).json()
+    response = client.patch(f"/api/queue/{entry['id']}/priority", headers=headers,
+                            json={'emergency': True})
+    assert response.status_code == 403
+
+
+def test_reception_still_creates_walkin_but_cannot_change_priority(client, reception_headers):
+    tutor = client.post('/api/tutors', headers=reception_headers,
+                        json={'name': 'Tutor da recepção'})
+    assert tutor.status_code == 200
+    animal = client.post('/api/animals', headers=reception_headers, json={
+        'tutor_id': tutor.json()['id'], 'code': 'REC-001',
+        'name': 'Nina', 'species': 'CAT',
+    })
+    assert animal.status_code == 200
+    entry = client.post('/api/walk-ins', headers=reception_headers, json={
+        'animal_id': animal.json()['id'], 'appointment_type': 'CONSULTATION',
+    })
+    assert entry.status_code == 200
+    response = client.patch(f"/api/queue/{entry.json()['id']}/priority",
+                            headers=reception_headers, json={'emergency': True})
+    assert response.status_code == 403
+
+
+def test_registration_integrity_error_returns_409(client, monkeypatch):
+    from sqlalchemy.exc import IntegrityError
+    from sqlalchemy.orm import Session
+    from app.models.domain import User
+
+    original_flush = Session.flush
+
+    def conflicting_flush(self, *args, **kwargs):
+        if any(isinstance(obj, User) and obj.email == 'race@example.com' for obj in self.new):
+            raise IntegrityError('INSERT INTO users', {}, Exception('duplicate email'))
+        return original_flush(self, *args, **kwargs)
+
+    monkeypatch.setattr(Session, 'flush', conflicting_flush)
+    response = client.post('/api/auth/tutors/register', json={
+        'name': 'Marina Silva', 'email': 'race@example.com',
+        'password': 'senha-segura-123',
+    })
+    assert response.status_code == 409

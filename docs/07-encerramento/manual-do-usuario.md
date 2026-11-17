@@ -49,14 +49,16 @@ Os botões de cada paciente dependem do estado:
 |---|---|---|
 | Aguardando (`WAITING`) | Na fila | **Chamar**, **Emergência** (vet/admin) |
 | Chamado (`CALLED`) | Aviso enviado ao tutor | **Iniciar** |
-| Voltando (`RETURNING`) | Tutor confirmou que está voltando | **Iniciar** |
+| Retornando (`RETURNING`) | Tutor confirmou que está voltando | **Iniciar** |
 | Pronto (`READY`) | Na clínica, pronto para atender | **Iniciar**, **Emergência** (vet/admin) |
 | Em atendimento (`IN_SERVICE`) | Atendimento começou | **Finalizar** |
-| Encerrado (`COMPLETED`) | Atendimento terminou | — |
+| Concluído (`COMPLETED`) | Atendimento terminou | — |
 
 - **Chamar** envia um aviso **simulado** ao tutor. O sistema não manda WhatsApp nem SMS.
-- **Emergência** passa o paciente na frente da fila. Só o veterinário ou o admin decide isso; o sistema nunca classifica gravidade sozinho.
+- **Emergência** passa o paciente na frente da fila. Só o veterinário ou o admin decide isso; o sistema nunca classifica gravidade sozinho. Enquanto o atendimento ainda espera, esses perfis também podem usar **Remover emergência**.
 - **Detalhe** abre o caso.
+
+Sem filtros ativos, veterinário ou admin também pode reordenar os pacientes pelos controles da fila. O sistema recusa a alteração se outra atualização tiver modificado a fila antes da confirmação; nesse caso, atualize a tela e repita a decisão.
 
 ### Detalhe do caso
 
@@ -114,7 +116,7 @@ Da esquerda para a direita: pedido de localização, aviso por tempo fixo depois
 - **Indisponível:** faltam amostras do tipo de atendimento. O sistema não inventa um número.
 - A estimativa muda quando a fila muda: emergência, início ou fim de atendimento.
 
-Dados marcados como `MOCKED` servem para desenvolvimento e demonstração. Eles não validam o C1 nem calibram oficialmente a F1.
+Os 40 registros identificados como `MOCKED` compõem o C1-MOCKED aprovado pelo GP para esta entrega. Eles não comprovam coleta em clínica real. Com `ALLOW_MOCKED_ESTIMATES=true`, a F1 pode calcular p50/p90 para a apresentação e informa `data_source=MOCKED`; uma futura coleta real deverá ser registrada e analisada separadamente.
 
 ## Solução de problemas
 
