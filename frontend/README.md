@@ -37,6 +37,9 @@ Decisão no [ADR-003](../docs/adr/003-hospedagem-vercel.md). No projeto da Verce
 
 | Figma | Rota | Arquivo |
 |---|---|---|
+| Página inicial (sem Figma): "Entrar na fila" ou "Entrar na recepção" | `/` | `src/paginas/Entrada.tsx` |
+| Tutor entra ou cria conta (sem Figma) | `/tutor/entrar`, `/tutor/criar-conta` | `src/paginas/tutor/AcessoTutor.tsx` |
+| Tutor entra na fila com os sintomas (sem Figma) | `/tutor` | `src/paginas/tutor/InicioTutor.tsx` |
 | T1–T6 (tutor) | `/t/<token>` | `src/paginas/tutor/StatusTutor.tsx` |
 | R1 Login | `/recepcao/login` | `src/paginas/recepcao/Login.tsx` |
 | R2/R3 Fila, R9 vazia, R10 sem estimativa, R11 erro de rede | `/recepcao/fila` | `src/paginas/recepcao/Fila.tsx` |
