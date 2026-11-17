@@ -8,6 +8,18 @@ Projeto Integrador UNASP-EC: agenda e fila virtual para clínica veterinária, c
 - `frontend/`: React, Vite e TypeScript para recepção e tutor.
 - `docs/`: documentação oficial, arquitetura, testes, manual e encerramento.
 
+## Como acessar
+
+Site publicado: https://clinica-veterinaria-mocha.vercel.app (a API fica em https://clinica-veterinaria-api-seven.vercel.app/docs).
+
+| Quem | Por onde entra | O que faz |
+|---|---|---|
+| Tutor com conta | Página inicial → **Entrar na fila** | Cria a conta, cadastra o animal, entra na fila com os sintomas e acompanha a vez |
+| Tutor sem conta | Link `/t/<código>` que a recepção manda | Acompanha a vez depois do encaixe ou do check-in feito pela recepção |
+| Recepção, veterinário e admin | Página inicial → **Entrar na recepção** | Fila, cadastro, recursos, avisos e indicadores. Só o veterinário e o admin mudam a ordem da fila |
+
+As contas de teste da equipe ficam com o grupo do frontend (G2); as senhas não vão para o repositório.
+
 ## Estado da versão
 
 - backend e frontend integrados;
