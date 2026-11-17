@@ -1,6 +1,6 @@
 // R1 · Login da equipe da clínica (recepção, veterinário ou admin).
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { entrar, ErroApi } from '../../api'
 import Campo from '../../componentes/Campo'
 import { salvarSessao } from '../../sessao'
@@ -23,6 +23,11 @@ export default function Login() {
     setErroGeral(null)
     try {
       const resposta = await entrar(email, senha)
+      // Conta de tutor não entra nas telas da equipe.
+      if (resposta.role === 'TUTOR') {
+        setErroGeral('Esta é uma conta de tutor. Entre pela página do tutor, no link abaixo.')
+        return
+      }
       salvarSessao({ token: resposta.access_token, perfil: resposta.role, email })
       navegar('/recepcao/fila')
     } catch (erro) {
@@ -84,6 +89,10 @@ export default function Login() {
           <button className="botao botao-acao botao-grande botao-largo" type="submit" disabled={ocupado}>
             {ocupado ? 'Entrando…' : 'Entrar'}
           </button>
+
+          <p className="corpo-sm texto-secundario">
+            É tutor? <Link to="/tutor/entrar">Entre na fila pelo celular</Link>
+          </p>
         </form>
       </main>
     </div>

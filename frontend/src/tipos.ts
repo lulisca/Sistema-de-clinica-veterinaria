@@ -20,7 +20,7 @@ export type MomentoLocalizacao = 'CHECK_IN' | 'NOTIFICATION' | 'RETURN_CONFIRMAT
 export interface Token {
   access_token: string
   token_type: string
-  role: Perfil
+  role: Perfil | 'TUTOR' // TUTOR: conta criada pelo próprio tutor (telas /tutor)
 }
 
 export interface Tutor {
