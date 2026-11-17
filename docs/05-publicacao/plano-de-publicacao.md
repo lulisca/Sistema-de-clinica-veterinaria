@@ -1,6 +1,6 @@
 # Plano de publicacao
 
-> **Status em 2026-11-16:** execucao em andamento. O ADR-003 definiu frontend e API na Vercel e PostgreSQL na Neon. Este documento prepara a publicacao, mas nao declara URLs ou smoke test antes da execucao real.
+> **Status em 2026-11-16:** publicacao concluida. Frontend e API respondem por HTTPS na Vercel, o PostgreSQL Neon respondeu pelas rotas autenticadas e o CT20 basico foi aprovado no commit `0fd8c67`.
 
 ## Topologia
 
@@ -53,31 +53,33 @@ O arquivo `backend/.env.example` e referencia local e nao deve ser copiado cegam
 
 ## Smoke test externo
 
-| Verificacao | Estado antes da publicacao |
+| Verificacao | Resultado em 2026-11-16 |
 |---|---|
-| HTTPS valido no frontend e API | Em execucao |
-| `/docs` e API respondem | Em execucao |
-| Login interno funciona | Em execucao |
-| Cadastro, check-in ou encaixe geram token publico | Em execucao |
-| Tutor consulta somente o proprio atendimento | Em execucao |
-| F1 mostra p50/p90 `MOCKED` ou indisponibilidade correta | Em execucao |
-| F2 aceita consentimento e negacao | Em execucao |
-| Aviso `SIMULATOR` e confirmacao funcionam | Em execucao |
-| Emergencia, reordenacao e recurso F3 funcionam | Em execucao |
-| Dados persistem apos nova execucao da API | Em execucao |
-| Segredos e `.env` nao aparecem no repositorio ou logs | Em execucao |
-| Snapshots expirados sao removidos | Em execucao |
+| HTTPS valido no frontend e API | Aprovado: frontend, rota interna, Swagger, OpenAPI e health responderam `200` |
+| `/docs` e API respondem | Aprovado: `/docs`, `/openapi.json` e `/api/health` |
+| Login interno funciona | Aprovado com conta de demonstracao da recepcao; perfil `RECEPTION` retornado |
+| Cadastro, check-in ou encaixe geram token publico | Coberto no CT19 local; nao repetido no smoke externo basico |
+| Tutor consulta somente o proprio atendimento | Coberto pela suite e pelo CT19; nao repetido no smoke externo basico |
+| F1 mostra p50/p90 `MOCKED` ou indisponibilidade correta | Coberto pela suite e pelo CT19; nao repetido no smoke externo basico |
+| F2 aceita consentimento e negacao | Coberto pela suite e pelo CT19; nao repetido no smoke externo basico |
+| Aviso `SIMULATOR` e confirmacao funcionam | Coberto pela suite e pelo CT19; nao repetido no smoke externo basico |
+| Emergencia, reordenacao e recurso F3 funcionam | Coberto pela suite e pelo CT19; nao repetido no smoke externo basico |
+| PostgreSQL Neon responde em rota autenticada | Aprovado: leitura da fila retornou `200` e uma entrada persistida |
+| Segredos e `.env` nao aparecem no repositorio | Aprovado na revisao do repositorio; credenciais publicas sao somente contas ficticias de demonstracao |
+| Snapshots expirados sao removidos | Coberto pela suite automatizada; nao repetido no smoke externo basico |
 
 ## Registro da versao publicada
 
 | Campo | Registro atual |
 |---|---|
-| Frontend URL | A registrar apos smoke test |
-| API URL | A registrar apos smoke test |
-| Commit/tag | A registrar na versao publicada |
-| Data/hora | A registrar na publicacao |
-| Responsavel | A registrar na execucao |
-| Resultado do smoke | A registrar apos verificacao externa |
+| Frontend URL | `https://clinica-veterinaria-mocha.vercel.app` |
+| API URL | `https://clinica-veterinaria-api-seven.vercel.app` |
+| Swagger | `https://clinica-veterinaria-api-seven.vercel.app/docs` |
+| Commit/tag | `0fd8c67`, merge do PR #20 (`development` para `main`) |
+| Data | 2026-11-16 |
+| Publicacao | Leonardo e equipe, por workflow Vercel integrado no PR #18 |
+| Verificacao | Alisson (GP), com apoio do OpenAI Codex, em requisicoes externas nao destrutivas |
+| Resultado do smoke | CT20 aprovado: frontend, rota SPA, API, health, CORS, login e leitura autenticada da fila |
 
 ## Rollback
 

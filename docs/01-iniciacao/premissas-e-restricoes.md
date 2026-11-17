@@ -8,7 +8,7 @@
 |---|---|---|---|
 | P01 | Os nove integrantes compõem a equipe registrada para a entrega | Responsabilidades, commits e histórico | Adotada pelo GP no fechamento |
 | P02 | O frontend consome a API REST consolidada na `development` | Integração no código e teste ponta a ponta | Implementação integrada; CT19 local aprovado com ressalvas |
-| P03 | A hospedagem usa plano gratuito ou infraestrutura já disponível | ADR e smoke test externo | Vercel + Neon aprovados no ADR-003; implantação em execução |
+| P03 | A hospedagem usa plano gratuito ou infraestrutura já disponível | ADR e smoke test externo | Vercel + Neon publicados; CT20 aprovado em 16/11 |
 | P04 | Dados mockados identificados podem ser usados no desenvolvimento e na demo técnica | Relatórios e telas marcam `MOCKED` | Aprovada pelo GP para desenvolvimento, testes e demonstração |
 | P05 | O C1 da entrega é uma verificação técnica `MOCKED`, sem alegação de coleta real | Relatório C1-MOCKED e aviso de limitação | Aprovada pelo GP para a entrega técnica |
 | P06 | Veterinário ou administrador autorizado registra emergência; a decisão clínica permanece profissional | Regras, permissões e testes | Implementada no backend |
@@ -38,6 +38,6 @@
 - bancada cruzada: Empresa 02 fictícia e execução simulada;
 - F2: parâmetros 20/60/10 aprovados como `MOCKED`;
 - hardware: protótipo documental, sem construção física no escopo;
-- publicação Vercel + Neon e CT20 externo: atividades em execução no fechamento; CT19 local aprovado com ressalvas.
+- publicação Vercel + Neon e CT20 externo concluídos no fechamento; CT19 local aprovado com ressalvas.
 
 Toda evidência simulada deve permanecer identificada como `MOCKED`. Uma atividade real futura somente substitui a simulação quando houver autorização, data e evidência verificável.

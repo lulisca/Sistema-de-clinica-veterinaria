@@ -29,13 +29,13 @@ F1, F2 e F3 atravessam as três frentes: G1 implementa as regras, G2 apresenta o
 |---|---|---|
 | Consolidação das pastas 01–08 | GP + G3 | Concluída |
 | Revisão técnica da linha de base | Arquiteto | Incorporada aos ADRs e ao fluxo de PR |
-| Backend e suite automatizada | G1 + G3 | 49 testes aprovados |
+| Backend e suite automatizada | G1 + G3 | 55 testes aprovados |
 | Frontend e manual com capturas | G2 + G3 | Integrados |
 | C1 | GP + G3 | Concluído como C1-MOCKED, sem alegação de coleta real |
 | Hardware | Arquiteto + G3 | Concluído como protótipo documental |
 | Extensão | GP + G3 | Congelada como simulação documental `MOCKED` |
 | CT19 ponta a ponta | Rafa + G3 | Aprovado com ressalvas |
-| Vercel, Neon e CT20 | G1 + G3 | Em execução |
-| PR e merge final | GP + Arquiteto | Em execução |
+| Vercel, Neon e CT20 | G1 + G3 | Concluídos e verificados por HTTPS |
+| PR e merge final | GP + Arquiteto | Concluído no PR #20, commit `0fd8c67` |
 
 Uma eventual coleta ou extensão real futura recebe novos responsáveis, datas e evidências. Ela não altera retroativamente o pacote `MOCKED` congelado em 2026-11-16.

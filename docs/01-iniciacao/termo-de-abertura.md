@@ -1,6 +1,6 @@
 # Termo de abertura
 
-> **Status:** aprovado pelo GP em 2026-11-16. Equipe, escopo e responsabilidades estão consolidados. A entrega técnica utiliza cenário, dados, C1 e bancada cruzada `MOCKED`, identificados como simulação. O CT19 local foi aprovado com ressalvas; publicação externa e CT20 estão em execução no fechamento.
+> **Status:** aprovado pelo GP em 2026-11-16. Equipe, escopo e responsabilidades estão consolidados. A entrega técnica utiliza cenário, dados, C1 e bancada cruzada `MOCKED`, identificados como simulação. O CT19 local foi aprovado com ressalvas; publicação externa e CT20 foram concluídos no fechamento.
 
 ## 1. Nome da empresa e do projeto
 
@@ -55,7 +55,7 @@ Critérios de sucesso:
 
 | Data | Entrega ou marco |
 |---|---|
-| 16/11/2026 | Congelamento técnico com código integrado, documentação, manual, dados e cenários `MOCKED`; CT19 local aprovado com ressalvas; publicação e CT20 em execução |
+| 16/11/2026 | Congelamento técnico com código integrado, documentação, manual, dados e cenários `MOCKED`; CT19 local aprovado com ressalvas; publicação e CT20 concluídos |
 | 23/11/2026 | Relatório da bancada cruzada simulada com Empresa 02 fictícia; substituir por evidência real somente se o professor autorizar nova etapa |
 | 30/11/2026 | Apresentação final, demonstração e relatório da simulação extensionista `MOCKED` |
 | 03/12/2026 | Versão final corrigida, documentação e lições aprendidas |
@@ -102,7 +102,7 @@ Os cenários Vila Nova EC e Empresa 02 são simulações documentais. Se o profe
 - orçamento operacional próximo de zero e preferência por hospedagem gratuita;
 - proteção de dados e minimização da geolocalização;
 - a entrega de 16/11 utiliza cenário fictício e não declara parceria, entrevista ou coleta de campo real;
-- frontend integrado à `development` e backend com 49 testes aprovados; CT19 local aprovado com ressalvas; publicação externa e CT20 estão em execução no fechamento;
+- frontend integrado e backend com 55 testes aprovados; CT19 local aprovado com ressalvas; publicação externa e CT20 concluídos no fechamento;
 - hardware limitado ao protótipo documental, sem construção física prevista no escopo aprovado;
 - ADRs e atas não podem ser retrodatados.
 
