@@ -31,6 +31,7 @@ Decisão no [ADR-003](../docs/adr/003-hospedagem-vercel.md). No projeto da Verce
 - **Root Directory:** `frontend`, com o preset **Vite** (build `npm run build`, saída `dist`). Com a raiz do repositório, nada é construído e todo endereço dá 404.
 - **Variável de ambiente:** `VITE_API_URL` com a URL da API publicada. Sem ela, o site chama `http://localhost:8000/api` e o login falha.
 - **`vercel.json`:** manda toda rota para o `index.html`. Sem ele, abrir ou recarregar `/recepcao/fila` ou o link do tutor (`/t/<token>`) dá 404, porque quem conhece essas rotas é o React Router, não o servidor.
+- **Publicação automática:** cada merge na `main` publica o site e a API pelo workflow `.github/workflows/publicar-vercel.yml`. Ele usa o segredo `VERCEL_TOKEN` do repositório. A Vercel não liga o repositório direto porque ele é de uma conta pessoal e o projeto da Vercel é de outra, então não há prévia por Pull Request. Migrations continuam à mão: rode `alembic upgrade head` no banco de produção antes do merge que mudar o banco.
 
 ## Onde fica cada tela
 
