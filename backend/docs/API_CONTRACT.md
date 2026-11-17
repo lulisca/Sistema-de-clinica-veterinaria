@@ -7,7 +7,7 @@ Base URL local: `http://localhost:8000/api`
 - `POST /auth/login` — retorna JWT.
 - `POST /auth/tutors/register` — cria a conta e o perfil do tutor e retorna JWT com papel `TUTOR`.
 - Operações internas usam `Authorization: Bearer <token>`.
-- O tutor autenticado usa `GET /tutor/me`, `GET|POST /tutor/animals` e `POST /tutor/queue`.
+- O tutor autenticado usa `GET /tutor/me`, `GET|POST /tutor/animals` e `GET|POST /tutor/queue`.
 - O acompanhamento também pode ser aberto pelo token público aleatório: `GET /public/status/{public_token}`. O endpoint público não retorna contato nem sintomas.
 
 ## Autoatendimento do tutor
@@ -15,6 +15,7 @@ Base URL local: `http://localhost:8000/api`
 - `GET /tutor/animals` — lista somente os animais do tutor autenticado.
 - `POST /tutor/animals` — cadastra um animal no próprio perfil; o código interno é gerado pelo servidor.
 - `POST /tutor/queue` — cria uma entrada para um animal do próprio tutor com `appointment_type` e `symptoms` obrigatórios.
+- `GET /tutor/queue` — lista os atendimentos ainda ativos (`WAITING`, `CALLED`, `RETURNING`, `READY`, `IN_SERVICE`) dos animais do tutor, com o `public_token` para abrir o acompanhamento.
 
 A autoentrada começa com prioridade normal. Ela não aceita emergência, nível de prioridade, marcadores operacionais nem veterinário; esses dados dependem da triagem da equipe. Uma segunda entrada ativa para o mesmo animal é rejeitada.
 

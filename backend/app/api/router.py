@@ -117,6 +117,21 @@ def create_tutor_queue_entry(payload: TutorQueueCreate, db: Session = Depends(ge
     recalculate_waiting_estimates(db, 'TUTOR_SELF_ENTRY')
     return q
 
+@router.get('/tutor/queue', response_model=list[QueueOut])
+def list_tutor_queue_entries(db: Session = Depends(get_db), user=TUTOR):
+    # Atendimentos ainda ativos dos animais do tutor logado. Serve para ele achar
+    # o link de acompanhamento (public_token) quando volta ao site.
+    tutor = _tutor_for_user(db, user)
+    return list(db.scalars(
+        select(QueueEntry)
+        .join(Animal, Animal.id == QueueEntry.animal_id)
+        .where(
+            Animal.tutor_id == tutor.id,
+            QueueEntry.status.in_(['WAITING', 'CALLED', 'RETURNING', 'READY', 'IN_SERVICE']),
+        )
+        .order_by(QueueEntry.checked_in_at.desc(), QueueEntry.id.desc())
+    ).all())
+
 @router.post('/tutors', response_model=TutorOut)
 def create_tutor(payload: TutorCreate, db: Session = Depends(get_db), user=STAFF):
     obj = Tutor(**payload.model_dump()); db.add(obj); db.flush(); audit(db,'Tutor',obj.id,'CREATE',user.id); db.commit(); db.refresh(obj); return obj
