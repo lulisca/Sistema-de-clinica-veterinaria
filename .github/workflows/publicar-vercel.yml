@@ -1,0 +1,40 @@
+# Publica o site e a API na Vercel sempre que algo entra na main (ADR-003).
+# A Vercel não consegue ligar este repositório direto, porque ele é de uma conta pessoal
+# e o projeto da Vercel é de outra. Por isso quem publica é o GitHub Actions, com a CLI da Vercel.
+#
+# Precisa de um segredo no repositório: VERCEL_TOKEN (Settings → Secrets and variables → Actions).
+# Também dá para rodar à mão pela aba Actions → "Publicar na Vercel" → Run workflow.
+name: Publicar na Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Se dois merges entrarem seguidos, as publicações rodam uma depois da outra.
+concurrency:
+  group: publicar-vercel
+  cancel-in-progress: false
+
+env:
+  VERCEL_ORG_ID: team_OpkceRH0HBdtJ6XbqvvaR4Gh # conta da Vercel (não é segredo)
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_PROJECT_ID: prj_pS5U5E9ujjbgX6JmiOcyxRGodFQR # projeto clinica-veterinaria (raiz frontend/)
+    steps:
+      - uses: actions/checkout@v5
+      - name: Publica o site
+        run: npx --yes vercel@54.7.1 deploy --prod --yes --token="$VERCEL_TOKEN"
+
+  api:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_PROJECT_ID: prj_tyjInImB7ePakbSdtwYD3YQP8I8R # projeto clinica-veterinaria-api (raiz backend/)
+    steps:
+      - uses: actions/checkout@v5
+      - name: Publica a API
+        run: npx --yes vercel@54.7.1 deploy --prod --yes --token="$VERCEL_TOKEN"
