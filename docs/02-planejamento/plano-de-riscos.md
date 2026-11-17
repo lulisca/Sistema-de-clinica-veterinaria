@@ -39,4 +39,4 @@
 | Marco | Data | Revisao | Mudanca |
 |---|---|---|---|
 | Recuperacao documental | 2026-11-15 | Alisson (GP), com apoio de IA declarado | Modelo inicial substituido por riscos e contingencias concretas |
-| Fechamento da linha de base | 2026-11-16 | Alisson (GP) | Estados alinhados ao frontend integrado, 49 testes, CT19 aprovado com ressalvas, cenarios `MOCKED`, hardware documental e publicacao em execucao |
+| Fechamento da linha de base | 2026-11-16 | Alisson (GP) | Estados alinhados ao frontend integrado, 55 testes, CT19 aprovado com ressalvas, cenarios `MOCKED`, hardware documental e publicacao/CT20 concluidos |

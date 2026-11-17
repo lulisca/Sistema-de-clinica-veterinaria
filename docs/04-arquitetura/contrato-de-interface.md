@@ -55,4 +55,4 @@ Qualquer alteracao de rota, payload, enum ou regra exige atualizar:
 - testes automatizados ou manuais;
 - ADR quando a mudanca for arquitetural.
 
-O contrato esta consolidado para execucao local e integracao na `development`. A homologacao externa somente pode ser declarada depois da publicacao e do smoke test, atividades registradas como em execucao.
+O contrato esta consolidado para execucao local e externa. A publicacao Vercel + Neon e o smoke CT20 foram verificados em 16/11 no commit `0fd8c67`.

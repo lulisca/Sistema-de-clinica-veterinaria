@@ -11,7 +11,7 @@
 | F2 | RF08-RF10 | consentimento, `travel_minutes`, fallback, avisos e falhas | CT06-CT11, CT22-CT23 | Implementada com parâmetros 20/60/10 `MOCKED` |
 | F3 | RF11-RF13, RF16 e RF18 | filtros, prioridade, emergência, reordenação, sintomas e recursos | CT12-CT16, CT24, CT29-CT32 | Implementada e integrada |
 | Frontend | RF14 | telas de recepção, tutor, recursos, avisos e indicadores | CT19, CT21-CT26, CT29-CT32 | Integrado à API atual |
-| Publicação | RF15 | ADR-003 e `docs/05-publicacao/` | CT20 | Vercel, Neon e smoke HTTPS em execução |
+| Publicação | RF15 | ADR-003 e `docs/05-publicacao/` | CT20 | Vercel, Neon e smoke HTTPS concluídos |
 | Autoatendimento | RF17 | registro, animais e entrada remota autenticada | CT27-CT28 | Backend implementado; tela dedicada fora do escopo congelado |
 
 ## Critérios do projeto
@@ -21,11 +21,11 @@
 | C1 · Dados | 40 registros, quatro tipos, quatro janelas e origem identificada | estrutura, importação e F1 com `data_source=MOCKED` | Concluído como C1-MOCKED aprovado pelo GP; não representa coleta real |
 | C2 · Gestão | `docs/01-iniciacao/` e `docs/02-planejamento/` | escopo, EAP, cronograma, custos, comunicação e riscos | Concluído na linha de base de 2026-11-16 |
 | C3 · Arquitetura | `docs/04-arquitetura/`, `backend/docs/` e ADRs | contrato, modelo, F1/F2/F3, hardware e hospedagem | Consolidado para a versão atual |
-| C4 · Sistema | backend, frontend e manual com 12 capturas | CT01-CT32 | Versão local integrada; CT19 aprovado com ressalvas; publicação externa em execução |
+| C4 · Sistema | backend, frontend e manual com 12 capturas | CT01-CT32 | Versão publicada; CT19 aprovado com ressalvas e CT20 aprovado |
 | C5 · Hardware | esquema, protocolo, alimentação e ADR-002 | revisão documental e cálculo elétrico | Concluído como protótipo documental; construção física fora do escopo |
-| C6 · Qualidade | `docs/06-testes/` | 49 testes, CT01-CT32 e BC01-BC16 | Suite automatizada e CT19 aprovados com ressalvas; CT20 em execução |
-| C7 · Apresentação | manual, roteiro, slides, capturas e lições | conferência documental e demonstração local | Material concluído; evidência externa acompanha CT20 |
-| C8 · Processo | Git, commits, PRs, ADRs e `docs/registro-de-ia.md` | auditoria do histórico | Revisão final registrada; PR e merge para `development` em execução |
+| C6 · Qualidade | `docs/06-testes/` | 55 testes, CT01-CT32 e BC01-BC16 | Suite automatizada aprovada; CT19 com ressalvas e CT20 aprovado |
+| C7 · Apresentação | manual, roteiro, slides, capturas e lições | conferência documental e demonstração publicada | Material e evidência externa concluídos |
+| C8 · Processo | Git, commits, PRs, ADRs e `docs/registro-de-ia.md` | auditoria do histórico | Revisão final e merge do PR #20 registrados |
 
 ## Cobertura dos testes
 
@@ -34,7 +34,7 @@
 - **CT12-CT16:** F3, emergência, filtros e recursos.
 - **CT17-CT18:** segurança de token e JWT.
 - **CT19:** jornada ponta a ponta local aprovada com ressalvas; três defeitos registrados.
-- **CT20:** publicação externa por HTTPS em execução.
+- **CT20:** publicação externa por HTTPS aprovada no commit `0fd8c67`.
 - **CT21-CT26:** comportamento e validações das telas.
 - **CT27-CT28:** autoatendimento autenticado do tutor.
 - **CT29-CT31:** reordenação, concorrência e remoção de emergência.

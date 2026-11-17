@@ -1,6 +1,6 @@
 # Requisitos e casos de uso
 
-> **Marco planejado:** 2026-10-19. **Consolidacao real:** 2026-11-16. Linha de base aprovada pelo GP e conferida contra frontend, backend e 49 testes automatizados.
+> **Marco planejado:** 2026-10-19. **Consolidacao real:** 2026-11-16. Linha de base aprovada pelo GP e conferida contra frontend, backend e 55 testes automatizados.
 
 ## Requisitos funcionais
 
@@ -20,7 +20,7 @@
 | RF12 | Aplicar prioridade e emergencia autorizada | Perfis e ordenacao | Implementado |
 | RF13 | Impedir dupla alocacao de recurso | ResourceAllocation | Implementado |
 | RF14 | Disponibilizar telas do tutor e equipe | Frontend na `development` | Implementado |
-| RF15 | Publicar versao externa | ADR-003 e plano de publicacao | Em execucao |
+| RF15 | Publicar versao externa | ADR-003 e plano de publicacao | Concluido; CT20 aprovado |
 | RF16 | Reordenar com protecao de concorrencia | `PUT /queue/order`, botoes, arrastar e `409` | Implementado |
 | RF17 | Autoatendimento autenticado do tutor | Registro, animais e entrada remota | Backend implementado; sem tela dedicada |
 | RF18 | Registrar sintomas sem exposicao publica | Modelos, API e telas internas | Implementado |
@@ -34,8 +34,8 @@
 | RNF03 | Rastreabilidade | Auditoria, revisoes F1, Git, ADRs e Registro de IA |
 | RNF04 | Portabilidade | Execucao local, Docker e PostgreSQL na producao |
 | RNF05 | Usabilidade | Estados claros, erros tratados e fluxos demonstraveis |
-| RNF06 | Disponibilidade | Local documentado; publicacao externa em execucao |
-| RNF07 | Qualidade | 49 testes, casos manuais, capturas e bancada `MOCKED` |
+| RNF06 | Disponibilidade | Execucao local documentada e publicacao externa verificada por HTTPS |
+| RNF07 | Qualidade | 55 testes, casos manuais, capturas e bancada `MOCKED` |
 | RNF08 | Integridade academica | Dados `MOCKED` identificados; nenhuma evidencia externa inventada |
 
 ## Casos de uso
@@ -96,4 +96,4 @@
 - Distancia e calculada por Haversine no navegador; nao ha servico externo de rotas.
 - Atraso, falta e reinsercao automatica nao foram arbitrados e nao integram o comportamento atual.
 - Hardware fisico e frontend dedicado do autoatendimento estao fora do escopo congelado.
-- Publicacao Vercel + Neon e teste ponta a ponta externo permanecem em execucao.
+- Publicacao Vercel + Neon e CT20 externo concluidos em 16/11.
