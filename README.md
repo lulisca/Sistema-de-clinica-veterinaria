@@ -18,7 +18,18 @@ Site publicado: https://clinica-veterinaria-mocha.vercel.app (a API fica em http
 | Tutor sem conta | Link `/t/<código>` que a recepção manda | Acompanha a vez depois do encaixe ou do check-in feito pela recepção |
 | Recepção, veterinário e admin | Página inicial → **Entrar na recepção** | Fila, cadastro, recursos, avisos e indicadores. Só o veterinário e o admin mudam a ordem da fila |
 
-As contas de teste da equipe ficam com o grupo do frontend (G2); as senhas não vão para o repositório.
+### Contas de teste
+
+Contas de demonstração do site publicado, com dados fictícios. Ficam aqui de propósito, para a equipe e a banca testarem. Não use estas senhas em nada real.
+
+| Perfil | E-mail | Senha | Entra por |
+|---|---|---|---|
+| Recepção | `recepcao@teste.fila` | `WLFjvRVbR69r` | Entrar na recepção |
+| Veterinário | `veterinario@teste.fila` | `OkVtE9zyRrnh` | Entrar na recepção |
+| Admin | `admin@teste.fila` | `0zh6WQIRhfy3` | Entrar na recepção |
+| Tutor | `tutor@teste.fila` | `-2XiS7UJjtBv` | Entrar na fila |
+
+O tutor de teste ainda não tem animal: na primeira entrada na fila, a tela pede o nome e a espécie. Para testar o caminho completo, entre como tutor e entre na fila. Depois, em outra aba, entre como veterinário: o paciente aparece com os sintomas e pode ser arrastado para outra posição.
 
 ## Estado da versão
 
