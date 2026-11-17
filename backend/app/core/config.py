@@ -9,9 +9,18 @@ def env_bool(name: str, default: bool = False) -> bool:
         return default
     return value.strip().lower() in {'1', 'true', 'yes', 'on'}
 
+
+def normalizar_url_banco(url: str) -> str:
+    # A Neon (pela Vercel) entrega "postgres://..." ou "postgresql://...".
+    # O SQLAlchemy precisa saber que o driver é o psycopg 3, o único instalado.
+    for prefixo in ('postgres://', 'postgresql://'):
+        if url.startswith(prefixo):
+            return 'postgresql+psycopg://' + url[len(prefixo):]
+    return url
+
 class Settings:
     app_name = os.getenv('APP_NAME', 'Fila Virtual API')
-    database_url = os.getenv('DATABASE_URL', 'sqlite:///./fila_virtual.db')
+    database_url = normalizar_url_banco(os.getenv('DATABASE_URL', 'sqlite:///./fila_virtual.db'))
     jwt_secret = os.getenv('JWT_SECRET', 'change-me-in-production')
     jwt_exp_minutes = int(os.getenv('JWT_EXP_MINUTES', '480'))
     _fixed_notice = os.getenv('DEFAULT_FIXED_NOTICE_MINUTES')
